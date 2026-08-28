@@ -1,5 +1,5 @@
 -----------------------------------------------------
--- Utilisateur
+-- User table
 -----------------------------------------------------
 DROP TABLE IF EXISTS user CASCADE;
 CREATE TABLE user (
@@ -10,9 +10,14 @@ CREATE TABLE user (
     access_token VARCHAR(255)
 );
 
-'''
-    id_code    SERIAL PRIMARY KEY,
-    cle_HMAC    VARCHAR,
-    lt_package    ARRAY,
-    empreinte    INTEGER
-'''
+-----------------------------------------------------
+-- File table
+-----------------------------------------------------
+
+DROP TABLE IF EXISTS user CASCADE;
+CREATE TABLE file (
+    id_file    SERIAL PRIMARY KEY,
+    name_file  VARCHAR
+    id_user    FOREIGN KEY,
+    HMAC_key    BYTEA,
+);
