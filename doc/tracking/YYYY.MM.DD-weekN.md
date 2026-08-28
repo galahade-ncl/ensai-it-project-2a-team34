@@ -1,33 +1,45 @@
-# Weekly Report
+# Point Hebdomadaire
 
-Date: Thursday ...
-Week No. ...
+Date: Jeudi ...
+Semaine n° ...
 
-## Tasks completed this week
+## Tâches réalisées cette semaine
 
-> Examples: `- [x] Task 1` or - `none`
+### MANAMBIRAVAKA Anaëlle
 
-### Student 1: Last Name, First Name
+- 
 
+### NADIN Sarah
 
-### Student 2: Last Name, First Name
-
-
-### Student 3: Last Name, First Name
+- 
 
 
-### Student 4: Last Name, First Name
+### NICOLIE Galahade
+
+- 
+
+### PERRIN-BEAU Madie
+
+- 
 
 
-### Student 5: Last Name, First Name
+### VILARRUPLA Thomas
 
----
+- 
+
+### ZHU Annabelle
+
+- 
+
 
 ## Backlog
 
-> List of tasks awaiting completion.
+> Liste des tâches en attente de prise en charge.
 
-### Priority
+### Prioritaires
 
+- 
 
-### Secondary
+### Secondaires
+
+- 
