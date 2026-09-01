@@ -17,67 +17,88 @@ Pour afficher ce diagramme dans VScode :
 ```mermaid
 classDiagram
     %% Business objects
-    class Player {
-        +id_player: int
+    class User {
+        +id_user: int
         +username: string
         +password: string
-        +elo: int
         +email: string
-        +pokemon_fan: bool
     }
-    
+    class File {
+        +id_file: int
+        +name_file: string
+        +id_user: int
+        +HMAC_key: hmac.HMAC
+    }
+    class Audit {
+        +id_audit: int
+        +file_id: int
+    }
+
     %% Data Access Objects
-    class PlayerDao {
-        +create(Player): bool
-        +find_by_id(int): Player
-        +list_all(): list[Player]
-        +delete(Player): bool
-        +update(Player): bool
-        +login(str,str): Player
+    class UserDAO {
+        +create(User): bool
+        +find_by_id(int): User
+        +list_all(): list[User]
+        +delete(User): bool
+        +update(User): bool
+        +login(str,str): User
     }
-    
+    class FileDAO {
+        +create(File): bool
+        +find_by_id(int): File
+        +list_all(): list[File]
+        +delete(File): bool
+        +update(File): bool
+        +login(str,str): File
+    }
+    class AuditDAO {
+    }
+
     %% Service layer
-    class PlayerService {
-        +create(str,str,int,str,bool): Player
-        +find_by_id(int): Player
-        +list_all(bool=False): list[Player]
-        +delete(Player): bool
-        +update(Player): Player
-        +login(str,str): Player
+    class UserService {
+        +create(str,str,str): User
+        +find_by_id(int): User
+        +list_all_files(User, bool=False): list[File]
+        +delete(User): bool
+        +update(User): User
+        +login(str,str): User
         +username_already_used(str): bool
     }
 
-    class GameService {
-        +play(id_player:int, id_opponent:int, choice:str): dict
-        +expected_score(elo1:int, elo2:int): float
-        +compute_elo(elo1:int, elo2:int, win1:bool): tuple[int,int]
-        +update_elo(j1:Player, j2:Player, winner:Player)
+
+    class FileService {
+        +create(int, str, int, hmac.HMAC): File
+        +find_by_id(int): File
+        +find_by_id_user(int) : File
+        +delete(File): bool
     }
-    
+
+    class AuditService {
+        +correct_HMAC_key(File): bool
+    }
+
     %% Controllers
-    class PlayerController {
-        +list_all_players(): list[Player]
-        +player_by_id(int): Player
-        +create_player(PlayerModel): Player
-        +update_player(int, PlayerModel): str
-        +delete_player(int): str
+    class UserController {
+        +user_by_id(int): User
+        +create_user(UserModel): User
+        +update_user(int, UserModel): str
+        +delete_user(int): str
     }
 
-    class AuthController {
-        +login(ConnexionRequest): dict
-    }
-
-    class GameController {
-        +play_game(GameRequest): dict
+    class FileController {
     }
 
     %% Relationships
-    PlayerService ..> PlayerDao : calls
-    PlayerService ..> Player : uses
-    PlayerDao ..> Player : uses
-    GameService ..> PlayerDao : calls
-    GameService ..> Player : uses
-    PlayerController ..> PlayerService : calls
-    AuthController ..> PlayerService : calls
-    GameController ..> GameService : calls
+    User "1" ..> "0..*" File : owns
+    File "1" ..> "0..*" Audit
+    UserService ..> UserDAO : calls
+    UserService ..> User : uses
+    UserDAO ..> User : uses
+    UserController ..> UserService : calls
+    FileService ..> FileDAO : calls
+    FileService ..> File : uses
+    FileDAO ..> File : uses
+    FileController ..> FileService : calls
+    AuditService ..> Audit : uses
+    AuditDAO ..> Audit : uses
 ```
