@@ -32,6 +32,7 @@ classDiagram
     class Audit {
         +id_audit: int
         +file_id: int
+
     }
 
     %% Data Access Objects
@@ -52,6 +53,8 @@ classDiagram
         +login(str,str): File
     }
     class AuditDAO {
+        +create(Audit); bool
+        +
     }
 
     %% Service layer
@@ -68,13 +71,15 @@ classDiagram
 
     class FileService {
         +create(int, str, int, hmac.HMAC): File
+        +correct_HMAC_key(File): bool
         +find_by_id(int): File
-        +find_by_id_user(int) : File
+        +find_user(int) : User
+        +list_all_audit(int) : list[Audit]
         +delete(File): bool
     }
 
     class AuditService {
-        +correct_HMAC_key(File): bool
+        +create()
     }
 
     %% Controllers
@@ -86,6 +91,16 @@ classDiagram
     }
 
     class FileController {
+        +file_by_id(int): File
+        +create_file(FileModel): File
+        +update_file(int, FileModel): str
+        +delete_file(int): str
+    }
+
+    class AuditController {
+        +audit_by_id(int): Audit
+        +create_audit(AuditModel): Audit
+        +delete_audit(int): str
     }
 
     %% Relationships
@@ -93,12 +108,22 @@ classDiagram
     File "1" ..> "0..*" Audit
     UserService ..> UserDAO : calls
     UserService ..> User : uses
+    UserService ..> FileDAO : calls
+    UserService ..> File : uses
     UserDAO ..> User : uses
     UserController ..> UserService : calls
     FileService ..> FileDAO : calls
     FileService ..> File : uses
+    FileService ..> User : uses
+    FileService ..> UserDAO : calls
+    FileService ..> Audit : uses
+    FileService ..> AuditDAO : calls
     FileDAO ..> File : uses
     FileController ..> FileService : calls
     AuditService ..> Audit : uses
+    AuditService ..> AuditDAO : calls
+    AuditService ..> File : uses
+    AuditService ..> FileDAO : calls
     AuditDAO ..> Audit : uses
+    AuditController ..> AuditService : calls
 ```
