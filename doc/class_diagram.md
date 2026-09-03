@@ -32,7 +32,9 @@ classDiagram
     class Audit {
         +id_audit: int
         +file_id: int
-
+        +dependency_file : int
+        +vulnerability:
+        +
     }
 
     %% Data Access Objects

@@ -16,3 +16,9 @@ INSERT INTO file(name_file, id_user, HMAC_key) VALUES
 ('code2',   4,  'gilbert@project.io', hmac('code2', '9pTGKrQYCsR_J9lIIxuw74K82t1U8QvJcjRsz5ByqXA', 'sha256')),
 ('tp4',    4,  'junior@project.io'hmac('tp4', '9pTGKrQYCsR_J9lIIxuw74K82t1U8QvJcjRsz5ByqXA', 'sha256'))
 ;
+
+'''
+INSERT INTO audit(...) VALUES
+()
+;
+'''

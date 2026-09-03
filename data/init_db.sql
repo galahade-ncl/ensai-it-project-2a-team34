@@ -3,7 +3,7 @@
 -----------------------------------------------------
 DROP TABLE IF EXISTS user CASCADE;
 CREATE TABLE user (
-    id_user    SERIAL PRIMARY KEY,
+    id_user      SERIAL PRIMARY KEY,
     username     VARCHAR(30) UNIQUE,
     password     VARCHAR(256),
     email        VARCHAR(50),
@@ -19,5 +19,15 @@ CREATE TABLE file (
     id_file    SERIAL PRIMARY KEY,
     name_file  VARCHAR
     id_user    FOREIGN KEY,
-    HMAC_key    BYTEA,
+    HMAC_key   BYTEA,
+);
+
+-----------------------------------------------------
+-- Audit table
+-----------------------------------------------------
+
+DROP TABLE IF EXISTS user CASCADE;
+CREATE TABLE audit (
+    id_audit    SERIAL PRIMARY KEY,
+    id_file     FOREIGN KEY
 );
