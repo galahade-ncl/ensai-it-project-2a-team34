@@ -21,8 +21,8 @@ stateDiagram
     login : Login
     menu_player : Player Menu
     signup : Sign Up
-    player_list : List Players
-    play_game : Play a game
+    code_check : Examiner un code (2 fichiers)
+    vulnerability_list : Liste des vulnérabilités détéctées et contrôles effectués
     logout : Logout
     
     [*] --> Home
@@ -36,8 +36,8 @@ stateDiagram
     quit --> [*]
     
     state menu_player {
-    	[*] --> player_list
-    	[*] --> play_game
+    	[*] --> code_check
+        code_check --> vulnerability_list
     	[*] --> logout
         logout --> [*]: return to home
     }
