@@ -19,9 +19,11 @@ Pour afficher ce diagramme dans VScode :
 ```mermaid
 stateDiagram
     login : Login
-    menu_player : Player Menu
+    menu_player : Menu Utilisateur
     signup : Sign Up
-    code_check : Examiner un code (2 fichiers)
+    code_check : Examiner un projet (2 fichiers)
+    fichier_1 : Code
+    fichier_2 : Fichier de dépendance
     vulnerability_list : Liste des vulnérabilités détéctées et contrôles effectués
     logout : Logout
     
@@ -37,7 +39,10 @@ stateDiagram
     
     state menu_player {
     	[*] --> code_check
-        code_check --> vulnerability_list
+        code_check --> fichier_1
+          fichier_1 --> vulnerability_list
+        code_check --> fichier_2
+          fichier_2 --> vulnerability_list
     	[*] --> logout
         logout --> [*]: return to home
     }
