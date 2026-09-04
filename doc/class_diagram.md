@@ -23,12 +23,27 @@ classDiagram
         +password: string
         +email: string
     }
-    class File {
-        +id_file: int
-        +name_file: string
+    class Project{
+        +id_project: int
+        +name_project: string
         +id_user: int
-        +HMAC_key: hmac.HMAC
-    }
+        +codefile: CodeFile
+        +dependencyfile: DependencyFile
+        +HMACkey: hmac.HMAC
+}
+
+    class CodeFile{
+        +id_cfile: int
+        +id_project: int
+}
+
+    class DependencyFile{
+        +id_dfile: int
+        +id_project: int
+        +dependencydict: dict()
+}
+
+
     class Audit {
         +id_audit: int
         +file_id: int
