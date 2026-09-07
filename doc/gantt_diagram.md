@@ -22,22 +22,18 @@ gantt
     %%excludes  YYYY-MM-DD and/or sunday and/or weekends 
      
     section Analyse
-    Découverte et compréhension du sujet
-    :milestone, 2023-09-01, 14d
-    Diagramme des classes,
-    :milestone, 2023-09-01, 14d
-    Diagramme d'activité               :milestone, 2023-09-08,
-    rédaction rapport                   :active,    2023-09-20, 2023-10-05
-    relecture                    :active,    2023-10-05, 2023-10-07
+    Découverte et compréhension du sujet        :milestone, 2023-09-01, 14d
+    Diagramme des classes,                      :milestone, 2023-09-01, 14d
+    Diagramme d'activité                        :milestone, 2023-09-08,
+    rédaction rapport                           :active,    2023-09-20, 2023-10-05
+    relecture                                   :active,    2023-10-05, 2023-10-07
 
 
     section Code
-    Adaptation du template du projet
-    :milestone, 2023-09-01, 
-    Création des BDD user et file.
-    :milestone, 2023-09-01, 
-    coder une v0                 :active,    2023-09-20, 15d
-    lister classes à coder       :active,    2023-10-07, 7d
+    Adaptation du template du projet            :milestone, 2023-09-01, 
+    Création des BDD user et file               :milestone, 2023-09-01, 
+    coder une v0                                :active,    2023-09-20, 15d
+    lister classes à coder                      :active,    2023-10-07, 7d
     
     section Rendu
     Dossier Analyse              :milestone, 2023-10-07,
@@ -60,14 +56,14 @@ gantt
 
 ## Dossier Analyse
 
-* [x] Diagramme de Gantt
-* [x] Diagramme de cas d'utilisation
-* [x] Diagramme de classe
+* [ ] Diagramme de Gantt
+* [ ] Diagramme de cas d'utilisation
+* [ ] Diagramme de classe
 * [ ] Répartition des parties à rédiger
 
 ## Code
 
-* [ ] Créer dépôt Git commun
+* [x] Créer dépôt Git commun
   * [ ] vérifier que tout le monde peut **push** et **pull**
 * [ ] Version 0 de l'application
   * coder une et une seule fonctionnalité simple de A à Z, et faire tourner l'appli
