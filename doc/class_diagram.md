@@ -56,9 +56,45 @@ classDiagram
 
     class Audit {
         +id_audit: int
-        +file_id: int
-        +vulnerability_list : list[]
-        +score_de_risque_global : int
+        +id_project: int
+        +date: datetime
+        +vulnerabilities: list[Vulnerability]
+        +licenses: list[License]
+        +anti_patterns: list[AntiPattern]
+        +complexity: float
+        +energy_consumption_kwh: float
+        +carbon_emission_gco2e: float
+        +sbom: SBOM
+        +quality_gate: QualityGate
+    }
+
+    class Vulnerability {
+        +id_vulnerability: int
+        +osv_id: int
+        +cve_id: int
+        +severity: str
+        +package: str
+        +version_package: str
+    }
+
+    class Licence {
+        +id_license: int
+        +name: str
+        +risk_level: str
+    }
+
+    class AntiPattern {
+        +id_antipattern: int
+        +type: str
+        +line: int
+        +description: str
+    }
+
+    class QualityGate {
+        +id_quality_gate: int
+        +max_vulnerabilities: int
+        +max_carbon_emission: float
+        +status: string
     }
 
     %% Data Access Objects
@@ -78,11 +114,11 @@ classDiagram
         +list_all(): list[File]
         +delete(File): bool
         +update(File): bool
-        +login(str,str): File
     }
     class AuditDAO {
-        +create(Audit); bool
-        +
+        +create(Audit): bool
+        +find_by_id(int): Audit
+        +list_all(): list[Audit]
     }
 
     %% Service layer
@@ -109,7 +145,7 @@ classDiagram
     }
 
     class FileService {
-        +create_file(): File
+        +create_file(int, datetime, str): File
         +find_by_id(int): File
         +find_user(int): User
         +find_project(int): Project
@@ -118,7 +154,34 @@ classDiagram
 
 
     class AuditService {
-        +create()
+        +create(int, int, datetime, list[Vulnerability], list[License], list[AntiPattern], float, float, float, QualityGate): Audit
+        +find_by_id(int): Audit
+        +find_user(int): User
+        +find_project(int): Project
+        +run_audit(Project): Audit
+    }
+
+    class SecurityService {
+        +parse_dependencies(DependencyFile): list[str]
+        +find_vulnerabilities(DependencyFile): list[Vulnerability]
+        +find_licenses(DependencyFile): list[License]
+    }
+
+    class EcoService {
+        +parse_ast(CodeFile): ast.Module
+        +detect_antipatterns(CodeFile): list[AntiPattern]
+        +estimate_complexity(CodeFile): float
+        +calculate_energy(CodeFile): float
+        +calculate_carbon(float): float
+    }
+
+    class SBOMService {
+        +generate(Project): SBOM
+    }
+
+    class QualityGateService {
+        +evaluate(Audit): QualityGate
+        +generate_certificate(Audit): Certificate
     }
 
     %% Controllers
@@ -144,7 +207,7 @@ classDiagram
 
     %% Relationships
     User "1" ..> "0..*" Project : owns
-    Project "1" ..> "0..*" Audit
+    Project "1" ..> "0..*" Audit : owns
     UserService ..> UserDAO : calls
     UserService ..> User : uses
     UserService ..> FileDAO : calls
@@ -173,4 +236,24 @@ classDiagram
     Project ..> CodeFile : uses
     DependencyFile ..> File : uses
     CodeFile ..> File : uses
+
+    Audit ..> Vulnerability : uses
+    Audit ..> Licence : uses
+    Audit ..> AntiPattern : uses
+    Audit ..> QualityGate : uses
+
+    AuditService ..> SecurityService : uses
+    AuditService ..> EcoService : uses
+    AuditService ..> QualityGateService : uses
+    AuditService ..> SBOMService : uses
+
+    QualityGateService ..> QualityGate : uses
+    QualityGateService ..> Audit : uses
+    SBOMService ..> Project : uses
+    SecurityService ..> Vulnerability : uses
+    SecurityService ..> Licence : uses
+    SecurityService ..> DependencyFile : uses
+    EcoService ..> AntiPattern : uses
+    EcoService ..> CodeFile : uses
+
 ```
