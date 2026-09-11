@@ -9,7 +9,7 @@
 # :dart: Planning des avancées et prévisionnel
 
 ---
-Dossier d'Analyse :  :clock1: <iframe src="https://free.timeanddate.com/countdown/i83zdl7u/n1264/cf11/cm0/cu2/ct4/cs0/ca0/co0/cr0/ss0/cac009/cpcf00/pcfff/tcfff/fs100/szw256/szh108/iso2023-10-07T12:00:00" allowtransparency="true" frameborder="0" width="130" height="16"></iframe>
+width="130" height="16"></iframe>
 
 ---
 
@@ -21,7 +21,7 @@ gantt
     title       Diagramme de Gantt
     %%excludes  YYYY-MM-DD and/or sunday and/or weekends 
      
-    section Analyse
+    section AnalyseDossier d'Analyse :  :clock1: <iframe src="https://free.timeanddate.com/countdown/i83zdl7u/n1264/cf11/cm0/cu2/ct4/cs0/ca0/co0/cr0/ss0/cac009/cpcf00/pcfff/tcfff/fs100/szw256/szh108/iso2023-10-07T12:00:00" allowtransparency="true" frameborder="0" 
     Découverte et compréhension du sujet        :active, 2023-09-01, 14d
     Diagramme des classes,                      :active, 2023-09-01, 14d
     Diagramme d'activité                        :milestone, 2023-09-08,
