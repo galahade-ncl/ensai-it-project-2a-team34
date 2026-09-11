@@ -21,7 +21,7 @@ classDiagram
         id_user INT PK
         username VARCHAR50
         password VARCHAR50
-        email VARCHAR50
+        email VARCHAR50 ..
     }
 
     class Project {
