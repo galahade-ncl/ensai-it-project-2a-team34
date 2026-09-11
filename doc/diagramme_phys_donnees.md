@@ -44,10 +44,10 @@ classDiagram
         id_audit INT PK
         #id_project INT FK
         date DATETIME
-        +complexity: float
-        +energy_consumption_kwh: float
-        +carbon_emission_gco2e: float
-        +sbom: SBOM
+        complexity FLOAT
+        energy_consumption_kwh FLOAT
+        carbon_emission_gco2e FLOAT
+        sbom SBOM
 
     }
 
@@ -78,31 +78,31 @@ classDiagram
     class Vulnerability {
         id_vulnerability INT PK
         nom_vulnerability VARCHAR50
-        +osv_id: int
-        +cve_id: int
-        +severity: str
-        +package: str
-        +version_package: str
+        osv_id INT
+        cve_id INT
+        severity VARCHAR50
+        package: VARCHAR50
+        version_package VARCHAR50
     }
 
     class Licence {
-        +id_license: int
-        +name: str
-        +risk_level: str
+        id_license INT PK
+        name VARCHAR50
+        risk_level VARCHAR 50
     }
 
     class AntiPattern {
-        +id_antipattern: int
-        +type: str
-        +line: int
-        +description: str
+        id_antipattern INT PK
+        type VARCHAR50
+        line INT
+        description VARCHAR50
     }
 
     class QualityGate {
-        +id_quality_gate: int
-        +max_vulnerabilities: int
-        +max_carbon_emission: float
-        +status: string
+        id_quality_gate INT PK
+        max_vulnerabilities INT
+        max_carbon_emission FLOAT
+        status VARCHAR50
     }
 
 
