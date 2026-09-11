@@ -24,35 +24,39 @@ classDiagram
         +email: string
     }
 
-    class Project {
-        +id_project: int
-        +name_project: string
-        +user: User
-        +codefile: CodeFile
-        +dependencyfile: DependencyFile
-        +HMACkey: hmac.HMAC
-    }
+    namespace ProjectFiles {
+        class Project {
+            +id_project: int
+            +name_project: string
+            +user: User
+            +codefile: CodeFile
+            +dependencyfile: DependencyFile
+            +HMACkey: hmac.HMAC
+        }
 
-    class File {
-        +id_file: int
-        +date: datetime
-        +path: str
-    }
+        class File {
+            +id_file: int
+            +date: datetime
+            +path: str
+            +submit(): bool
+        }
 
-    class CodeFile {
-        +id_file: int
-        +date: datetime
-        +path: str
-        +tree: ast.Module
-    }
+        class CodeFile {
+            +id_file: int
+            +date: datetime
+            +path: str
+            +tree: ast.Module
+            +submit(): bool
+        }
 
-    class DependencyFile {
-        +id_file: int
-        +date: datetime
-        +path: str
-        +dependencylist: list[str]
+        class DependencyFile {
+            +id_file: int
+            +date: datetime
+            +path: str
+            +dependencylist: list[str]
+            +submit(): bool
+        }
     }
-
 
     class Audit {
         +id_audit: int
@@ -134,14 +138,14 @@ classDiagram
 
 
     class ProjectService {
-        +create(int, string, User, CodeFile, DependencyFile, hmac.HMAC): Project
-        +create_dependency_file(int, datetime, str, list[str]): DependencyFile
-        +create_code_file(int, datetime, str, ast.Module): CodeFile
-        +correct_HMAC_key(Project): bool
+        +upload(int, string, User, CodeFile, DependencyFile, hmac.HMAC): Project
+        +upload_dependency_file(int, datetime, str, list[str]): DependencyFile
+        +upload_code_file(int, datetime, str, ast.Module): CodeFile
+        +verify_HMAC_key(Project): bool
         +find_by_id(int): Project
-        +find_user(int) : User
         +list_all_audit(int) : list[Audit]
-        +delete(File): bool
+        +delete(Project): bool
+        +run_audit(Project): Audit
     }
 
     class FileService {
@@ -150,6 +154,7 @@ classDiagram
         +find_user(int): User
         +find_project(int): Project
         +delete(File): bool
+        +submit(): bool
     }
 
 
@@ -185,24 +190,23 @@ classDiagram
     }
 
     %% Controllers
-    class UserController {
-        +user_by_id(int): User
-        +create_user(UserModel): User
-        +update_user(int, UserModel): str
-        +delete_user(int): str
-    }
+    namespace API {
+        class UserController {
+            +user_by_id(int): User
+            +create_user(UserModel): User
+            +update_user(int, UserModel): str
+            +delete_user(int): str
+        }
 
-    class ProjectController {
-        +file_by_id(int): File
-        +create_project(ProjectModel): File
-        +update_project(int, ProjectModel): str
-        +delete_project(int): str
-    }
-
-    class AuditController {
-        +audit_by_id(int): Audit
-        +create_audit(AuditModel): Audit
-        +delete_audit(int): str
+        class ProjectController {
+            +file_by_id(int): Project
+            +create_project(ProjectModel): Project
+            +update_project(int, ProjectModel): str
+            +delete_project(int): str
+            +all_audit(Project): list[Audit]
+            +last_audit(Project): Audit
+            +create_audit(AuditModel): Audit
+        }
     }
 
     %% Relationships
@@ -230,7 +234,7 @@ classDiagram
     AuditService ..> File : uses
     AuditService ..> FileDAO : calls
     AuditDAO ..> Audit : uses
-    AuditController ..> AuditService : calls
+    ProjectService ..> AuditService : calls
 
     Project ..> DependencyFile : uses
     Project ..> CodeFile : uses
