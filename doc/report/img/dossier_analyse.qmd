@@ -1,0 +1,65 @@
+---
+bibliography: refs.bib
+citeproc: false
+nocite: "@*"
+format:
+  html:
+    code-tools: true
+  typst:
+    papersize: a4
+    margin:
+      x: 1.5cm
+      y: 2.0cm
+    section-numbering: 1.1.a
+    mainfont: "Libertinus Serif"
+    fontsize: 11pt
+---
+
+
+```{=typst}
+#import "model.typ": project_template
+
+#show: body => project_template(
+  title: [Dossier d'Analyse],
+  team: [Équipe ?],
+  authors: ([MANAMBIRAVAKA Anaëlle], [NADIN Sarah], [NICOLIE Galahade], [PERRIN-BEAU Madie], [VILARRUPLA Thomas], [ZHU Annabelle]),
+  tutor: [LACAILLE ],
+  project: [Projet Informatique de 2ème année - Année 2026-2027],
+  body
+)
+```
+
+## Introduction {.unnumbered}
+
+```{=typst} 
+#lorem(100)
+```
+
+{{< pagebreak >}}
+
+## Section 1
+
+### Subsection 1.1
+
+### Subsection 1.2
+
+{{< pagebreak >}}
+
+## Section 2
+
+{{< pagebreak >}}
+
+## Bibliography
+
+
+{{< pagebreak >}}
+
+## Conclusion {.unnumbered}
+
+
+{{< pagebreak >}}
+
+## Annexes {.unnumbered}
+
+
+{{< pagebreak >}}
