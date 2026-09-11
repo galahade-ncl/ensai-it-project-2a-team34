@@ -18,58 +18,66 @@ Pour afficher ce diagramme dans VScode :
 classDiagram
     %% Business objects
     class User {
-        +id_user: int
-        +username: string
-        +password: string
-        +email: string
+        id_user INT PK
+        username VARCHAR50
+        password VARCHAR50
+        email VARCHAR50
     }
 
     class Project {
-        +id_project: int
-        +name_project: string
-        +user: User
-        +codefile: CodeFile
-        +dependencyfile: DependencyFile
-        +HMACkey: hmac.HMAC
+        id_project INT PK
+        name_project VARCHAR50
+        user USER
+        HMACkey hmac.HMAC
     }
 
     class File {
-        +id_file: int
-        +date: datetime
-        +path: str
-    }
-
-    class CodeFile {
-        +id_file: int
-        +date: datetime
-        +path: str
-        +tree: ast.Module
-    }
-
-    class DependencyFile {
-        +id_file: int
-        +date: datetime
-        +path: str
-        +dependencylist: list[str]
+        id_file INT PK
+        name_file VARCHAR50
+        #id_project INT FK
+        type VARCHAR50
+        date DATETIME
     }
 
 
     class Audit {
-        +id_audit: int
-        +id_project: int
-        +date: datetime
-        +vulnerabilities: list[Vulnerability]
-        +licenses: list[License]
-        +anti_patterns: list[AntiPattern]
+        id_audit INT PK
+        #id_project INT FK
+        date DATETIME
         +complexity: float
         +energy_consumption_kwh: float
         +carbon_emission_gco2e: float
         +sbom: SBOM
-        +quality_gate: QualityGate
+
+    }
+
+    class DetectV{
+        #id_audit INT
+        #id_vulnerability INT
+    
+    }
+
+    class DetectL{
+        #id_audit INT
+        #id_license INT
+
+    }
+
+    class DetectA{
+        #id_audit INT
+        #id_antipattern INT
+
+    }
+
+    class DetectQ{
+        #id_audit INT
+        #id_quality_gate INT
+
     }
 
     class Vulnerability {
-        +id_vulnerability: int
+        id_vulnerability INT PK
+        nom_vulnerability VARCHAR50
         +osv_id: int
         +cve_id: int
         +severity: str
@@ -100,18 +108,22 @@ classDiagram
 
 
     %% Relationships
-    User "1" ..> "0..*" Project : owns
-    Project "1" ..> "0..*" Audit : owns
+    User "1" -- "0..*" Project : owns
+    Project "1" -- "0..*" Audit : owns
 
-    Project ..> DependencyFile : uses
-    Project ..> CodeFile : uses
-    DependencyFile ..> File : uses
-    CodeFile ..> File : uses
+    Project "1" --> "2" File : uses
 
-    Audit ..> Vulnerability : uses
-    Audit ..> Licence : uses
-    Audit ..> AntiPattern : uses
-    Audit ..> QualityGate : uses
+    Audit -- DetectV
+    DetectV -- Vulnerability
+
+    Audit -- DetectL
+    DetectL -- Licence
+
+    Audit -- DetectA
+    DetectA -- AntiPattern
+
+    Audit -- DetectQ
+    DetectQ -- QualityGate
 
 
 ```
