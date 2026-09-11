@@ -181,7 +181,7 @@ classDiagram
 
     class QualityGateService {
         +evaluate(Audit): QualityGate
-        +generate_certificate(Audit): Certificate
+        +generate_certificate(Audit): str
     }
 
     %% Controllers
