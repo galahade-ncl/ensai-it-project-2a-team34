@@ -56,15 +56,16 @@ gantt
 
 ## Dossier Analyse
 
-* [ ] Diagramme de Gantt
+* [ ] Diagramme de Gantt 
 * [ ] Diagramme de cas d'utilisation
-* [ ] Diagramme de classe
+* [x] Diagramme de classe
+* [x] Diagramme physique des données
 * [ ] Répartition des parties à rédiger
 
 ## Code
 
 * [x] Créer dépôt Git commun
-  * [ ] vérifier que tout le monde peut **push** et **pull**
+  * [x] vérifier que tout le monde peut **push** et **pull**
 * [ ] Version 0 de l'application
   * coder une et une seule fonctionnalité simple de A à Z, et faire tourner l'appli
   * cela permettra à toute l'équipe d'avoir une bonne base de départ
