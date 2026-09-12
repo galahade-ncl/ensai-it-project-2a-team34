@@ -1,7 +1,6 @@
 ---
 title: "Dossier d'Analyse"
-subtitle: "**CleansOps**
-Projet Informatique de 2ème année - Année 2026-2027"
+subtitle: "Projet Informatique de 2ème année : **⚙️CleansOps⚙️** "
 authors:
   - "MANAMBIRAVAKA Anaëlle"
   - "NADIN Sarah"
@@ -51,6 +50,8 @@ format:
 
 ## Présentation du projet
 
+### Contexte et objectifs
+
 ### Cahier des charges
 
 ### Organisation et planning
@@ -69,7 +70,7 @@ format:
 
 {{< pagebreak >}}
 
-## Bibliography
+## Bibliographie
 
 
 {{< pagebreak >}}
