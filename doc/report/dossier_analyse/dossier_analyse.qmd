@@ -4,7 +4,10 @@ citeproc: false
 nocite: "@*"
 format:
   html:
-    code-tools: true
+    theme: Zephyr
+    toc: true
+    code-fold: true
+    number-sections: true
   typst:
     papersize: a4
     margin:
@@ -37,15 +40,23 @@ format:
 
 {{< pagebreak >}}
 
-## Section 1
+## Présentation du projet
 
-### Subsection 1.1
+### Cahier des charges
 
-### Subsection 1.2
+### Organisation et planning
 
 {{< pagebreak >}}
 
-## Section 2
+## Modélisation du projet
+
+### Diagramme de cas d'utilisation
+
+### Diagramme d'activité
+
+### Diagramme de classes
+
+### Modèle physique de donnée
 
 {{< pagebreak >}}
 

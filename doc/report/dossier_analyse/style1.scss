@@ -1,0 +1,166 @@
+/*-- scss:defaults --*/
+
+$body-bg: #ffffff;
+$body-color: #263238;
+
+$link-color: #1565c0;
+
+$font-family-sans-serif:
+  "Arial",
+  sans-serif;
+
+
+/*-- scss:rules --*/
+
+body {
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+
+/* -------------------------------------------------
+   EN-TÊTE
+   ------------------------------------------------- */
+
+#title-block-header {
+  border-top: 8px solid #12304a;
+
+  padding-top: 3rem;
+
+  padding-bottom: 3rem;
+
+  border-bottom: 1px solid #cfd8dc;
+}
+
+.title {
+  color: #12304a;
+
+  font-size: 2.8rem;
+
+  font-weight: 700;
+}
+
+.subtitle {
+  color: #546e7a;
+}
+
+
+/* -------------------------------------------------
+   TITRES
+   ------------------------------------------------- */
+
+h1 {
+  color: #12304a;
+
+  font-size: 1.9rem;
+
+  padding-bottom: 0.6rem;
+
+  border-bottom: 1px solid #90caf9;
+}
+
+h1::after {
+  content: "";
+
+  display: block;
+
+  width: 80px;
+
+  margin-top: 0.5rem;
+
+  border-bottom: 4px solid #1565c0;
+}
+
+h2 {
+  background: #F8FAFC;
+
+  border: 1px solid #E2E8F0;
+
+  border-radius: 8px;
+
+  padding: 0.8rem 1rem;
+
+  color: #12304A;
+
+  box-shadow: 0 2px 5px rgba(15, 23, 42, 0.04);
+}
+
+
+
+
+
+h3 {
+  color: #37474f;
+}
+
+
+/* -------------------------------------------------
+   TABLEAUX
+   ------------------------------------------------- */
+
+.table {
+  border: 1px solid #cfd8dc;
+}
+
+.table thead {
+  background: #12304a;
+
+  color: white;
+}
+
+.table tbody tr:nth-child(even) {
+  background: #f5f9fc;
+}
+
+
+/* -------------------------------------------------
+   ENCADRÉS
+   ------------------------------------------------- */
+
+blockquote {
+  background: #e3f2fd;
+
+  border-left: 5px solid #1565c0;
+
+  padding: 1rem 1.5rem;
+}
+
+
+/* -------------------------------------------------
+   SOMMAIRE
+   ------------------------------------------------- */
+
+#TOC a {
+  color: #37474f;
+}
+
+#TOC .active {
+  color: #1565c0;
+
+  font-weight: 600;
+}
+
+/* -------------------------------------------------
+   LOGO DANS LA PAGE DE TITRE
+   ------------------------------------------------- */
+
+#title-block-header {
+  position: relative;
+}
+
+#title-block-header::after {
+  content: "";
+
+  position: absolute;
+
+  top: -2rem;
+  right: 0rem;
+
+  width: 220px;
+  height: 220px;
+
+  background-image: url("img/ensai_logo.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
