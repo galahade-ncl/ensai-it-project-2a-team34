@@ -1,0 +1,86 @@
+---
+title: "Dossier d'Analyse"
+subtitle: "Projet Informatique de 2ème année : **⚙️CleansOps⚙️** "
+authors:
+  - "MANAMBIRAVAKA Anaëlle"
+  - "NADIN Sarah"
+  - "NICOLIE Galahade"
+  - "PERRIN-BEAU Madie"
+  - "VILARRUPLA Thomas"
+  - "ZHU Annabelle"
+date: "17 Septembre 2026"
+keywords :
+  - "LACAILLE Adrien"
+
+lang: fr
+language:
+  title-block-author-plural: "ÉQUIPE N°34"
+  title-block-published: "Date"
+  title-block-keywords: "Tuteur"
+
+format:
+  html:
+    theme: default
+    css: style2.scss
+    toc: true
+    toc-depth: 2
+    number-sections: true
+---
+
+```{=typst}
+#import "model.typ": project_template
+
+#show: body => project_template(
+  title: [Dossier d'Analyse : Clean Ops],
+  team: [Équipe 34],
+  authors: ([MANAMBIRAVAKA Anaëlle], [NADIN Sarah], [NICOLIE Galahade], [PERRIN-BEAU Madie], [VILARRUPLA Thomas], [ZHU Annabelle]),
+  tutor: [LACAILLE Adrien],
+  project: [Projet Informatique de 2ème année - Année 2026-2027],
+  body
+)
+```
+
+## Introduction {.unnumbered}
+
+```{=typst} 
+#lorem(100)
+```
+
+{{< pagebreak >}}
+
+## Présentation du projet
+
+### Contexte et objectifs
+
+### Cahier des charges
+
+### Organisation et planning
+
+{{< pagebreak >}}
+
+## Modélisation du projet
+
+### Diagramme de cas d'utilisation
+
+### Diagramme d'activité
+
+### Diagramme de classes
+
+### Modèle physique de donnée
+
+{{< pagebreak >}}
+
+## Bibliographie
+
+
+{{< pagebreak >}}
+
+## Conclusion {.unnumbered}
+
+
+{{< pagebreak >}}
+
+## Annexes {.unnumbered}
+
+
+{{< pagebreak >}}
