@@ -18,88 +18,88 @@ Pour afficher ce diagramme dans VScode :
 classDiagram
     %% Business objects
     class User {
-        id_user INT PK
+        id_user SERIAL PK
         username VARCHAR50
-        password VARCHAR50
-        email VARCHAR50 ..
+        password VARCHAR100
+        email VARCHAR100
     }
 
     class Project {
-        id_project INT PK
-        name_project VARCHAR50
-        user USER
-        HMACkey hmac.HMAC
+        id_project SERIAL PK
+        name_project VARCHAR100
+        #id_user SERIAL FK
+        HMACkey hmac.HMAC  #A vérifier
     }
 
     class File {
-        id_file INT PK
-        name_file VARCHAR50
-        #id_project INT FK
-        type VARCHAR50
-        date DATETIME
+        id_file SERIAL PK
+        name_file VARCHAR100
+        #id_project SERIAL FK
+        type_file VARCHAR50
+        date DATE
     }
 
 
     class Audit {
-        id_audit INT PK
-        #id_project INT FK
-        date DATETIME
+        id_audit SERIAL PK
+        #id_project SERIAL FK
+        date DATE
         complexity FLOAT
         energy_consumption_kwh FLOAT
         carbon_emission_gco2e FLOAT
-        sbom SBOM
+        sbom SBOM  #A vérifier
 
     }
 
     class DetectV{
-        #id_audit INT
-        #id_vulnerability INT
+        #id_audit SERIAL
+        #id_vulnerability SERIAL
     
     }
 
     class DetectL{
-        #id_audit INT
-        #id_license INT
+        #id_audit SERIAL
+        #id_license SERIAL
 
     }
 
     class DetectA{
-        #id_audit INT
-        #id_antipattern INT
+        #id_audit SERIAL
+        #id_antipattern SERIAL
 
     }
 
     class DetectQ{
-        #id_audit INT
-        #id_quality_gate INT
+        #id_audit SERIAL
+        #id_quality_gate SERIAL
 
     }
 
     class Vulnerability {
-        id_vulnerability INT PK
-        nom_vulnerability VARCHAR50
+        id_vulnerability SERIAL PK
+        nom_vulnerability VARCHAR100
         osv_id INT
         cve_id INT
         severity VARCHAR50
-        package: VARCHAR50
+        package VARCHAR50
         version_package VARCHAR50
     }
 
     class Licence {
-        id_license INT PK
-        name VARCHAR50
-        risk_level VARCHAR 50
+        id_license SERIAL PK
+        name_license VARCHAR100
+        risk_level VARCHAR50
     }
 
     class AntiPattern {
-        id_antipattern INT PK
-        type VARCHAR50
+        id_antipattern SERIAL PK
+        type_antipattern VARCHAR50
         line INT
         description VARCHAR50
     }
 
     class QualityGate {
-        id_quality_gate INT PK
+        id_quality_gate SERIAL PK
         max_vulnerabilities INT
         max_carbon_emission FLOAT
         status VARCHAR50
@@ -113,17 +113,17 @@ classDiagram
 
     Project "1" --> "2" File : uses
 
-    Audit -- DetectV
-    DetectV -- Vulnerability
+    Audit "1" -- "0..*" DetectV
+    Vulnerability "1" -- "0..*" DetectV
 
-    Audit -- DetectL
-    DetectL -- Licence
+    Audit "1" -- "0..*" DetectL
+    Licence "1" -- "0..*" DetectL
 
-    Audit -- DetectA
-    DetectA -- AntiPattern
+    Audit "1" -- "0..*" DetectA
+    AntiPattern "1" -- "0..*" DetectA
 
-    Audit -- DetectQ
-    DetectQ -- QualityGate
+    Audit "1" -- "0..*" DetectQ
+    QualityGate "1" -- "0..*" DetectQ
 
 
 ```
