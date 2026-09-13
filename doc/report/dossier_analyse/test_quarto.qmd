@@ -25,6 +25,12 @@ format:
     toc: true
     toc-depth: 2
     number-sections: true
+
+  pdf:
+    template-partials:
+      - before-body.tex
+    toc: true
+    number-sections: true
 ---
 
 ```{=typst}
@@ -45,12 +51,28 @@ format:
 ```{=typst} 
 #lorem(100)
 ```
+  Dans le développement logiciel moderne, la qualité d'une application ne se résume plus à l'absence de bugs fonctionnels. La sécurité de la chaîne de dépendances (supply chain), qui est régulièrement ciblée par des attaques et la sobriété énergétique du code sont des enjeux de plus en plus importants. Notre projet d’application CleanOps, encadré par Adrien Lacaille, est de créer une plateforme d’audit automatisée qui puisse répondre conjointement à ces deux problématiques.
 
 {{< pagebreak >}}
 
 ## Présentation du projet
 
 ### Contexte et objectifs
+
+
+Les applications actuelles reposent massivement sur des bibliothèques open source, ce qui expose les projets à des vulnérabilités connues (appelées CVE), des licences juridiquement contraignantes ou des dépendances abandonnées. De plus, la manière dont un programme est conçu a un impact direct sur sa consommation énergétique : certains anti-patterns, comme les boucles imbriquées ou récursives mal maîtrisées, augmentent inutilement la charge de calcul et donc l'empreinte carbone associée à son exécution.
+L’objectif de notre application CleanOps est de concevoir une API REST capable d'auditer automatiquement un code source Python ainsi que ses fichiers de dépendances, à chaque soumission.
+
+Concrètement, CleanOps doit permettre de :
+<ul>
+  <li>garantir l'intégrité et la provenance de chaque soumission grâce à une signature cryptographique</li>
+  <li>détecter les vulnérabilités et risques liés aux dépendances (CVE, licences, packages obsolètes ou suspects, secrets exposés)</li>
+  <li>estimer l'impact éco-énergétique du code soumis à partir de son analyse statique (AST)</li>
+  <li>générer un inventaire standardisé des composants du projet (SBOM)</li>
+  <li>historiser les audits et statuer, via une Quality Gate, sur la conformité d'un projet aux critères de sécurité et d'impact environnemental fixés.</li>
+</ul>
+CleanOps se positionne ainsi comme un outil qui aide les équipes de développement à intégrer des critères de sécurité et d'éco-responsabilité directement dans leur cycle de développement, notamment via les pipelines CI/CD.
+
 
 ### Cahier des charges
 

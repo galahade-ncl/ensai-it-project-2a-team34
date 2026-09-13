@@ -1,0 +1,221 @@
+% ============================================================
+% PAGE DE GARDE — DOSSIER D'ANALYSE
+% ============================================================
+
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage{xcolor}
+
+\definecolor{ensaiblue}{HTML}{00A3E0}
+\definecolor{lightblue}{HTML}{E5F6FC}
+\definecolor{darkgray}{HTML}{5C5C5C}
+\definecolor{lightgray}{HTML}{E6E6E6}
+
+\begin{titlepage}
+
+\begin{tikzpicture}[remember picture,overlay]
+
+% ------------------------------------------------------------
+% GRAND APLAT BLEU EN HAUT À GAUCHE
+% ------------------------------------------------------------
+
+\fill[lightblue]
+  (current page.north west)
+  -- ++(62mm,0)
+  -- ++(-20mm,-100mm)
+  -- (current page.north west)
+  -- cycle;
+
+% ------------------------------------------------------------
+% FORME GRISE EN BAS À DROITE
+% ------------------------------------------------------------
+
+\fill[lightgray]
+  (current page.south east)
+  -- ++(-65mm,0)
+  -- ++(25mm,75mm)
+  -- ++(40mm,25mm)
+  -- cycle;
+
+% ------------------------------------------------------------
+% LOGO ENSAI
+% ------------------------------------------------------------
+
+\node[
+  anchor=north east
+] at ([xshift=-18mm,yshift=-18mm]current page.north east)
+{
+  \includegraphics[
+    width=42mm
+  ]{img/ensai-logo.png}
+};
+
+% ------------------------------------------------------------
+% PETIT RÉSEAU DE POINTS
+% ------------------------------------------------------------
+
+\foreach \x in {75,87,99,111,123,135} {
+  \foreach \y in {257,269,281} {
+    \fill[ensaiblue!35]
+      (\x mm,\y mm) circle (0.7pt);
+  }
+}
+
+\foreach \x/\y in {
+  75/281,
+  87/269,
+  99/281,
+  111/269,
+  123/281,
+  135/269
+} {
+  \fill[ensaiblue]
+    (\x mm,\y mm) circle (1pt);
+}
+
+\draw[
+  ensaiblue!30,
+  line width=0.4pt
+]
+  (75mm,281mm)
+  -- (87mm,269mm)
+  -- (99mm,281mm)
+  -- (111mm,269mm)
+  -- (123mm,281mm)
+  -- (135mm,269mm);
+
+% ------------------------------------------------------------
+% TITRE
+% ------------------------------------------------------------
+
+\node[
+  align=center,
+  text width=145mm
+] at ([yshift=-90mm]current page.north)
+{
+  {\fontsize{25}{30}\selectfont\bfseries
+  Dossier d'Analyse\par}
+
+  \vspace{7mm}
+
+  {\fontsize{17}{21}\selectfont
+  Projet Informatique\par}
+};
+
+% ------------------------------------------------------------
+% LIGNE
+% ------------------------------------------------------------
+
+\draw[
+  darkgray!40,
+  line width=0.5pt
+]
+  ([xshift=35mm,yshift=-130mm]current page.north west)
+  --
+  ([xshift=-35mm,yshift=-130mm]current page.north east);
+
+% ------------------------------------------------------------
+% ÉQUIPE
+% ------------------------------------------------------------
+
+\node[
+  align=center,
+  text width=150mm
+] at ([yshift=-145mm]current page.north)
+{
+  {\fontsize{15}{20}\selectfont
+  \textbf{ÉQUIPE N°1}\par}
+
+  \vspace{8mm}
+
+  {\fontsize{11}{15}\selectfont
+  NOM Prenom\par
+  NOM Prenom\par
+  NOM Prenom\par
+  NOM Prenom\par
+  NOM Prenom\par
+  NOM Prenom\par}
+};
+
+% ------------------------------------------------------------
+% TUTEUR
+% ------------------------------------------------------------
+
+\node[
+  anchor=north west,
+  align=left,
+  text width=65mm
+] at ([xshift=38mm,yshift=-215mm]current page.north)
+{
+  {\fontsize{9}{12}\selectfont
+  \textit{Tuteur}\par}
+
+  \vspace{2mm}
+
+  {\fontsize{10}{13}\selectfont
+  NOM Prenom\par}
+};
+
+% ------------------------------------------------------------
+% ANNÉE
+% ------------------------------------------------------------
+
+\node[
+  anchor=north east,
+  align=right,
+  text width=65mm
+] at ([xshift=-38mm,yshift=-215mm]current page.north)
+{
+  {\fontsize{9}{12}\selectfont
+  \textit{Année}\par}
+
+  \vspace{2mm}
+
+  {\fontsize{10}{13}\selectfont
+  2026\par}
+};
+
+% ------------------------------------------------------------
+% LOGO INSEE
+% ------------------------------------------------------------
+
+\node[
+  anchor=south
+] at ([yshift=32mm]current page.south)
+{
+  \includegraphics[
+    width=38mm
+  ]{img/insee-logo.png}
+};
+
+% ------------------------------------------------------------
+% MOTIF DU BAS
+% ------------------------------------------------------------
+
+\draw[
+  ensaiblue!25,
+  line width=0.5pt
+]
+  (0mm,28mm)
+  -- (35mm,16mm)
+  -- (72mm,27mm)
+  -- (112mm,15mm)
+  -- (153mm,36mm)
+  -- (210mm,18mm);
+
+\draw[
+  ensaiblue!15,
+  line width=0.5pt
+]
+  (0mm,20mm)
+  -- (45mm,7mm)
+  -- (85mm,14mm)
+  -- (126mm,3mm)
+  -- (170mm,27mm)
+  -- (210mm,11mm);
+
+\end{tikzpicture}
+
+\end{titlepage}
+
+\clearpage

@@ -166,3 +166,8 @@ doc/report/*.pdf
 doc/report/*.html
 doc/report/report_files/
 doc/report/.quarto/
+
+doc/report/dossier_analyse/*.pdf
+doc/report/dossier_analyse/*.html
+doc/report/dossier_analyse/report_files/
+doc/report/dossier_analyse/.quarto/

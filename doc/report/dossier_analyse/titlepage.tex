@@ -1,76 +1,159 @@
-\begin{titlepage}
 
+% ============================================================
+% titlepage.tex — fragment LaTeX pour Quarto
+% À placer dans : doc/report/dossier_analyse/
+%
+% Arborescence :
+% dossier_analyse/
+% ├── rapport.qmd
+% ├── titlepage.tex
+% └── img/
+%     ├── ensai-logo.png
+%     └── insee-logo.png
+%
+% YAML :
+% format:
+%   pdf:
+%     include-before-body: titlepage.tex
+%     toc: true
+% ============================================================
+
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage{xcolor}
+
+\definecolor{ensaiblue}{HTML}{00A3E0}
+\definecolor{lightblue}{HTML}{DDF3FC}
+\definecolor{darkgray}{HTML}{5D5868}
+\definecolor{lightgray}{HTML}{D9D9D9}
+
+% ---------- Informations à modifier ----------
+\newcommand{\ReportTitle}{Titre du rapport}
+\newcommand{\ReportSubtitle}{Sous-titre}
+\newcommand{\AuthorName}{Prénom NOM}
+\newcommand{\StageType}{TYPE DE STAGE}
+\newcommand{\StageDates}{Dates du stage}
+\newcommand{\TutorName}{Prénom NOM}
+\newcommand{\TutorEmail}{prenom.nom@insee.fr}
+\newcommand{\SupervisorName}{Prénom NOM}
+\newcommand{\SupervisorEmail}{prenom.nom@insee.fr}
+
+% ---------- Page de garde ----------
+\newgeometry{left=0mm,right=0mm,top=0mm,bottom=0mm}
+
+\begin{titlepage}
 \thispagestyle{empty}
 
-\definecolor{reportblue}{HTML}{12304A}
-\definecolor{reportblue2}{HTML}{2563EB}
-\definecolor{reportlight}{HTML}{DBEAFE}
+\begin{tikzpicture}[remember picture,overlay]
 
-% -------------------------------------------------
-% Bandeau supérieur
-% -------------------------------------------------
+% Fond bleu pâle en haut à gauche
+\fill[lightblue]
+  (current page.north west)
+  -- ([xshift=58mm]current page.north west)
+  -- ([xshift=0mm,yshift=-102mm]current page.north west)
+  -- cycle;
 
-\noindent
-\colorbox{reportblue}{
-    \parbox{\dimexpr\textwidth-2\fboxsep\relax}{
-        \vspace{0.35cm}
-        \hspace{0.3cm}
-        \color{white}
-        \large\textbf{RAPPORT D'ANALYSE}
-        \hspace{0.3cm}
-        \vspace{0.35cm}
-    }
+% Forme grise en bas à droite
+\fill[lightgray]
+  (current page.south east)
+  -- ([xshift=-60mm]current page.south east)
+  -- ([xshift=-18mm,yshift=62mm]current page.south east)
+  -- ([yshift=102mm]current page.south east)
+  -- cycle;
+
+% Logos
+\node[anchor=north east]
+  at ([xshift=-18mm,yshift=-18mm]current page.north east)
+  {\includegraphics[height=29mm]{img/ensai-logo.png}};
+
+% Décor réseau de points
+\foreach \x in {75,87,99,111,123,135} {
+  \foreach \y in {257,269,281} {
+    \fill[ensaiblue!25] (\x mm,\y mm) circle (0.65pt);
+  }
 }
 
-\vspace{3cm}
+\draw[ensaiblue!20,line width=.3pt]
+  (75mm,281mm) -- (87mm,269mm) -- (99mm,281mm)
+  -- (111mm,269mm) -- (123mm,281mm) -- (135mm,269mm);
 
-% -------------------------------------------------
 % Titre
-% -------------------------------------------------
+\draw[darkgray!35,line width=.6pt]
+  ([xshift=35mm,yshift=-83mm]current page.north west)
+  -- ([xshift=-35mm,yshift=-83mm]current page.north east);
 
-{\color{reportblue}
-\fontsize{30}{36}\selectfont
-\textbf{$title$}
+\node[
+  anchor=north,
+  align=center,
+  text width=140mm
+] at ([yshift=-90mm]current page.north) {
+  {\fontsize{19}{24}\selectfont\ReportTitle\par}
+  \vspace{5mm}
+  {\fontsize{14}{18}\selectfont\ReportSubtitle\par}
+};
+
+\draw[darkgray!35,line width=.6pt]
+  ([xshift=35mm,yshift=-130mm]current page.north west)
+  -- ([xshift=-35mm,yshift=-130mm]current page.north east);
+
+% Auteur / stage
+\node[
+  anchor=north,
+  align=center,
+  text width=150mm
+] at ([yshift=-142mm]current page.north) {
+  {\fontsize{15}{20}\selectfont\AuthorName\par}
+  \vspace{8mm}
+  {\fontsize{9}{12}\selectfont\StageType\par}
+  \vspace{6mm}
+  {\fontsize{10}{13}\selectfont\StageDates\par}
+};
+
+% Encadré tuteur
+\node[
+  anchor=north west,
+  align=left,
+  text width=62mm
+] at ([xshift=39mm,yshift=-194mm]current page.north) {
+  {\fontsize{8.5}{11}\selectfont\textit{Tuteur ENSAI}\par}
+  \vspace{1mm}
+  {\fontsize{9}{12}\selectfont\TutorName\par}
+  \vspace{1mm}
+  {\fontsize{8}{10}\selectfont\TutorEmail\par}
+};
+
+% Encadré maître de stage
+\node[
+  anchor=north east,
+  align=right,
+  text width=62mm
+] at ([xshift=-39mm,yshift=-194mm]current page.north) {
+  {\fontsize{8.5}{11}\selectfont\textit{Maître de stage}\par}
+  \vspace{1mm}
+  {\fontsize{9}{12}\selectfont\SupervisorName\par}
+  \vspace{1mm}
+  {\fontsize{8}{10}\selectfont\SupervisorEmail\par}
+};
+
+% Logo INSEE
+\node[anchor=south]
+  at ([yshift=34mm]current page.south)
+  {\includegraphics[height=26mm]{img/insee-logo.png}};
+
+% Motif inférieur
+\draw[ensaiblue!25,line width=.4pt]
+  (0mm,31mm) -- (35mm,18mm) -- (73mm,28mm)
+  -- (112mm,17mm) -- (152mm,38mm) -- (210mm,20mm);
+
+\draw[ensaiblue!18,line width=.4pt]
+  (0mm,24mm) -- (46mm,8mm) -- (84mm,15mm)
+  -- (126mm,4mm) -- (170mm,30mm) -- (210mm,12mm);
+
+\foreach \x/\y in {35/18,73/28,112/17,152/38} {
+  \fill[ensaiblue] (\x mm,\y mm) circle (1pt);
 }
 
-\vspace{0.8cm}
-
-\noindent
-\textcolor{reportblue2}{\rule{0.35\textwidth}{2pt}}
-
-\vspace{2.5cm}
-
-% -------------------------------------------------
-% Groupe
-% -------------------------------------------------
-
-{\Large
-\color{reportblue}
-\textbf{Groupe XX}
-}
-
-\vspace{1.2cm}
-
-{\large
-Prénom NOM\\[0.25cm]
-Prénom NOM\\[0.25cm]
-Prénom NOM\\[0.25cm]
-Prénom NOM
-}
-
-\vfill
-
-% -------------------------------------------------
-% Date
-% -------------------------------------------------
-
-{\large
-\color{gray}
-2026--2027
-}
-
-\vspace{0.8cm}
-
+\end{tikzpicture}
 \end{titlepage}
 
-\clearpage
+\restoregeometry
