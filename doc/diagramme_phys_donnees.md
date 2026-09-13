@@ -113,17 +113,17 @@ classDiagram
 
     Project "1" --> "2" File : uses
 
-    Audit -- DetectV
-    DetectV -- Vulnerability
+    Audit "1" -- "0..*" DetectV
+    Vulnerability "1" -- "0..*" DetectV
 
-    Audit -- DetectL
-    DetectL -- Licence
+    Audit "1" -- "0..*" DetectL
+    Licence "1" -- "0..*" DetectL
 
-    Audit -- DetectA
-    DetectA -- AntiPattern
+    Audit "1" -- "0..*" DetectA
+    AntiPattern "1" -- "0..*" DetectA
 
-    Audit -- DetectQ
-    DetectQ -- QualityGate
+    Audit "1" -- "0..*" DetectQ
+    QualityGate "1" -- "0..*" DetectQ
 
 
 ```
