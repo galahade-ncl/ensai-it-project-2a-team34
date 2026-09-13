@@ -1,0 +1,115 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{float}
+\usepackage[french]{babel}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{titlesec}
+\usepackage{lmodern}
+\usepackage{fancyhdr}
+\usepackage{ragged2e}
+\usepackage[table]{xcolor}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{pdfpages}
+\usepackage{embedfile}
+\usepackage{tabularx} 
+
+\geometry{top=3cm, bottom=3cm, left=2.5cm, right=2.5cm}
+\pagestyle{empty}
+
+\begin{document}
+
+% Logo ENSAI
+\begin{center}
+    \includegraphics[width=0.50\textwidth]{img/ensai_logo.png}
+\end{center}
+
+\vspace{0.5cm}
+
+% =========================================================
+% TITRE
+% =========================================================
+
+\begin{center}
+
+{\Large\textsc{$title$}}\\[0.3cm]
+
+{\Large $subtitle$}\\[1cm]
+
+\rule{\textwidth}{0.4pt}\\[0.7cm]
+
+\Large\textbf{$project$}\\[0.3cm]
+
+\rule{\textwidth}{0.4pt}
+
+\end{center}
+
+
+% =========================================================
+% AUTEURS ET TUTEUR
+% =========================================================
+
+\begin{minipage}{0.87\textwidth}
+
+\vspace{1.2cm}
+
+\begin{flushleft}
+
+\hspace{1cm}\textit{Auteurs :}\\[0.2cm]
+
+\hspace{1cm}
+
+$for(author)$
+\textsc{$author$}\\
+$endfor$
+
+\end{flushleft}
+
+
+\vspace{-2cm}
+
+\begin{flushright}
+
+\textit{Tuteur :}\\[0.2cm]
+
+\textsc{$tutor$}
+
+\end{flushright}
+
+\end{minipage}
+
+
+% =========================================================
+% DATE
+% =========================================================
+
+\vfill
+
+\begin{center}
+
+$date$
+
+\end{center}
+
+
+% =========================================================
+% SOMMAIRE
+% =========================================================
+
+\newpage
+
+\renewcommand{\contentsname}{Table des matières}
+
+\tableofcontents
+
+
+% =========================================================
+% CONTENU DU QUARTO
+% =========================================================
+
+\newpage
+
+$body$
+
+
+\end{document}

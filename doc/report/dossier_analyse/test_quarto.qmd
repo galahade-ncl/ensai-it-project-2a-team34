@@ -27,8 +27,7 @@ format:
     number-sections: true
 
   pdf:
-    template-partials:
-      - before-body.tex
+    template: template_ensai.tex
     toc: true
     number-sections: true
 ---
