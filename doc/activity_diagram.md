@@ -18,43 +18,46 @@ Pour afficher ce diagramme dans VScode :
 
 ```mermaid
 stateDiagram
-    login : Login
+    login : Connexion
     menu_player : Menu Utilisateur
-    signup : Sign Up
+    signup : Créer un compte
     ajout_projet : Importer un projet
-    fournir_clef : Fournir une clef pour la clef Hmac
-    check_clef : Vérification de la clef
-    fournir_fichiers : Fournir les fichiers du projet (code et fichier de dépendance)
-    liste_fichier : Fichier importé dans la liste des fichier
-    code_check : Examiner un projet (2 fichiers)
-    fichier_1 : Code
-    fichier_2 : Fichier de dépendance
-    vulnerability_list : Liste des vulnérabilités détéctées et contrôles effectués
-    logout : Logout
+    update_project : Modifier un projet
+    update_dependencies : Modifier le fichier de dépendances
+    update_code : Modifier le fichier de code
+    fournir_clef : Fournir une clef secrète pour la clef HMAC
+    fournir_fichiers : Fournir les fichiers du projet (code et fichier de dépendances)
+    select_project : Sélectionner un projet
+    code_check :  Demander un audit
+    audit_history : Consulter l'historique des audits
+    project_history : Consulter l'historique des fichiers
+    dashboard : Tableau de bord
+    audit_result : Résultat de l'audit
+    logout : Déconnexion
 
-    [*] --> Home
+    [*] --> Accueil
 
-    Home --> login
+    Accueil --> login
     login --> menu_player
 
-    Home --> signup
+    Accueil --> signup
 
-    Home --> quit
-    quit --> [*]
+    Accueil --> Quitter
 
     state menu_player {
-        [*] --> ajout_projet
+        [*] --> dashboard
+        dashboard --> ajout_projet
         ajout_projet --> fournir_clef
-        fournir_clef --> check_clef
-        check_clef --> liste_fichier
         ajout_projet --> fournir_fichiers
-        fournir_fichiers --> liste_fichier
-        [*] --> code_check
-        code_check --> fichier_1
-        fichier_1 --> vulnerability_list
-        code_check --> fichier_2
-        fichier_2 --> vulnerability_list
-        [*] --> logout
-        logout --> [*]: return to home
+        dashboard --> code_check
+        code_check --> select_project
+        select_project --> audit_result
+        dashboard --> audit_history
+        dashboard --> project_history
+        dashboard --> update_project
+        update_project --> update_code
+        update_project --> update_dependencies
+        dashboard --> logout
+        logout --> [*]:  retour à l'accueil
     }
 ```
