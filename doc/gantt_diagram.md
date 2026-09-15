@@ -8,10 +8,7 @@
 
 # :dart: Planning des avancées et prévisionnel
 
----
-width="130" height="16"></iframe>
 
----
 
 ```mermaid
 gantt
@@ -21,23 +18,28 @@ gantt
     title       Diagramme de Gantt
     %%excludes  YYYY-MM-DD and/or sunday and/or weekends 
      
-    section AnalyseDossier d'Analyse :  :clock1: <iframe src="https://free.timeanddate.com/countdown/i83zdl7u/n1264/cf11/cm0/cu2/ct4/cs0/ca0/co0/cr0/ss0/cac009/cpcf00/pcfff/tcfff/fs100/szw256/szh108/iso2023-10-07T12:00:00" allowtransparency="true" frameborder="0" 
+    section Analyse  
     Découverte et compréhension du sujet        :active, 2023-09-01, 14d
-    Diagramme des classes,                      :active, 2023-09-01, 14d
+    Diagramme des classes                       :active, 2023-09-01, 14d
     Diagramme d'activité                        :milestone, 2023-09-08,
-    rédaction rapport                           :active,    2023-09-20, 2023-10-05
-    relecture                                   :active,    2023-10-05, 2023-10-07
+    Diagramme de cas d'utilisation et de Gantt             :milestone, 2023-09-13
+    rédaction dossier d'analyse                           :active,    2023-09-12, 2023-09-17
+    relecture                                   :active,    2023-09-16, 2023-09-17
+    rédaction du rapport                           :active,    2023-10-12, 2023-11-17
+    relecture                                   :active,    2023-11-16, 2023-11-17
 
 
     section Code
     Adaptation du template du projet            :milestone, 2023-09-01, 
     Création des BDD user et file               :milestone, 2023-09-01, 
+    lister classes à coder                      :active,    2023-09-07, 7d
     coder une v0                                :active,    2023-09-20, 15d
-    lister classes à coder                      :active,    2023-10-07, 7d
+    étapes de code à définir                                :active,    2023-10-10, 40d
+
     
     section Rendu
-    Dossier Analyse              :milestone, 2023-10-07,
-    Rapport + Code               :milestone, 2023-11-25,
+    Dossier Analyse              :milestone, 2023-09-17,
+    Rapport + Code               :milestone, 2023-11-21,
     Soutenance                   :milestone, 2023-12-11,
     
 
@@ -48,7 +50,7 @@ gantt
 
 | Date    | Livrables                                                    |
 | ------- | ------------------------------------------------------------ |
-| 07 oct. | [Dossier d'Analyse](https://www.overleaf.com/)               |
+| 07 oct. | Dossier d'Analyse             |
 | 25 nov. | Rapport final + code (:hammer_and_wrench:  [correcteur orthographe et grammaire](https://www.scribens.fr/))|
 | 12 déc. | Soutenance                                                   |
 
