@@ -18,31 +18,31 @@ Pour afficher ce diagramme dans VScode :
 classDiagram
     %% Business objects
     class User {
-        id_user SERIAL PK
+        id_user INT PK
         username VARCHAR50
         password VARCHAR100
         email VARCHAR100
     }
 
     class Project {
-        id_project SERIAL PK
+        id_project INT PK
         name_project VARCHAR100
-        #id_user SERIAL FK
+        #id_user INT FK
         HMACkey hmac.HMAC  #A vérifier
     }
 
     class File {
-        id_file SERIAL PK
+        id_file INT PK
         name_file VARCHAR100
-        #id_project SERIAL FK
+        #id_project INT FK
         type_file VARCHAR50
         date DATE
     }
 
 
     class Audit {
-        id_audit SERIAL PK
-        #id_project SERIAL FK
+        id_audit INT PK
+        #id_project INT FK
         date DATE
         complexity FLOAT
         energy_consumption_kwh FLOAT
@@ -52,31 +52,31 @@ classDiagram
     }
 
     class DetectV{
-        #id_audit SERIAL
-        #id_vulnerability SERIAL
+        #id_audit INT
+        #id_vulnerability INT
     
     }
 
     class DetectL{
-        #id_audit SERIAL
-        #id_license SERIAL
+        #id_audit INT
+        #id_license INT
 
     }
 
     class DetectA{
-        #id_audit SERIAL
-        #id_antipattern SERIAL
+        #id_audit INT
+        #id_antipattern INT
 
     }
 
     class DetectQ{
-        #id_audit SERIAL
-        #id_quality_gate SERIAL
+        #id_audit INT
+        #id_quality_gate INT
 
     }
 
     class Vulnerability {
-        id_vulnerability SERIAL PK
+        id_vulnerability INT PK
         nom_vulnerability VARCHAR100
         osv_id INT
         cve_id INT
@@ -86,20 +86,20 @@ classDiagram
     }
 
     class Licence {
-        id_license SERIAL PK
+        id_license INT PK
         name_license VARCHAR100
         risk_level VARCHAR50
     }
 
     class AntiPattern {
-        id_antipattern SERIAL PK
+        id_antipattern INT PK
         type_antipattern VARCHAR50
         line INT
         description VARCHAR50
     }
 
     class QualityGate {
-        id_quality_gate SERIAL PK
+        id_quality_gate INT PK
         max_vulnerabilities INT
         max_carbon_emission FLOAT
         status VARCHAR50
