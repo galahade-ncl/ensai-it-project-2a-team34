@@ -15,6 +15,14 @@ Pour afficher ce diagramme dans VScode :
   * faire **CTRL + K**, puis **V**
 
 ```mermaid
+
+%%{init: {
+  "theme": "base",
+  "flowchart": {
+    "htmlLabels": true,
+    "curve": "basis"},
+  "themeCSS": ".cluster:nth-of-type(1) rect { fill: #b3ccf8 !important; stroke: #3086e8 !important; width: 700px !important; } .cluster:nth-of-type(2) rect { fill: #adf8ffd1 !important; stroke: #586cff !important; width: 1100 !important; } .cluster:nth-of-type(3) rect { fill: #e1baf1 !important; stroke: #8E44AD !important;}"}}%%
+
 classDiagram
     %% Business objects
     class User {
@@ -24,7 +32,7 @@ classDiagram
         +email: string
     }
 
-    namespace ProjectFiles {
+    namespace ProjectClasses {
         class Project {
             +id_project: int
             +name_project: string
@@ -58,47 +66,49 @@ classDiagram
         }
     }
 
-    class Audit {
-        +id_audit: int
-        +id_project: int
-        +date: datetime
-        +vulnerabilities: list[Vulnerability]
-        +licenses: list[License]
-        +anti_patterns: list[AntiPattern]
-        +complexity: float
-        +energy_consumption_kwh: float
-        +carbon_emission_gco2e: float
-        +sbom: SBOM
-        +quality_gate: QualityGate
-    }
+    namespace AuditClasses {
+        class Audit {
+           +id_audit: int
+           +id_project: int
+            +date: datetime
+            +vulnerabilities: list[Vulnerability]
+            +licenses: list[License]
+            +anti_patterns: list[AntiPattern]
+            +complexity: float
+            +energy_consumption_kwh: float
+            +carbon_emission_gco2e: float
+            +sbom: SBOM
+            +quality_gate: QualityGate
+        }
 
-    class Vulnerability {
-        +id_vulnerability: int
-        +osv_id: int
-        +cve_id: int
-        +severity: str
-        +package: str
-        +version_package: str
-    }
+        class Vulnerability {
+            +id_vulnerability: int
+            +osv_id: int
+            +cve_id: int
+            +severity: str
+            +package: str
+            +version_package: str
+        }
 
-    class Licence {
-        +id_license: int
-        +name: str
-        +risk_level: str
-    }
+        class License {
+            +id_license: int
+            +name: str
+            +risk_level: str
+        }
 
-    class AntiPattern {
-        +id_antipattern: int
-        +type: str
-        +line: int
-        +description: str
-    }
+        class AntiPattern {
+            +id_antipattern: int
+            +type: str
+            +line: int
+            +description: str
+        }
 
-    class QualityGate {
-        +id_quality_gate: int
-        +max_vulnerabilities: int
-        +max_carbon_emission: float
-        +status: string
+        class QualityGate {
+            +id_quality_gate: int
+            +max_vulnerabilities: int
+            +max_carbon_emission: float
+            +status: string
+        }
     }
 
     %% Data Access Objects
@@ -111,6 +121,11 @@ classDiagram
         +login(str,str): User
     }
 
+    class ProjectDAO {
+        +upload(Project): bool
+        +find_by_id(int): Project
+        +delete(Project): bool
+    }
 
     class FileDAO {
         +create(File): bool
@@ -136,7 +151,6 @@ classDiagram
         +username_already_used(str): bool
     }
 
-
     class ProjectService {
         +upload(int, string, User, CodeFile, DependencyFile, hmac.HMAC): Project
         +upload_dependency_file(int, datetime, str, list[str]): DependencyFile
@@ -156,7 +170,6 @@ classDiagram
         +delete(File): bool
         +submit(): bool
     }
-
 
     class AuditService {
         +create(int, int, datetime, list[Vulnerability], list[License], list[AntiPattern], float, float, float, QualityGate): Audit
@@ -220,6 +233,7 @@ classDiagram
     UserController ..> UserService : calls
     FileService ..> File : uses
     ProjectService ..> Project : uses
+    ProjectService ..> ProjectDAO : calls
     ProjectService ..> FileService : uses
     ProjectService ..> FileDAO : calls
     ProjectService ..> File : uses
@@ -227,6 +241,7 @@ classDiagram
     ProjectService ..> UserDAO : calls
     ProjectService ..> Audit : uses
     ProjectService ..> AuditDAO : calls
+    ProjectDAO ..> Project : uses
     FileDAO ..> File : uses
     ProjectController ..> ProjectService : calls
     AuditService ..> Audit : uses
@@ -242,7 +257,7 @@ classDiagram
     CodeFile ..> File : uses
 
     Audit ..> Vulnerability : uses
-    Audit ..> Licence : uses
+    Audit ..> License : uses
     Audit ..> AntiPattern : uses
     Audit ..> QualityGate : uses
 
@@ -255,9 +270,41 @@ classDiagram
     QualityGateService ..> Audit : uses
     SBOMService ..> Project : uses
     SecurityService ..> Vulnerability : uses
-    SecurityService ..> Licence : uses
+    SecurityService ..> License : uses
     SecurityService ..> DependencyFile : uses
     EcoService ..> AntiPattern : uses
     EcoService ..> CodeFile : uses
 
+    %% Colors
+
+    style User fill:#E3F0FF,stroke:#4A90E2
+    style Project fill:#E3F0FF,stroke:#4A90E2
+    style File fill:#E3F0FF,stroke:#4A90E2
+    style CodeFile fill:#E3F0FF,stroke:#4A90E2
+    style DependencyFile fill:#E3F0FF,stroke:#4A90E2
+    style Audit fill:#E3F0FF,stroke:#4A90E2
+    style Vulnerability fill:#E3F0FF,stroke:#4A90E2
+    style License fill:#E3F0FF,stroke:#4A90E2
+    style AntiPattern fill:#E3F0FF,stroke:#4A90E2
+    style SBOM fill:#E3F0FF,stroke:#4A90E2
+    style QualityGate fill:#E3F0FF,stroke:#4A90E2
+
+    style UserDAO fill:#FFF3E0,stroke:#FB8C00
+    style FileDAO fill:#FFF3E0,stroke:#FB8C00
+    style ProjectDAO fill:#FFF3E0,stroke:#FB8C00
+    style AuditDAO fill:#FFF3E0,stroke:#FB8C00
+
+    style UserService fill:#E8F5E9,stroke:#43A047
+    style ProjectService fill:#E8F5E9,stroke:#43A047
+    style FileService fill:#E8F5E9,stroke:#43A047
+    style AuditService fill:#E8F5E9,stroke:#43A047
+    style SecurityService fill:#E8F5E9,stroke:#43A047
+    style EcoService fill:#E8F5E9,stroke:#43A047
+    style SBOMService fill:#E8F5E9,stroke:#43A047
+    style QualityGateService fill:#E8F5E9,stroke:#43A047
+
+    style UserController fill:#F3E5F5,stroke:#8E44AD
+    style ProjectController fill:#F3E5F5,stroke:#8E44AD
+
+    style API fill:#F3E5F5,stroke:#8E44AD,color:#000
 ```
