@@ -1,7 +1,13 @@
 \documentclass[a4paper,12pt]{article}
+
+% ============================================================
+% PACKAGES
+% ============================================================
+
 \usepackage{float}
 \usepackage[french]{babel}
 \usepackage{geometry}
+\usepackage{ragged2e}
 \usepackage{graphicx}
 \usepackage{titlesec}
 \usepackage{lmodern}
@@ -12,104 +18,166 @@
 \usepackage{multirow}
 \usepackage{pdfpages}
 \usepackage{embedfile}
-\usepackage{tabularx} 
+\usepackage{tabularx}
+\usepackage{etoolbox}
+\providecommand{\tightlist}{}
 
-\geometry{top=3cm, bottom=3cm, left=2.5cm, right=2.5cm}
-\pagestyle{empty}
+% ============================================================
+% MISE EN PAGE
+% ============================================================
+
+\geometry{
+  top=3cm,
+  bottom=3cm,
+  left=2.5cm,
+  right=2.5cm
+}
+
+% ============================================================
+% COULEURS
+% ============================================================
+
+\definecolor{ensaiblue}{HTML}{00A3E0}
+\definecolor{darkgray}{HTML}{5C5C5C}
+
+% ============================================================
+% TITRES
+% ============================================================
+
+\titleformat{\section}
+  {\Large\bfseries\color{ensaiblue}}
+  {\thesection}
+  {0.8em}
+  {}
+
+\titleformat{\subsection}
+  {\large\bfseries\color{darkgray}}
+  {\thesubsection}
+  {0.8em}
+  {}
+
+\titleformat{\subsubsection}
+  {\normalsize\bfseries\color{darkgray}}
+  {\thesubsubsection}
+  {0.8em}
+  {}
+
+% ============================================================
+% EN-TÊTE / PIED DE PAGE
+% ============================================================
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\thepage}
+
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% ============================================================
+% DOCUMENT
+% ============================================================
 
 \begin{document}
 
-% Logo ENSAI
+% ============================================================
+% PAGE DE GARDE
+% ============================================================
+
+\begin{titlepage}
+
+\thispagestyle{empty}
+
+% ------------------------------------------------------------
+% LOGO ENSAI
+% ------------------------------------------------------------
+
 \begin{center}
-    \includegraphics[width=0.50\textwidth]{img/ensai_logo.png}
+
+\includegraphics[
+  width=0.50\textwidth
+]{img/ensai_logo.png}
+
 \end{center}
 
 \vspace{0.5cm}
 
-% =========================================================
+% ------------------------------------------------------------
 % TITRE
-% =========================================================
+% ------------------------------------------------------------
 
 \begin{center}
 
 {\Large\textsc{$title$}}\\[0.3cm]
 
-{\Large $subtitle$}\\[1cm]
-
 \rule{\textwidth}{0.4pt}\\[0.7cm]
 
-\Large\textbf{$project$}\\[0.3cm]
+{\Large\textbf{$subtitle$}}\\[0.3cm]
 
 \rule{\textwidth}{0.4pt}
 
 \end{center}
 
-
-% =========================================================
+% ------------------------------------------------------------
 % AUTEURS ET TUTEUR
-% =========================================================
+% ------------------------------------------------------------
 
 \begin{minipage}{0.87\textwidth}
 
-\vspace{1.2cm}
+\vspace{3cm}
 
-\begin{flushleft}
+% AUTEURS
 
-\hspace{1cm}\textit{Auteurs :}\\[0.2cm]
+\textit{Équipe n°34 :}\\[0.2cm]
+\textsc{MANAMBIRAVAKA Anaëlle}\\
+\textsc{NADIN Sarah}\\
+\textsc{NICOLIE Galahade}\\
+\textsc{PERRIN-BEAU Madie}\\
+\textsc{VILARRUPLA Thomas}\\
+\textsc{ZHU Annabelle}
 
-\hspace{1cm}
-
-$for(author)$
-\textsc{$author$}\\
-$endfor$
-
-\end{flushleft}
-
-
-\vspace{-2cm}
+% TUTEUR
+\vspace{-4.3cm}
 
 \begin{flushright}
 
 \textit{Tuteur :}\\[0.2cm]
 
-\textsc{$tutor$}
+\textsc{$keywords$}
 
 \end{flushright}
 
 \end{minipage}
 
-
-% =========================================================
+% ------------------------------------------------------------
 % DATE
-% =========================================================
+% ------------------------------------------------------------
 
 \vfill
 
 \begin{center}
 
-$date$
+\textsc{17 Septembre 2026}
 
 \end{center}
 
+\end{titlepage}
 
-% =========================================================
-% SOMMAIRE
-% =========================================================
+% ============================================================
+% TABLE DES MATIÈRES
+% ============================================================
 
-\newpage
+\clearpage
 
 \renewcommand{\contentsname}{Table des matières}
 
 \tableofcontents
 
-
-% =========================================================
+% ============================================================
 % CONTENU DU QUARTO
-% =========================================================
+% ============================================================
 
-\newpage
+\clearpage
 
 $body$
-
 
 \end{document}

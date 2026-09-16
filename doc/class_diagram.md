@@ -21,7 +21,7 @@ Pour afficher ce diagramme dans VScode :
   "flowchart": {
     "htmlLabels": true,
     "curve": "basis"},
-  "themeCSS": ".cluster:nth-of-type(1) rect { fill: #b3ccf8 !important; stroke: #3086e8 !important; width: 700px !important; } .cluster:nth-of-type(2) rect { fill: #adf8ffd1 !important; stroke: #586cff !important; width: 1100 !important; } .cluster:nth-of-type(3) rect { fill: #e1baf1 !important; stroke: #8E44AD !important;}"}}%%
+  "themeCSS": ".cluster:nth-of-type(1) rect {   fill: #b3ccf8 !important; stroke: #3086e8 !important; width: 700px !important; } .cluster:nth-of-type(2) rect { fill: #ccf0ff !important; stroke: #586cff !important; width: 1100px !important; } .cluster:nth-of-type(3) rect { fill: #e1baf1 !important; stroke: #8E44AD !important;}"}}%%
 
 classDiagram
     %% Business objects
@@ -83,8 +83,8 @@ classDiagram
 
         class Vulnerability {
             +id_vulnerability: int
-            +osv_id: int
-            +cve_id: int
+            +osv_id: str
+            +cve_id: str | None
             +severity: str
             +package: str
             +version_package: str
@@ -106,6 +106,7 @@ classDiagram
         class QualityGate {
             +id_quality_gate: int
             +max_vulnerabilities: int
+            +max_critical_vulnerabilities: int
             +max_carbon_emission: float
             +status: string
         }
@@ -117,7 +118,7 @@ classDiagram
         +find_by_id(int): User
         +list_all(): list[User]
         +delete(User): bool
-        +update(User): bool
+        +update(User): User
         +login(str,str): User
     }
 
@@ -132,7 +133,7 @@ classDiagram
         +find_by_id(int): File
         +list_all(): list[File]
         +delete(File): bool
-        +update(File): bool
+        +update(File): File
     }
     class AuditDAO {
         +create(Audit): bool
@@ -155,10 +156,11 @@ classDiagram
         +upload(int, string, User, CodeFile, DependencyFile, hmac.HMAC): Project
         +upload_dependency_file(int, datetime, str, list[str]): DependencyFile
         +upload_code_file(int, datetime, str, ast.Module): CodeFile
-        +verify_HMAC_key(Project): bool
+        +update(Project): Project
         +find_by_id(int): Project
         +list_all_audit(int) : list[Audit]
         +delete(Project): bool
+        +verify_HMAC_key(Project): bool
         +run_audit(Project): Audit
     }
 
@@ -168,6 +170,7 @@ classDiagram
         +find_user(int): User
         +find_project(int): Project
         +delete(File): bool
+        +update(File): File
         +submit(): bool
     }
 

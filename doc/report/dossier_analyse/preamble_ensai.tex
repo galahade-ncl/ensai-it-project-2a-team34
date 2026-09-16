@@ -1,0 +1,54 @@
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{titlesec}
+\usepackage{lmodern}
+\usepackage{fancyhdr}
+\usepackage{ragged2e}
+\usepackage[table]{xcolor}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{pdfpages}
+\usepackage{embedfile}
+\usepackage{tabularx}
+\usepackage[table]{xcolor}
+
+
+% ------------------------------------------------------------
+% COULEURS
+% ------------------------------------------------------------
+
+\definecolor{ensaiblue}{HTML}{00A3E0}
+\definecolor{darkgray}{HTML}{5C5C5C}
+
+% ------------------------------------------------------------
+% TITRES
+% ------------------------------------------------------------
+
+\titleformat{\section}
+  {\Large\bfseries\color{ensaiblue}}
+  {\thesection}
+  {0.8em}
+  {}
+
+\titleformat{\subsection}
+  {\large\bfseries\color{darkgray}}
+  {\thesubsection}
+  {0.8em}
+  {}
+
+\titleformat{\subsubsection}
+  {\normalsize\bfseries\color{darkgray}}
+  {\thesubsubsection}
+  {0.8em}
+  {}
+
+% ------------------------------------------------------------
+% PIED DE PAGE
+% ------------------------------------------------------------
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\thepage}
+
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}

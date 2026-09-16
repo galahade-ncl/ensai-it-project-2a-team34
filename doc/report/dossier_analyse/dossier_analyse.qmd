@@ -1,32 +1,45 @@
 ---
-bibliography: refs.bib
-citeproc: false
-nocite: "@*"
+title: "Dossier d'Analyse"
+subtitle: "Projet Informatique de 2ème année : **⚙️CleansOps⚙️**"
+authors:
+  - "MANAMBIRAVAKA Anaëlle"
+  - "NADIN Sarah"
+  - "NICOLIE Galahade"
+  - "PERRIN-BEAU Madie"
+  - "VILARRUPLA Thomas"
+  - "ZHU Annabelle"
+date: "17 Septembre 2026"
+keywords :
+  - "LACAILLE Adrien"
+
+lang: fr
+language:
+  title-block-author-plural: "ÉQUIPE N°34"
+  title-block-published: "Date"
+  title-block-keywords: "Tuteur"
+
 format:
   html:
-    theme: Zephyr
+    theme: default
+    css: style2.scss
     toc: true
-    code-fold: true
+    toc-depth: 2
     number-sections: true
-  typst:
-    papersize: a4
-    margin:
-      x: 1.5cm
-      y: 2.0cm
-    section-numbering: 1.1.a
-    mainfont: "Libertinus Serif"
-    fontsize: 11pt
----
 
+  pdf:
+    template: template_ensai.tex
+    toc: true
+    number-sections: true
+---
 
 ```{=typst}
 #import "model.typ": project_template
 
 #show: body => project_template(
-  title: [Dossier d'Analyse],
-  team: [Équipe ?],
+  title: [Dossier d'Analyse : Clean Ops],
+  team: [Équipe 34],
   authors: ([MANAMBIRAVAKA Anaëlle], [NADIN Sarah], [NICOLIE Galahade], [PERRIN-BEAU Madie], [VILARRUPLA Thomas], [ZHU Annabelle]),
-  tutor: [LACAILLE ],
+  tutor: [LACAILLE Adrien],
   project: [Projet Informatique de 2ème année - Année 2026-2027],
   body
 )
@@ -37,10 +50,30 @@ format:
 ```{=typst} 
 #lorem(100)
 ```
+  Dans le développement logiciel moderne, la qualité d'une application ne se résume plus à l'absence de bugs fonctionnels. La sécurité de la chaîne de dépendances (supply chain), qui est régulièrement ciblée par des attaques et la sobriété énergétique du code sont des enjeux de plus en plus importants. Notre projet d’application CleanOps, encadré par Adrien Lacaille, est de créer une plateforme d’audit automatisée qui puisse répondre conjointement à ces deux problématiques.
 
 {{< pagebreak >}}
 
 ## Présentation du projet
+
+### Contexte et objectifs
+
+
+Les applications actuelles reposent massivement sur des bibliothèques open source, ce qui expose les projets à des vulnérabilités connues (appelées CVE), des licences juridiquement contraignantes ou des dépendances abandonnées. De plus, la manière dont un programme est conçu a un impact direct sur sa consommation énergétique : certains anti-patterns, comme les boucles imbriquées ou récursives mal maîtrisées, augmentent inutilement la charge de calcul et donc l'empreinte carbone associée à son exécution.
+L’objectif de notre application CleanOps est de concevoir une API REST capable d'auditer automatiquement un code source Python ainsi que ses fichiers de dépendances, à chaque soumission.
+\vspace{0.2cm}
+
+Concrètement, CleanOps doit permettre de :
+
+  * garantir l'intégrité et la provenance de chaque soumission grâce à une signature cryptographique
+  * détecter les vulnérabilités et risques liés aux dépendances (CVE, licences, packages obsolètes ou suspects, secrets exposés)
+  * estimer l'impact éco-énergétique du code soumis à partir de son analyse statique (AST)
+  * générer un inventaire standardisé des composants du projet (SBOM)
+  * historiser les audits et statuer, via une Quality Gate, sur la conformité d'un projet aux critères de sécurité et d'impact environnemental fixés.
+\vspace{0.2cm}
+
+CleanOps se positionne ainsi comme un outil qui aide les équipes de développement à intégrer des critères de sécurité et d'éco-responsabilité directement dans leur cycle de développement, notamment via les pipelines CI/CD.
+
 
 ### Cahier des charges
 
@@ -50,17 +83,123 @@ format:
 
 ## Modélisation du projet
 
-### Diagramme de cas d'utilisation
-
 ### Diagramme d'activité
+
+\begin{center}
+\includegraphics[width=\textwidth]{img/diagramme_activite.png}
+\end{center}
 
 ### Diagramme de classes
 
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+    \hline
+    \textbf{} & \textbf{Principe} \\
+    \hline
+
+    \cellcolor[HTML]{E3F0FF}\textbf{Objet métier}
+    &
+    Classes représentant les principales entités manipulées par l'application.
+    \\
+    \hline
+
+    \cellcolor[HTML]{E8F5E9}\textbf{Classe de service}
+    &
+    Implémentation de la logique métier et des fonctionnalités définies dans le cahier des charges, notamment la réalisation des audits du projet.
+    \\
+    \hline
+
+    \cellcolor[HTML]{FFF3E0}\textbf{Classe DAO}
+    &
+    Classes qui assurent l'accès aux bases de données depuis l'application (créer, modifier, supprimer dans la base de données)
+    \\
+    \hline
+
+    \cellcolor[HTML]{F3E5F5}\textbf{Classe d'API}
+    &
+    Assure la communication entre l'utilisateur et l'application en transmettant les requêtes du frontend vers le backend et les réponses du backend vers le frontend.
+    \\
+    \hline
+
+\end{tabular}
+\end{center}
+
+\newpage
+
+\begin{center}
+\makebox[\textwidth][c]{%
+    \includegraphics[width=1.15\textwidth]{img/diagramme_de_classe.png}%
+}
+\end{center}
+
+\newpage
+
 ### Modèle physique de donnée
 
-{{< pagebreak >}}
+\justifying
+Ce modèle physique de données décrit la structure de la base de données de l’application. Il comporte 4 tables : User, Project, File et Audit. 
+\vspace{0.4cm}
 
-## Bibliography
+**User** : La table User contient les données liées aux utilisateurs de l’application
+\vspace{0.2cm}
+
+  * id_user : identifiant unique de l’utilisateur (clé primaire)
+  * username : chaîne de caractère ne dépassant pas 50 caractères qui est le nom de l’utilisateur
+  * password : mot de passe de l’utilisateur (100 caractères max)
+  * email : adresse mail
+\vspace{0.2cm}
+
+Chaque utilisateur peut posséder 0, 1 ou plusieurs projets. 0 projet car quand l’utilisateur crée son compte, il n’a pas directement un projet déjà importé.
+\vspace{0.4cm}
+
+**Project** : La table Project représente un projet soumis à l’audit par un User. 
+\vspace{0.2cm}
+
+  - id_project : identifiant unique du projet (clé primaire)
+  - name_project : nom du projet 
+  - id_user : clé étrangère qui réfère à l’utilisateur qui a soumis le projet
+  - HMACkey : clé HMAC utilisée pour garantir la provenance et l’intégrité du projet
+\vspace{0.2cm}
+
+Un projet appartient à un seul utilisateur et contient exactement deux fichiers (le code et le fichier de dépendances). Un projet peut être soumis à 0, 1 ou plusieurs audit. 
+\vspace{0.4cm}
+
+**File** : La table File représente les fichiers importés.
+\vspace{0.2cm}
+
+  - id_file : identifiant unique du fichier (clé primaire)
+  - name_file : nom du fichier
+  - id_project : clé étrangère qui réfère au projet dont le fichier appartient
+  - type_file : type du fichier (code ou fichier de dépendances)
+  - date : date d’ajout du fichier (ou dernier mise à jour du fichier)
+\vspace{0.2cm}
+
+Chaque projet contient exactement deux fichiers, un code et un fichier de dépendances. 
+\vspace{0.4cm}
+
+**Audit** : La table Audit représente le résultat d'un audit effectué sur un projet.
+\vspace{0.2cm}
+
+  - id_audit : identifiant unique de l'audit (clé primaire)
+  - id_project : référence vers le projet audité (clé étrangère)
+  - date : date à laquelle l'audit a été réalisé 
+  - complexity : indicateur de complexité du code analysé 
+  - energy_consumption_kwh : estimation de la consommation énergétique du code
+  - carbon_emission_gco2e : estimation des émissions carbone associées
+  - vulnerabilities : liste des vulnérabilités détectées dans le code ou les dépendances 
+  - sbom : liste des composants et dépendances du projet (packages, leurs versions, licence, etc.)
+\vspace{0.2cm}
+
+Un projet peut posséder 0 à plusieurs audits sachant qu’un audit doit obligatoirement être lié à un projet. 
+
+\begin{center}
+\includegraphics[width=0.6\textwidth]{img/diagramme_de_bdd.png}
+\end{center}
+
+
+{{< pagebreak >}}
+## Bibliographie
 
 
 {{< pagebreak >}}
