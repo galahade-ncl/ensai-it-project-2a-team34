@@ -28,7 +28,7 @@ classDiagram
         id_project INT PK
         name_project VARCHAR100
         #id_user INT FK
-        HMACkey hmac.HMAC  #A vérifier
+        HMACkey VARCHAR100
     }
 
     class File {
@@ -47,7 +47,8 @@ classDiagram
         complexity FLOAT
         energy_consumption_kwh FLOAT
         carbon_emission_gco2e FLOAT
-        sbom SBOM  #A vérifier
+        vulnerabilties TEXT
+        sbom TEXT
 
     }
 
