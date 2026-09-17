@@ -296,7 +296,7 @@ Un projet peut posséder 0 à plusieurs audits sachant qu’un audit doit obliga
 ## Conclusion intermédiaire {.unnumbered}
 
 
-  En guise de conclusion, cette première phase du projet a permis de mieux comprendre les enjeux et les objectifs de CleanOps et de préciser les différentes fonctionnalités attendues. L’étude du cahier des charges a amené à réfléchir aux besoins de l’application, notamment en termes de sécurité des dépendances, d’analyse du code, d’estimation de son impact environnemental et de traçabilité des composants logiciels ? Cette étape a également permis d’identifier les principaux acteurs et composants intervenants dans le fonctionnement de l’application. 
+  En guise de conclusion, cette première phase du projet a permis de mieux comprendre les enjeux et les objectifs de CleanOps et de préciser les différentes fonctionnalités attendues. L’étude du cahier des charges a amené à réfléchir aux besoins de l’application, notamment en termes de sécurité des dépendances, d’analyse du code, d’estimation de son impact environnemental et de traçabilité des composants logiciels ? Cette étape a également permis d’identifier les principaux acteurs et composants intervenant dans le fonctionnement de l’application. 
 	
   La modélisation a ensuite permis de traduire ces besoins en une conception plus concrète du projet. De plus, les diagrammes réalisés ainsi que le modèle physique des données ont aidé à représenter le fonctionnement de l’application et les relations entre ses différents éléments. Par ailleurs, les recherches nécessaires à la conception de CleanOps ont permis de nous familiariser avec différentes technologies et références liées à la sécurité et à l’analyse logicielle. 
   
