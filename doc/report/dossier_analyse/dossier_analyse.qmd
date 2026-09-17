@@ -1,6 +1,6 @@
 ---
 title: "Dossier d'Analyse"
-subtitle: "Projet Informatique de 2ème année : **⚙️CleansOps⚙️**"
+subtitle: "Projet Informatique de 2ème année : **⚙️CleanOps⚙️**"
 authors:
   - "MANAMBIRAVAKA Anaëlle"
   - "NADIN Sarah"
@@ -98,7 +98,7 @@ Afin de clarifier les interactions entre l'utilisateur et la plateforme CleanOps
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1.1\textwidth]{img/diagramme_cas_utilisation.png}
+    \includegraphics[width=\textwidth]{img/diagramme_de_cas_utilisation.png}
     \caption{Diagramme de cas d'utilisation}
     \label{fig:diagcas}
 \end{figure}
@@ -110,14 +110,14 @@ Afin de clarifier les interactions entre l'utilisateur et la plateforme CleanOps
 
 Pour organiser la réalisation du projet CleanOps, nous avons établi un diagramme de Gantt couvrant l'ensemble de la période, de début septembre à mi-décembre. Celui-ci distingue les phases d’analyse et de développement, ainsi que les dates de rendu, dont les grandes échéances sont matérialisées 
 
-\vspace{-0.3cm}
+\vspace{-0.2cm}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{img/diagramme_de_gantt.png}
+    \includegraphics[width=0.97\textwidth]{img/diagramme_de_gantt.png}
     \caption{Diagramme de Gantt}
     \label{fig:diagGantt}
 \end{figure}
-\vspace{-0.4cm}
+\vspace{-0.5cm}
 
 La phase d'analyse occupe les premières semaines du projet. Elle débute par la découverte du sujet et la modélisation UML (diagramme des classes, diagramme d'activité, diagramme de cas d'utilisation), menées de façon rapprochée afin de construire une compréhension commune du besoin avant de rédiger. Cette phase se conclut par la rédaction et la relecture du dossier d’analyse que voici. Une seconde phase de rédaction, celle du rapport final, est prévue plus tard, de mi-octobre à mi-novembre, une fois le développement suffisamment avancé pour en rendre compte.
 
@@ -128,20 +128,23 @@ Contrairement à ce que le diagramme de Gantt peut laisser penser au premier reg
 {{< pagebreak >}}
 
 ## Modélisation du projet
+\vspace{-0.1cm}
 
 ### Diagramme d'activité
 
-
+\vspace{-0.7cm}
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{img/diagramme_activite.png}
     \caption{Diagramme d'activité}
     \label{fig:diagact}
 \end{figure}
+\vspace{-0.6cm}
 
 ### Diagramme de classes
+\vspace{-0.1cm}
 
-Afin de présenter l’organisation prévue de notre code de CleansOps, nous avons réalisé un diagramme de classes composé de 24 classes. Ces classes sont réparties selon leur rôle et leurs fonctionnalités, présentés dans le tableau ci-dessous : 
+Afin de présenter l’organisation prévue de notre code de CleanOps, nous avons réalisé un diagramme de classes composé de 24 classes. Ces classes sont réparties selon leur rôle et leurs fonctionnalités, présentés dans le tableau ci-dessous : 
 
 \begin{center}
 \renewcommand{\arraystretch}{1.4}
@@ -197,7 +200,7 @@ La classe User représente un utilisateur avec ses informations d’identificati
 
 **Classe Projet**
 
-La classe Project représente un projet déposé par un utilisateur, et est constituée exactement de 2 fichiers : un fichier de code et un fichier de dépendances. ProjectService gère quant à lui la soumission d'un projet et de ses fichiers, la vérification de l'intégrité du projet par sa clé HMAC, la recherche d'un projet ou sa suppresion, tandis que ProjectDAO enregistre dans la base de données projet et fichiers. ProjectController assure entre autre l’accès à ces fonctionnalités via l’API.
+La classe Project représente un projet déposé par un utilisateur, et est constitué exactement de 2 fichiers : un fichier de code et un fichier de dépendances. ProjectService gère quant à lui la soumission d'un projet et de ses fichiers, la vérification de l'intégrité du projet par sa clé HMAC, la recherche d'un projet ou sa suppresion, tandis que ProjectDAO enregistre dans la base de données projet et fichiers. ProjectController assure entre autre l’accès à ces fonctionnalités via l’API.
 
 **Gestion des fichiers**
 
@@ -227,7 +230,7 @@ Comme nous pouvons le voir plus précisément avec le diagramme de séquence, l�
 \begin{figure}[H]
     \centering
     \makebox[\textwidth][c]{%
-    \includegraphics[width=0.80\textwidth]{img/diagramme_de_sequence_complet.png}%
+    \includegraphics[width=0.9\textwidth]{img/diagramme_de_sequence_fini.png}%
 }
     \caption{Diagramme de séquence}
     \label{fig:diagseq}
@@ -241,7 +244,7 @@ Ce modèle physique de données décrit la structure de la base de données de l
 **User** : La table User contient les données liées aux utilisateurs de l’application
 
   * id_user : identifiant unique de l’utilisateur (clé primaire)
-  * username : chaîne de caractère ne dépassant pas 50 caractères qui est le nom de l’utilisateur
+  * username : chaîne de caractères ne dépassant pas 50 caractères qui est le nom de l’utilisateur
   * password : mot de passe de l’utilisateur (100 caractères max)
   * email : adresse mail
 

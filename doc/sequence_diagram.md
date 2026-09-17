@@ -60,13 +60,10 @@ sequenceDiagram
         else Clé HMAC correcte
             API->>DAO: Transmet les informations du projet
             DAO->>BDD: Crée le projet
-            BDD-->>DAO: Projet créé
             DAO->>BDD: Crée le fichier de code
-            BDD-->>DAO: Fichier de code créé
             DAO->>BDD: Crée le fichier de dépendances
-            BDD-->>DAO: Fichier de dépendances créé
             DAO-->>API: Projet créé avec ses fichiers
-            API-->>Utilisateur: Confirmation de la l'importation du Projet
+            API-->>Utilisateur: Confirmation de l'importation du Projet
         end
     end
 
@@ -75,8 +72,7 @@ sequenceDiagram
 
         Utilisateur->>API: Dépose les informations relatives à l'utilisation
         API->>DAO: Vérifier si le nom existe
-        DAO->>BDD: Demande les informations relatives au nom de user donné
-        BDD-->>DAO: Résultat
+        DAO->>BDD: Demande les informations relatives au nom du user donné
 
         alt Nom déjà utilisé
             DAO-->>API: Nom existant
@@ -85,9 +81,8 @@ sequenceDiagram
             API->>API: Hasher le mot de passe
             API->>DAO: Créer l'utilisateur
             DAO->>BDD: Enregistre les informations de l'utilisateur
-            BDD-->>DAO: Utilisateur créé
-            DAO-->>API: Confirmation
-            API-->>Utilisateur: Confirme la création du compte
+            DAO-->>API: Utilisateur créé
+            API-->>Utilisateur: Confirmation de la création du compte
         end
     end
 ````
