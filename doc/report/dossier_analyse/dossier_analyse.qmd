@@ -96,9 +96,13 @@ Quatre fonctionnalités supplémentaires pourraient être ajoutées selon l'avan
 
 Afin de clarifier les interactions entre l'utilisateur et la plateforme CleanOps, le diagramme de cas d'utilisation ci-dessous modélise les fonctionnalités principales accessibles depuis l'interface. L'utilisateur commence par s'authentifier auprès du système, étape préalable à toute action ultérieure. Une fois connecté il peut d'une part gérer ses projets (création, modification, ajout de composants et suppression), une opération qui repose systématiquement sur la génération d'une clé HMAC garantissant l'intégrité et l'authenticité de chaque soumission et d'autre part consulter l'historique des audits déjà réalisés.
 
-\begin{center}
-\includegraphics[width=1.1\textwidth]{img/diagramme_cas_utilisation.png}
-\end{center}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.1\textwidth]{img/diagramme_cas_utilisation.png}
+    \caption{Diagramme de cas d'utilisation}
+    \label{fig:diagcas}
+\end{figure}
+
 
 {{< pagebreak >}}
 
@@ -106,9 +110,14 @@ Afin de clarifier les interactions entre l'utilisateur et la plateforme CleanOps
 
 Pour organiser la réalisation du projet CleanOps, nous avons établi un diagramme de Gantt couvrant l'ensemble de la période, de début septembre à mi-décembre. Celui-ci distingue les phases d’analyse et de développement, ainsi que les dates de rendu, dont les grandes échéances sont matérialisées 
 
-\begin{center}
-\includegraphics[width=\textwidth]{img/diagramme_de_gantt.png}
-\end{center}
+\vspace{-0.3cm}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{img/diagramme_de_gantt.png}
+    \caption{Diagramme de Gantt}
+    \label{fig:diagGantt}
+\end{figure}
+\vspace{-0.4cm}
 
 La phase d'analyse occupe les premières semaines du projet. Elle débute par la découverte du sujet et la modélisation UML (diagramme des classes, diagramme d'activité, diagramme de cas d'utilisation), menées de façon rapprochée afin de construire une compréhension commune du besoin avant de rédiger. Cette phase se conclut par la rédaction et la relecture du dossier d’analyse que voici. Une seconde phase de rédaction, celle du rapport final, est prévue plus tard, de mi-octobre à mi-novembre, une fois le développement suffisamment avancé pour en rendre compte.
 
@@ -122,9 +131,13 @@ Contrairement à ce que le diagramme de Gantt peut laisser penser au premier reg
 
 ### Diagramme d'activité
 
-\begin{center}
-\includegraphics[width=\textwidth]{img/diagramme_activite.png}
-\end{center}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{img/diagramme_activite.png}
+    \caption{Diagramme d'activité}
+    \label{fig:diagact}
+\end{figure}
 
 ### Diagramme de classes
 
@@ -145,7 +158,7 @@ Afin de présenter l’organisation prévue de notre code de CleansOps, nous avo
 
     \cellcolor[HTML]{E8F5E9}\textbf{Classe de service}
     &
-    Implémentation des fonctionnalités définies dans le cahier des charges, notamment la réalisation des audits du projet.
+    Implémentation des fonctionnalités définies dans le cahier des charges, notamment la création des audits du projet.
     \\
     \hline
 
@@ -166,11 +179,14 @@ Afin de présenter l’organisation prévue de notre code de CleansOps, nous avo
 
 \newpage
 
-\begin{center}
-\makebox[\textwidth][c]{%
+\begin{figure}[H]
+    \centering
+    \makebox[\textwidth][c]{%
     \includegraphics[width=1.15\textwidth]{img/diagramme_de_classe.png}%
 }
-\end{center}
+    \caption{Diagramme de classes}
+    \label{fig:diagclasse}
+\end{figure}
 
 \newpage
 
@@ -181,7 +197,7 @@ La classe User représente un utilisateur avec ses informations d’identificati
 
 **Classe Projet**
 
-La classe Project représente un projet déposé par un utilisateur, et est constitué exactement de 2 fichiers : un fichier de code et un fichier de dépendances. ProjectService gère quant à lui la soumission d'un projet et de ses fichiers, la vérification de l'intégrité du projet par sa clé HMAC, la recherche d'un projet ou sa suppresion, tandis que ProjectDAO enregistre dans la base de données projet et fichiers. ProjectController assure entre autre l’accès à ces fonctionnalités via l’API.
+La classe Project représente un projet déposé par un utilisateur, et est constituée exactement de 2 fichiers : un fichier de code et un fichier de dépendances. ProjectService gère quant à lui la soumission d'un projet et de ses fichiers, la vérification de l'intégrité du projet par sa clé HMAC, la recherche d'un projet ou sa suppresion, tandis que ProjectDAO enregistre dans la base de données projet et fichiers. ProjectController assure entre autre l’accès à ces fonctionnalités via l’API.
 
 **Gestion des fichiers**
 
@@ -191,11 +207,12 @@ La classe File constitue la classe mère de CodeFile et DependencyFile. Elle reg
 
 Audit constitue le résultat global d’un audit réalisé sur un projet. Il regroupe les vulnérabilités, licences, anti-patterns énergétiques, complexité du code, consommation énergétique, émissions carbone, SBOM et résultat de la Quality Gate.
 AuditService orchestre l’ensemble des analyses grâce à plusieurs services spécialisés :
-  * SecurityService analyse le fichier de dépendance : recherche des vulnérabilités via notamment l’API OSV et identifie les licences, dont celles à risque
-  * EcoService analyse le fichier code : détecte les anti-patterns, estime sa complexité et évalue sa consommation énergétique et ses émissions carbone
-  * SBOMService génère l’inventaire des composants logiciels du projet
-  * QualityGateService compare les résultats de l’audit aux seuils définis et détermine si le projet respecte les critères de validation.
-Les classes Vulnerability, License, AntiPattern et QualityGate sont des objets distincts de l’Audit. Cela permet de leur associer plus d'information si nécessaire, et de faciliter leur manipulation au sein de l’application.
+
+ * SecurityService analyse le fichier de dépendance : recherche des vulnérabilités via notamment l’API OSV et identifie les licences, dont celles à risque
+ * EcoService analyse le fichier code : détecte les anti-patterns, estime sa complexité et évalue sa consommation énergétique et ses émissions carbone
+ * SBOMService génère l’inventaire des composants logiciels du projet
+ * QualityGateService compare les résultats de l’audit aux seuils définis et détermine si le projet respecte les critères de validation.
+Les classes Vulnerability, License, AntiPattern et QualityGate sont des objets distincts de l’Audit. Cela permet de leur associer plus d'informations si nécessaire, et de faciliter leur manipulation au sein de l’application.
 
 **Quality Gate et certificat**
 
@@ -205,57 +222,53 @@ QualityGate définit les seuils à respecter, notamment en matière de vulnérab
 
 ### Diagramme de séquence
 
-Comme nous pouvons le voir plus précisément avec le diagramme de séquence, l’architecture de notre application est organisée autour de plusieurs couches. Les classes Controller constituent le point d’entrée de l’application et permettent de recevoir les requêtes des utilisateurs, comme créer un compte ou importer un projet. Elles communiquent avec les classes Service, qui applique la requête de l'utilisateur. Ces services utilisent ensuite les classes DAO lorsqu’une interaction avec les bases de données est nécessaire.
+Comme nous pouvons le voir plus précisément avec le diagramme de séquence, l’architecture de notre application est organisée autour de plusieurs couches. Les classes Controller constituent le point d’entrée de l’application et permettent de recevoir les requêtes des utilisateurs, comme créer un compte ou importer un projet. Elles communiquent avec les classes Service, qui appliquent la requête de l'utilisateur. Ces services utilisent ensuite les classes DAO lorsqu’une interaction avec les bases de données est nécessaire.
 
-\begin{center}
-\makebox[\textwidth][c]{%
+\begin{figure}[H]
+    \centering
+    \makebox[\textwidth][c]{%
     \includegraphics[width=0.80\textwidth]{img/diagramme_de_sequence_complet.png}%
 }
-\end{center}
-
+    \caption{Diagramme de séquence}
+    \label{fig:diagseq}
+\end{figure}
 
 
 ### Modèle physique de donnée
 
 Ce modèle physique de données décrit la structure de la base de données de l’application. Il comporte 4 tables : User, Project, File et Audit. 
-\vspace{0.4cm}
 
 **User** : La table User contient les données liées aux utilisateurs de l’application
-\vspace{0.1cm}
+
   * id_user : identifiant unique de l’utilisateur (clé primaire)
   * username : chaîne de caractère ne dépassant pas 50 caractères qui est le nom de l’utilisateur
   * password : mot de passe de l’utilisateur (100 caractères max)
   * email : adresse mail
-\vspace{0.2cm}
 
 Chaque utilisateur peut posséder 0, 1 ou plusieurs projets. Un utilisateur possède 0 projet lorsqu’il a créé un compte, mais n’a encore importé aucun projet, ou lorsqu’il a supprimé les projets qu’il avait précédemment importés.
-\vspace{0.4cm}
 
-**Project** : La table Project représente un projet soumis à l’audit par un User. 
-\vspace{0.1cm}
+**Project** : La table Project représente un projet soumis à l’audit par un User.
+
   - id_project : identifiant unique du projet (clé primaire)
   - name_project : nom du projet 
   - id_user : clé étrangère qui réfère à l’utilisateur qui a soumis le projet
   - HMACkey : clé HMAC utilisée pour garantir la provenance et l’intégrité du projet
 \vspace{0.2cm}
 
-Un projet appartient à un seul utilisateur et contient exactement deux fichiers (le code et le fichier de dépendances). Un projet peut être soumis à 0, 1 ou plusieurs audit. 
-\vspace{0.4cm}
+Un projet appartient à un seul utilisateur et contient exactement deux fichiers (le code et le fichier de dépendances). Un projet peut être soumis à 0, 1 ou plusieurs audit.
 
 **File** : La table File représente les fichiers importés.
-\vspace{0.1cm}
+
   - id_file : identifiant unique du fichier (clé primaire)
   - name_file : nom du fichier
   - id_project : clé étrangère qui réfère au projet dont le fichier appartient
   - type_file : type du fichier (code ou fichier de dépendances)
   - date : date d’ajout du fichier (ou dernier mise à jour du fichier)
-\vspace{0.1cm}
 
 Chaque projet contient exactement deux fichiers, un code et un fichier de dépendances. 
-\vspace{0.2cm}
 
 **Audit** : La table Audit représente le résultat d'un audit effectué sur un projet.
-\vspace{0.1cm}
+
   - id_audit : identifiant unique de l'audit (clé primaire)
   - id_project : référence vers le projet audité (clé étrangère)
   - date : date à laquelle l'audit a été réalisé 
@@ -264,13 +277,15 @@ Chaque projet contient exactement deux fichiers, un code et un fichier de dépen
   - carbon_emission_gco2e : estimation des émissions carbone associées
   - vulnerabilities : liste des vulnérabilités détectées dans le code ou les dépendances 
   - sbom : liste des composants et dépendances du projet (packages, leurs versions, licence, etc.)
-\vspace{0.2cm}
 
 Un projet peut posséder 0 à plusieurs audits sachant qu’un audit doit obligatoirement être lié à un projet. 
 
-\begin{center}
-\includegraphics[width=0.6\textwidth]{img/diagramme_de_bdd.png}
-\end{center}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{img/diagramme_de_bdd.png}
+    \caption{Diagramme physique de donnée}
+    \label{fig:bdd}
+\end{figure}
 
 
 {{< pagebreak >}}
