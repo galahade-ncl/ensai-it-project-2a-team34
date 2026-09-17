@@ -1,0 +1,605 @@
+\documentclass[a4paper,12pt]{article}
+
+% ============================================================
+% PACKAGES
+% ============================================================
+
+\usepackage[french]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{geometry}
+\usepackage{ragged2e}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage[table]{xcolor}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{etoolbox}
+\usepackage{tikz}
+\usepackage{eso-pic}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{setspace}
+
+
+\usetikzlibrary{calc}
+
+\providecommand{\tightlist}{}
+
+% ============================================================
+% MISE EN PAGE
+% ============================================================
+
+\geometry{
+    top=2.7cm,
+    bottom=2.8cm,
+    left=2.7cm,
+    right=2.7cm
+}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.5em}
+
+% ============================================================
+% COULEURS
+% ============================================================
+
+\definecolor{ensaiblue}{HTML}{00A3E0}
+\definecolor{ensailightblue}{HTML}{D9F2FC}
+\definecolor{ensailighterblue}{HTML}{EAF8FD}
+\definecolor{darkgray}{HTML}{555555}
+\definecolor{lightgray}{HTML}{E5E5E5}
+
+
+% ============================================================
+% ENGRENAGES
+% ============================================================
+
+\newcommand{\gear}[1]{%
+  \begin{scope}[scale=#1]
+
+    % Corps de l'engrenage
+    \fill[ensaiblue!40]
+      (0,0) circle (1cm);
+
+    % Dents
+    \foreach \i in {0,...,11} {
+      \begin{scope}[rotate=\i*30]
+        \fill[ensaiblue!30]
+          (-0.17cm,0.78cm)
+          rectangle
+          (0.17cm,1.20cm);
+      \end{scope}
+    }
+
+    % Trou central
+    \fill[white]
+      (0,0) circle (0.32cm);
+
+    % Contours
+    \draw[
+      ensaiblue!60,
+      line width=0.8pt
+    ]
+      (0,0) circle (1cm);
+
+    \draw[
+      darkgray!40,
+      line width=0.8pt
+    ]
+      (0,0) circle (0.32cm);
+
+  \end{scope}%
+}
+
+% ============================================================
+% TITRES
+% ============================================================
+
+\titleformat{\section}
+    {\Large\bfseries}
+    {\thesection}
+    {0.8em}
+    {}
+
+\titleformat{\subsection}
+    {\large\bfseries}
+    {\thesubsection}
+    {0.8em}
+    {}
+
+\titleformat{\subsubsection}
+    {\normalsize\bfseries}
+    {\thesubsubsection}
+    {0.8em}
+    {}
+
+  
+\renewcommand{\sectionmark}[1]{%
+    \markboth{#1}{#1}%
+}
+
+\titlespacing*{\section}
+    {0pt}{2em}{1em}
+
+\titlespacing*{\subsection}
+    {0pt}{1.5em}{0.7em}
+
+\titlespacing*{\subsubsection}
+    {0pt}{1.2em}{0.5em}
+
+% ============================================================
+% MOTIF NUMÉRO DE PAGE
+% ============================================================
+
+\newcommand{\pagenumbermotif}{%
+\begin{tikzpicture}[remember picture,overlay]
+
+    % Centre du motif
+\coordinate (C) at
+    ([xshift=-1.50cm,yshift=1.45cm]current page.south east);
+
+% Numéro de page
+\node[
+    font=\small,
+    text=darkgray
+] at ([yshift=0.10cm]C)
+    {\thepage};
+
+
+% ========================================================
+% 1er ARC — GRAND
+% ========================================================
+
+\foreach \i in {0,...,24} {
+
+    \pgfmathsetmacro{\angle}{220 - \i*7.5}
+
+    \draw[
+        ensaiblue,
+        line width=0.70pt
+    ]
+    ([shift={(\angle:1.05cm)}]C)
+    --
+    ([shift={(\angle:1.25cm)}]C);
+}
+
+
+% ========================================================
+% 2ème ARC — MOYEN
+% ========================================================
+
+\foreach \i in {0,...,17} {
+
+    \pgfmathsetmacro{\angle}{208 - \i*7.8}
+
+    \draw[
+        ensaiblue!72,
+        line width=0.63pt
+    ]
+    ([shift={(\angle:0.75cm)}]C)
+    --
+    ([shift={(\angle:0.94cm)}]C);
+}
+
+
+% ========================================================
+% 3ème ARC — PETIT
+% ========================================================
+
+\foreach \i in {0,...,11} {
+
+    \pgfmathsetmacro{\angle}{195 - \i*8.0}
+
+    \draw[
+        ensaiblue!48,
+        line width=0.57pt
+    ]
+    ([shift={(\angle:0.51cm)}]C)
+    --
+    ([shift={(\angle:0.65cm)}]C);
+}
+
+\end{tikzpicture}%
+}
+
+% ============================================================
+% EN-TÊTE / PIED DE PAGE
+% ============================================================
+
+\pagestyle{fancy}
+
+\fancyhf{}
+
+\fancyhead[L]{%
+    \raisebox{-0.15cm}{%
+        \includegraphics[height=0.45cm]{img/Ensai-petit_logo.png}%
+    }
+}
+
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\fancyfoot[L]{%
+    \small\textsc{\leftmark}%
+}
+\fancyfoot[R]{%
+    \pagenumbermotif
+}
+
+\makeatletter
+\pretocmd{\section}{\markboth{}{}}{}{}
+\makeatother
+
+% ============================================================
+% ARRIÈRE-PLAN DE LA PAGE DE GARDE
+% ============================================================
+
+\newcommand{\coverbackground}{%
+\begin{tikzpicture}[remember picture,overlay]
+
+    % ========================================================
+    % TRIANGLE BLEU EN HAUT À GAUCHE
+    % ========================================================
+    %
+    % Beaucoup plus court que précédemment.
+    %
+
+    \fill[ensailightblue]
+        (current page.north west)
+        --
+        ([xshift=3.8cm]current page.north west)
+        --
+        ([yshift=-7.2cm]current page.north west)
+        --
+        cycle;
+
+    % ========================================================
+    % PETIT RÉSEAU DE POINTS EN HAUT
+    % ========================================================
+
+    % lignes horizontales
+    \foreach \y in {-0.7,-1.7,-2.7} {
+
+        \draw[
+            ensaiblue!12,
+            line width=0.5pt
+        ]
+        ([xshift=3.2cm,yshift=\y cm]current page.north west)
+        --
+        ([xshift=8.7cm,yshift=\y cm]current page.north west);
+    }
+
+    % lignes verticales
+    \foreach \x in {3.5,4.5,5.5,6.5,7.5} {
+
+        \draw[
+            ensaiblue!12,
+            line width=0.5pt
+        ]
+        ([xshift=\x cm,yshift=-0.2cm]current page.north west)
+        --
+        ([xshift=\x cm,yshift=-3.2cm]current page.north west);
+    }
+
+    % points
+    \foreach \x in {3.5,4.5,5.5,6.5,7.5} {
+        \foreach \y in {-0.7,-1.7,-2.7} {
+
+            \fill[
+                ensaiblue!25
+            ]
+            ([xshift=\x cm,yshift=\y cm]current page.north west)
+            circle (1.25pt);
+        }
+    }
+
+    % ========================================================
+    % TRIANGLE GRIS EN BAS À DROITE
+    % ========================================================
+    %
+    % Le bord droit est maintenant exactement sur le bord
+    % droit de la page.
+    %
+
+    \fill[lightgray!65]
+        (current page.south east)
+        --
+        ([xshift=-5.0cm]current page.south east)
+        --
+        ([yshift=6.0cm]current page.south east)
+        --
+        cycle;
+
+    % ========================================================
+    % RÉSEAU DE LIGNES EN BAS
+    % ========================================================
+
+    % --------------------------------------------------------
+    % Ligne 1 : très claire
+    % --------------------------------------------------------
+
+    \draw[
+        ensaiblue!12,
+        line width=0.55pt
+    ]
+    ([xshift=-1cm,yshift=1.55cm]current page.south west)
+    --
+    ([xshift=3.8cm,yshift=0.8cm]current page.south west)
+    --
+    ([xshift=8.0cm,yshift=1.8cm]current page.south west)
+    --
+    ([xshift=12.5cm,yshift=0.5cm]current page.south west)
+    --
+    ([xshift=18cm,yshift=1.4cm]current page.south west);
+
+    % --------------------------------------------------------
+    % Ligne 2 : un peu plus visible
+    % --------------------------------------------------------
+
+    \draw[
+        ensaiblue!20,
+        line width=0.55pt
+    ]
+    ([xshift=-1cm,yshift=0.7cm]current page.south west)
+    --
+    ([xshift=4.8cm,yshift=2.0cm]current page.south west)
+    --
+    ([xshift=8.5cm,yshift=0.4cm]current page.south west)
+    --
+    ([xshift=13.0cm,yshift=2.4cm]current page.south west)
+    --
+    ([xshift=18cm,yshift=0.8cm]current page.south west);
+
+    % --------------------------------------------------------
+    % Ligne 3 : très transparente
+    % --------------------------------------------------------
+
+    \draw[
+        ensaiblue!9,
+        line width=0.5pt
+    ]
+    ([xshift=0cm,yshift=2.6cm]current page.south west)
+    --
+    ([xshift=5.5cm,yshift=1.3cm]current page.south west)
+    --
+    ([xshift=10cm,yshift=2.8cm]current page.south west)
+    --
+    ([xshift=15cm,yshift=1.0cm]current page.south west)
+    --
+    ([xshift=18cm,yshift=2.2cm]current page.south west);
+
+    % --------------------------------------------------------
+    % Ligne 4 : encore plus claire
+    % --------------------------------------------------------
+
+    \draw[
+        ensaiblue!6,
+        line width=0.5pt
+    ]
+    ([xshift=-1cm,yshift=2.9cm]current page.south west)
+    --
+    ([xshift=4cm,yshift=2.2cm]current page.south west)
+    --
+    ([xshift=9cm,yshift=3.0cm]current page.south west)
+    --
+    ([xshift=14cm,yshift=1.8cm]current page.south west)
+    --
+    ([xshift=18cm,yshift=2.7cm]current page.south west);
+
+    % ========================================================
+    % POINTS BLEUS SUR LES INTERSECTIONS
+    % ========================================================
+
+    \fill[ensaiblue]
+        ([xshift=3.8cm,yshift=0.8cm]current page.south west)
+        circle (1.5pt);
+
+    \fill[ensaiblue]
+        ([xshift=4.8cm,yshift=2.0cm]current page.south west)
+        circle (1.5pt);
+
+    \fill[ensaiblue]
+        ([xshift=8.5cm,yshift=0.4cm]current page.south west)
+        circle (1.5pt);
+
+    \fill[ensaiblue]
+        ([xshift=13.0cm,yshift=2.4cm]current page.south west)
+        circle (1.5pt);
+
+    \fill[ensaiblue]
+        ([xshift=15.0cm,yshift=1.0cm]current page.south west)
+        circle (1.5pt);
+
+    \fill[ensaiblue]
+        ([xshift=18cm,yshift=0.8cm]current page.south west)
+        circle (1.5pt);
+
+\end{tikzpicture}%
+}
+
+% ============================================================
+% DOCUMENT
+% ============================================================
+
+\begin{document}
+
+% ============================================================
+% PAGE DE GARDE
+% ============================================================
+
+\begin{titlepage}
+
+\thispagestyle{empty}
+
+\coverbackground
+
+% ============================================================
+% LOGO ENSAI
+% ============================================================
+
+\begin{flushright}
+
+\vspace*{-1.2cm}
+
+\includegraphics[
+    width=0.6\textwidth
+]{img/ensai_logo.png}
+
+\end{flushright}
+
+\vspace{1.5cm}
+
+% ============================================================
+% TITRE / SUBTITLE + ENGRENAGES
+% ============================================================
+
+\begin{tikzpicture}[
+    remember picture,
+    overlay
+]
+
+    % --------------------------------------------------------
+    % ENGRENAGE BAS GAUCHE
+    % --------------------------------------------------------
+
+    \begin{scope}[
+        shift={([xshift=4cm,yshift=-15cm]current page.north west)}
+    ]
+        \gear{0.95}
+    \end{scope}
+
+
+    % --------------------------------------------------------
+    % ENGRENAGE HAUT DROITE
+    % --------------------------------------------------------
+
+    \begin{scope}[
+        shift={([xshift=16.8cm,yshift=-11.35cm]current page.north west)}
+    ]
+        \gear{0.95}
+    \end{scope}
+
+\end{tikzpicture}
+
+% ============================================================
+% SUBTITLE
+% ============================================================
+
+\begin{center}
+
+    \rule{0.82\textwidth}{0.5pt}
+
+    \vspace{0.3cm}
+
+    {\fontsize{22}{27}\selectfont
+    \textbf{Projet Informatique de 2ème année :}
+
+    \par\vspace{0.3cm}
+
+
+    \textbf{CleansOps}
+    }
+
+    \vspace{0.2cm}
+
+    \rule{0.82\textwidth}{0.5pt}
+
+\end{center}
+
+\vspace{1.4cm}
+
+% ============================================================
+% NOM = $titre$
+% ============================================================
+
+\begin{center}
+
+{\large
+\textsc{$title$}
+}
+
+\vspace{1.3cm}
+
+
+{\small{17 Septembre 2026}}
+
+
+\end{center}
+
+
+% ============================================================
+% ÉQUIPE / TUTEUR
+% ============================================================
+
+\begin{center}
+
+\begin{tabularx}{0.90\textwidth}{>{\raggedright\arraybackslash}X >{\raggedleft\arraybackslash}X}
+
+% ------------------------------------------------------------
+% ÉQUIPE
+% ------------------------------------------------------------
+
+\begin{flushleft}
+
+\textit{\textbf{Équipe n\textdegree 34 :}}\\[0.2cm]
+
+\textsc{MANAMBIRAVAKA Anaëlle}\\
+\textsc{NADIN Sarah}\\
+\textsc{NICOLIE Galahade}\\
+\textsc{PERRIN-BEAU Madie}\\
+\textsc{VILARRUPLA Thomas}\\
+\textsc{ZHU Annabelle}
+
+\end{flushleft}
+
+&
+
+% ------------------------------------------------------------
+% TUTEUR
+% ------------------------------------------------------------
+
+\begin{flushright}
+
+\textit{\textbf{Tuteur :}}
+
+\vspace{0.15cm}
+
+\textsc{$keywords$}
+
+\end{flushright}
+
+\end{tabularx}
+
+\end{center}
+
+\vspace{1.3cm}
+
+\end{titlepage}
+
+% ============================================================
+% TABLE DES MATIÈRES
+% ============================================================
+
+\clearpage
+
+\pagestyle{fancy}
+
+\renewcommand{\contentsname}{Table des matières}
+
+\tableofcontents
+
+% ============================================================
+% CONTENU QUARTO
+% ============================================================
+
+\clearpage
+
+$body$
+
+\end{document}
