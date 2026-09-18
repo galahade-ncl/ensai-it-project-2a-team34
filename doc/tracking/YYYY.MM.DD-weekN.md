@@ -3,7 +3,7 @@
 Date: Jeudi ...
 Semaine n° ...
 
-## Tâches réalisées cette semaine
+## :memo: Tâches réalisées cette semaine
 
 ### MANAMBIRAVAKA Anaëlle
 
@@ -31,8 +31,11 @@ Semaine n° ...
 
 - 
 
+## :handshake: Réunions organisées cette semaine
 
-## Backlog
+-
+
+## :bullseye: Backlog
 
 > Liste des tâches en attente de prise en charge.
 
