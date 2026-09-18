@@ -35,7 +35,7 @@ Semaine n° ...
 
 -
 
-## :bullseye: Backlog
+## :dart: Backlog
 
 > Liste des tâches en attente de prise en charge.
 
