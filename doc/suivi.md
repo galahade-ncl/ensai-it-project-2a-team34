@@ -2,9 +2,9 @@
 
 # :clipboard:  Présentation du sujet
 
-* **Sujet** : Application pour gérer une liste de players et de joueuses
-* **Tuteur / Tutrice** : Rick Auray (rick.auray@ensai.fr)
-* [Dépôt GitHub](https://github.com/ludo2ne/ENSAI-projet-info-2A-template)
+* **Sujet** : Application pour gérer et analyser des projets informatiques
+* **Tuteur / Tutrice** : Adrien Lacaille (adrien.lacaille@gmail.com)
+* [Dépôt GitHub](https://github.com/galahade-ncl/ensai-it-project-2a-team34.git)
 
 # :dart: Échéances
 
@@ -20,7 +20,6 @@ gantt
     axisFormat  %d %b
     title       Diagramme de Gantt
     %%excludes  YYYY-MM-DD and/or sunday and/or weekends 
-     
     section Suivi
     TP1 et Suivi 1               :milestone, 2023-09-01,
     TP2 et Suivi 2               :milestone, 2023-09-08,
@@ -57,9 +56,9 @@ gantt
 
 | Date    | Livrables                                                    |
 | ------- | ------------------------------------------------------------ |
-| 07 oct. | [Dossier d'Analyse](https://www.overleaf.com/)               |
-| 25 nov. | Rapport final + code (:hammer_and_wrench:  [correcteur orthographe et grammaire](https://www.scribens.fr/))|
-| 12 déc. | Soutenance                                                   |
+| 17 sep. | [Dossier d'Analyse](https://www.overleaf.com/)               |
+| 21 nov. | Rapport final + code (:hammer_and_wrench:  [correcteur orthographe et grammaire](https://www.scribens.fr/))|
+|  9 déc. | Soutenance                                                   |
 
 # :construction: Todo List
 
@@ -68,23 +67,31 @@ gantt
 * [x] Diagramme de Gantt
 * [x] Diagramme de cas d'utilisation
 * [x] Diagramme de classe
-* [ ] Répartition des parties à rédiger
+* [x] Diagramme d'activité
+* [x] Diagramme de séquence
+* [x] Diagramme de package
+* [x] Répartition des parties à rédiger
+* [x] Template pdf
 
 ## Code
 
-* [ ] Créer dépôt Git commun
+* [x] Créer dépôt Git commun
   * [ ] vérifier que tout le monde peut **push** et **pull**
+* [x] Lister classes et méthodes à coder
+* [x] Réflechir à l'architecture du code
 * [ ] Version 0 de l'application
-  * coder une et une seule fonctionnalité simple de A à Z, et faire tourner l'appli
-  * cela permettra à toute l'équipe d'avoir une bonne base de départ
-* [ ] Lister classes et méthodes à coder
+  * [ ] coder les classes objets
+  * [ ] coder les bases de données + DAO
+  * [ ] coder la partie service
+  * [ ] coder l'API (main + controller)
+  * [ ] tests unitaires
+* [ ] Gérer les éventuels bugs
+* [ ] Créer un frontend
 
----
+## Rendu final
 
-* [ ] appel WS
-* [ ] création WS
-* [ ] Vue inscription
-* [ ] hacher password
+## Soutenance
+
 
 ---
 
