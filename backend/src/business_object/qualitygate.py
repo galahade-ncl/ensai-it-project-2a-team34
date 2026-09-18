@@ -29,4 +29,4 @@ class QualityGate:
         Returns:
             str: A string containing the status and the details of the quality gate.
         """
-        return f"Status : {self.status}" + "\n" + f"Details : {self.max_vulnerabilities}) vulnerabilities, {self.max_critical_vulnerabilities} critical vulnerabilities, {self.max_carbon_emission} carbon emission"
+        return f"Status : {self.status}" + "\n" + f"Details : {self.max_vulnerabilities} vulnerabilities, {self.max_critical_vulnerabilities} critical vulnerabilities, {self.max_carbon_emission} carbon emission"
