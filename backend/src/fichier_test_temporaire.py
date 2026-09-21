@@ -1,5 +1,5 @@
-from business_object.qualitygate import QualityGate
 from business_object.project import Project
+from business_object.qualitygate import QualityGate
 
 # Initialization
 # initialize_logs("Webservice")
