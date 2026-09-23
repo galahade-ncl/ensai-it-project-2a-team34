@@ -11,15 +11,27 @@ CREATE TABLE user (
 );
 
 -----------------------------------------------------
+-- Project table
+-----------------------------------------------------
+
+DROP TABLE IF EXISTS user CASCADE;
+CREATE TABLE project (
+    id_project      SERIAL PRIMARY KEY,
+    name_project    VARCHAR,
+    id_user         FOREIGN KEY,
+    HMAC_key        BYTEA,
+);
+
+-----------------------------------------------------
 -- File table
 -----------------------------------------------------
 
 DROP TABLE IF EXISTS user CASCADE;
 CREATE TABLE file (
-    id_file    SERIAL PRIMARY KEY,
-    name_file  VARCHAR
-    id_user    FOREIGN KEY,
-    HMAC_key   BYTEA,
+    id_file         SERIAL PRIMARY KEY,
+    name_file       VARCHAR,
+    type_file       VARCHAR,
+    project_file    FOREIGN KEY,
 );
 
 -----------------------------------------------------
@@ -28,6 +40,11 @@ CREATE TABLE file (
 
 DROP TABLE IF EXISTS user CASCADE;
 CREATE TABLE audit (
-    id_audit    SERIAL PRIMARY KEY,
-    id_file     FOREIGN KEY
+    id_audit                         SERIAL PRIMARY KEY,
+    id_project                       FOREIGN KEY,
+    date                             TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    complexity                       FLOAT,
+    energy_comsumption               FLOAT,
+    carbon_emission_gco2e            FLOAT,
+    status_qualitygate               VARCHAR
 );
