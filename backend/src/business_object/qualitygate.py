@@ -3,9 +3,9 @@ class QualityGate:
     Class representing the quality gate expected for an audit of a project
     Attributes:
         id_qualitygate (int): The unique identifier of the quality gate
-        max_vulnerabilities (int): Total of vulnerabilities of the project
-        max_critical_vulnerabilities (int): Total of citical vulnerabilities of the project
-        max_carbon_emission (int): Total of carbon emission of the project
+        max_vulnerabilities (int): Max vulnerabilities tolerated for a project
+        max_critical_vulnerabilities (int): Max critical vulnerabilities tolerated for a project
+        max_carbon_emission (int): Max carbon emission tolerated for a project
         status (str): Status of the quality gate
     """
 
@@ -29,4 +29,4 @@ class QualityGate:
         Returns:
             str: A string containing the status and the details of the quality gate.
         """
-        return f"Status : {self.status}" + "\n" + f"Details : {self.max_vulnerabilities} vulnerabilities, {self.max_critical_vulnerabilities} critical vulnerabilities, {self.max_carbon_emission} carbon emission"
+        return f"Status : {self.status}" + "\n" + f"Details : {self.max_vulnerabilities} max vulnerabilities, {self.max_critical_vulnerabilities} max critical vulnerabilities, {self.max_carbon_emission} max carbon emission"
