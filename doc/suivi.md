@@ -9,47 +9,87 @@
 # :dart: Échéances
 
 ---
-Dossier d'Analyse :  :clock1: <iframe src="https://free.timeanddate.com/countdown/i83zdl7u/n1264/cf11/cm0/cu2/ct4/cs0/ca0/co0/cr0/ss0/cac009/cpcf00/pcfff/tcfff/fs100/szw256/szh108/iso2023-10-07T12:00:00" allowtransparency="true" frameborder="0" width="130" height="16"></iframe>
+Dossier d'Analyse :  :clock1: <iframe src="https://free.timeanddate.com/countdown/i83zdl7u/n1264/cf11/cm0/cu2/ct4/cs0/ca0/co0/cr0/ss0/cac009/cpcf00/pcfff/tcfff/fs100/szw256/szh108/iso2026-10-07T12:00:00" allowtransparency="true" frameborder="0" width="130" height="16"></iframe>
 
 ---
 
 ```mermaid
+%%{init: {
+  "theme": "base",
+  "useWidth": 1800,
+  "gantt": {
+    "useWidth": 1000,
+    "barHeight": 20,
+    "barGap": 12
+  },
+
+  "themeVariables": {
+    "primaryColor": "#fdd882",
+    "primaryTextColor": "#172033",
+    "primaryBorderColor": "#D9788B",
+    "secondaryColor": "#C7DDF2",
+    "tertiaryColor": "#FFF1C9",
+    "critBkgColor": "#F4A6A6",
+    "critBorderColor": "#C65353",
+    "doneTaskBkgColor": "#B8DDBE",
+    "doneTaskBorderColor": "#5B9A68",
+    "activeTaskBkgColor": "#AFCFF0",
+    "activeTaskBorderColor": "#4E82B4",
+    "taskBkgColor": "#F3D6B8",
+    "taskBorderColor": "#C68A5B",
+    "taskTextColor": "#172033",
+    "sectionBkgColor": "#f6c6ac",
+    "altSectionBkgColor": "#f4e4df",
+    "sectionBorderColor": "#B47A4C"
+  }
+}}%%
+
 gantt
     %% doc : https://mermaid-js.github.io/mermaid/#/./gantt
     dateFormat  YYYY-MM-DD
     axisFormat  %d %b
+    tickInterval 1week
     title       Diagramme de Gantt
-    %%excludes  YYYY-MM-DD and/or sunday and/or weekends 
+    %%excludes  YYYY-MM-DD and/or sunday and/or weekends
     section Suivi
-    TP1 et Suivi 1               :milestone, 2023-09-01,
-    TP2 et Suivi 2               :milestone, 2023-09-08,
-    TP3 et suivi 3                         :milestone, 2023-09-15,
-    TP4                
-    :milestone, 2023-09-29,
-    Suivi 4                      :milestone, 2023-10-13,
-    3j immersion                 :active,    2023-10-25, 3d
-    Suivi 7                      :milestone, 2023-11-17,
-    
-    section Rendu
-    Dossier Analyse              :milestone, 2023-10-07,
-    Rapport + Code               :milestone, 2023-11-25,
-    Soutenance                   :milestone, 2023-12-11,
-    
-    section Vac
-    Toussaint                    :crit,    2023-10-28, 2023-11-05
-    
-    section Analyse
-    analyse sujet                :done,      2023-09-01, 15d
-    modélisation                 :active,    2023-09-08, 15d
-    rédaction                    :active,    2023-09-20, 2023-10-05
-    relecture                    :active,    2023-10-05, 2023-10-07
-    
-    section Code
-    coder une v0                 :active,    2023-09-20, 15d
-    lister classes à coder       :active,    2023-10-07, 7d
-    
+    TP1 et Suivi 1               :milestone, 2026-08-28, 0d
+    TP2 et Suivi 2               :milestone, 2026-09-04, 0d
+    TP3 et suivi 3               :milestone, 2026-09-11, 0d
+    TP4 (sans suivi)             :milestone, 2026-09-18, 0d
+    TP5 et suivi 4               :milestone, 2026-09-25, 0d
+    3j immersion                 :active,    2026-11-03, 3d
+    Suivi 7                      :milestone, 2026-11-20, 0d
 
-    %%Stats univariées retraités   :done,         2021-11-28, 3d
+    section Rendu
+    Dossier Analyse              :milestone, crit, 2026-09-17, 0d
+    Rapport + Code               :milestone, crit,2026-11-21, 0d
+    Soutenance                   :milestone, crit,2026-12-09, 0d
+
+    section Vac
+    Toussaint                    :2026-10-24, 8d
+
+    section Analyse
+    analyse du sujet             :done,      2026-08-28, 21d
+    modélisation                 :done,    2026-09-02, 16d
+    rédaction 1                  :done,      2026-09-10, 8d
+    rédaction 2 (rapport final)  :active,    2026-10-23, 29d
+    relecture                    :active,    2026-11-14, 7d
+
+    section Code
+    lister classes à coder                 :done,     2026-09-04, 14d
+    architecture du code                   :done,     2026-09-11, 14d
+    coder une v0                           :active,   2026-09-18, 42d
+    coder les classes objets               :active,   2026-09-18, 21d
+    coder DAO et BDD                       :active,   2026-09-25, 21d
+    coder user/project service             :active,   2026-10-02, 21d
+    API interne                            :active,   2026-10-02, 21d
+    coder l'audit service                  :active,   2026-10-09, 21d
+    gestion des bugs et améliorations      :active,   2026-10-16, 30d
+    ajout de fonctionnalités optionnelles  :active,   2026-10-23, 29d
+
+
+
+    %%Stats univariées retraités   :done,         2026-11-28, 3d
 ```
 
 # :calendar: Livrables
