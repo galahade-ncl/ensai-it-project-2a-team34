@@ -206,24 +206,27 @@ classDiagram
     }
 
     %% Controllers
-    namespace API {
-        class UserController {
-            +user_by_id(int): User
-            +create_user(UserModel): User
-            +update_user(int, UserModel): str
-            +delete_user(int): str
-        }
+    %% namespace API {
+    %%     class UserController {
+    %%         +user_by_id(int): User
+    %%         +create_user(UserModel): User
+    %%         +update_user(int, UserModel): str
+    %%         +delete_user(int): str
+    %%     }
 
-        class ProjectController {
-            +file_by_id(int): Project
-            +create_project(ProjectModel): Project
-            +update_project(int, ProjectModel): str
-            +delete_project(int): str
-            +all_audit(Project): list[Audit]
-            +last_audit(Project): Audit
-            +create_audit(AuditModel): Audit
+    %%     class ProjectController {
+    %%         +file_by_id(int): Project
+    %%         +create_project(ProjectModel): Project
+    %%         +update_project(int, ProjectModel): str
+    %%         +delete_project(int): str
+    %%         +all_audit(Project): list[Audit]
+    %%         +last_audit(Project): Audit
+    %%         +create_audit(AuditModel): Audit
+    %%     }
+    %% }
+
+    class API {
         }
-    }
 
     %% Relationships
     User "1" ..> "0..*" Project : owns
@@ -233,7 +236,7 @@ classDiagram
     UserService ..> FileDAO : calls
     UserService ..> Project : uses
     UserDAO ..> User : uses
-    UserController ..> UserService : calls
+    API ..> UserService : calls
     FileService ..> File : uses
     ProjectService ..> Project : uses
     ProjectService ..> ProjectDAO : calls
@@ -246,7 +249,7 @@ classDiagram
     ProjectService ..> AuditDAO : calls
     ProjectDAO ..> Project : uses
     FileDAO ..> File : uses
-    ProjectController ..> ProjectService : calls
+    API ..> ProjectService : calls
     AuditService ..> Audit : uses
     AuditService ..> AuditDAO : calls
     AuditService ..> File : uses
@@ -306,8 +309,8 @@ classDiagram
     style SBOMService fill:#E8F5E9,stroke:#43A047
     style QualityGateService fill:#E8F5E9,stroke:#43A047
 
-    style UserController fill:#F3E5F5,stroke:#8E44AD
-    style ProjectController fill:#F3E5F5,stroke:#8E44AD
+    %% style API fill:#F3E5F5,stroke:#8E44AD
+    %% style ProjectController fill:#F3E5F5,stroke:#8E44AD
 
     style API fill:#F3E5F5,stroke:#8E44AD,color:#000
 ```
