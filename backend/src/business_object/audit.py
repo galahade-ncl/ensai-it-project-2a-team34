@@ -32,7 +32,7 @@ class Audit:
         self.id_audit = id_audit
         self.id_project = id_project
         self.date = date
-        self.vulnerabilities  =vulnerabilities
+        self.vulnerabilities = vulnerabilities
         self.licenses = licenses
         self.anti_patterns = anti_patterns
         self.complexity = complexity
@@ -44,4 +44,3 @@ class Audit:
     def __str__(self):
         """Returns a string representation of the audit
         """
-        
