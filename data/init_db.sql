@@ -40,11 +40,13 @@ CREATE TABLE file (
 
 DROP TABLE IF EXISTS user CASCADE;
 CREATE TABLE audit (
-    id_audit                         SERIAL PRIMARY KEY,
-    id_project                       FOREIGN KEY,
-    date                             TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    complexity                       FLOAT,
-    energy_comsumption               FLOAT,
-    carbon_emission_gco2e            FLOAT,
-    status_qualitygate               VARCHAR
+    id_audit                                  SERIAL PRIMARY KEY,
+    id_project                                FOREIGN KEY,
+    date                                      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    max_vulnerability                         FLOAT,
+    max_critical_vulnerability                FLOAT,
+    complexity                                FLOAT,
+    energy_comsumption                        FLOAT,
+    carbon_emission_gco2e                     FLOAT,
+    status_qualitygate                        VARCHAR
 );
