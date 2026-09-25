@@ -49,12 +49,12 @@ class AuditDao(metaclass=Singleton):
         return created
 
     @log
-    def find_by_id(self, id_user: int) -> User:
-        """Find a user by their id.
+    def find_by_id(self, id_audit: int) -> User:
+        """Find an audit by their id.
         Args:
-            id_user (int): The ID of the user to find
+            id_audit (int): The ID of the audit to find
         Returns:
-            User matching the given id
+            Audit matching the given id
         """
         try:
             with DBConnection().connection as connection:
