@@ -1,4 +1,4 @@
-from business_object.user import User
+from business_object.audit import Audit
 from dao.db_connection import DBConnection
 from utils.log_utils import get_logger, log
 from utils.singleton import Singleton
@@ -7,7 +7,7 @@ logger = get_logger(__name__)
 
 
 class AuditDao(metaclass=Singleton):
-    """Class containing methods to access Audit  in the database."""
+    """Class containing methods to access Audit in the database."""
 
     @log
     def create(self, audit) -> bool:
@@ -49,7 +49,7 @@ class AuditDao(metaclass=Singleton):
         return created
 
     @log
-    def find_by_id(self, id_audit: int) -> User:
+    def find_by_id(self, id_audit: int) -> Audit:
         """Find an audit by their id.
         Args:
             id_audit (int): The ID of the audit to find
@@ -61,31 +61,38 @@ class AuditDao(metaclass=Singleton):
                 with connection.cursor() as cursor:
                     cursor.execute(
                         "SELECT *                            "
-                        "  FROM user                       "
-                        " WHERE id_user = %(id_user)s;   ",
-                        {"id_user": id_user},
+                        "  FROM audit                       "
+                        " WHERE id_audit = %(id_audit)s;   ",
+                        {"id_audit": id_audit},
                     )
                     res = cursor.fetchone()
         except Exception as e:
             logger.error(e)
             raise
 
-        user = None
+        audit = None
         if res:
-            user = User(
-                username=res["username"],
-                email=res["email"],
-                id_user=res["id_user"],
-                password=res["password"],
+            audit = Audit(
+                id_audit=res["id_audit"],
+                id_project=res["id_project"],
+                date=res["date"],
+                vulnerabilities=res["vulnerabilities"],
+                licenses=res["licenses"],
+                antipatterns=res["antipattern"],
+                complexity=res["complexity"],
+                energy_consumption_kwh=res["energy_consumption_kwh"],
+                carbon_emission_gco2e=res["carbon_emission_gco2e"],
+                sbom=res["sbom"],
+                quality_gate=res["quality_gate"],
             )
 
-        return user
+        return audit
 
     @log
-    def find_all(self) -> list[User]:
-        """List all users in the database.
+    def find_all(self) -> list[Audit]:
+        """List all audits in the database.
         Returns:
-            list[User] sorted by username
+            list[Audit] sorted by username
         """
 
         try:
@@ -93,7 +100,7 @@ class AuditDao(metaclass=Singleton):
                 with connection.cursor() as cursor:
                     cursor.execute(
                         "SELECT *                                "
-                        "  FROM user                           "
+                        "  FROM audit                           "
                         " ORDER BY username;                     "
                     )
                     res = cursor.fetchall()
@@ -105,22 +112,29 @@ class AuditDao(metaclass=Singleton):
 
         if res:
             for row in res:
-                user = User(
-                    id_player=row["id_player"],
-                    username=row["username"],
-                    password=row["password"],
-                    email=row["email"],
+                audit = Audit(
+                    id_audit=row["id_audit"],
+                    id_project=row["id_project"],
+                    date=row["date"],
+                    vulnerabilities=row["vulnerabilities"],
+                    licenses=row["licenses"],
+                    antipatterns=row["antipattern"],
+                    complexity=row["complexity"],
+                    energy_consumption_kwh=row["energy_consumption_kwh"],
+                    carbon_emission_gco2e=row["carbon_emission_gco2e"],
+                    sbom=row["sbom"],
+                    quality_gate=row["quality_gate"],
                 )
 
-                users_list.append(user)
+                users_list.append(audit)
 
         return users_list
 
     @log
-    def update(self, user) -> bool:
-        """Update a user in the database.
+    def update(self, audit) -> bool:
+        """Update a audit in the database.
         Args:
-            User to be updated
+            Audit to be updated
         Returns:
             True if update is successful, False otherwise
         """
@@ -130,18 +144,18 @@ class AuditDao(metaclass=Singleton):
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
-                        "UPDATE user                                                  "
+                        "UPDATE audit                                                  "
                         "   SET username = %(username)s,                                "
                         "       password = COALESCE(%(password)s, password),            "
                         "       email = %(email)s,                                      "
                         "       access_token = COALESCE(%(access_token)s, access_token) "
                         " WHERE id_user = %(id_user)s;                              ",
                         {
-                            "username": user.username,
-                            "password": user.password,
-                            "email": user.email,
-                            "access_token": user.access_token,
-                            "id_user": user.id_user,
+                            "username": audit.username,
+                            "password": audit.password,
+                            "email": audit.email,
+                            "access_token": audit.access_token,
+                            "id_user": audit.id_user,
                         },
                     )
                     nb_affected_rows = cursor.rowcount
@@ -152,20 +166,20 @@ class AuditDao(metaclass=Singleton):
         return nb_affected_rows == 1
 
     @log
-    def delete(self, user) -> bool:
-        """Delete a user from the database.
+    def delete(self, audit) -> bool:
+        """Delete a audit from the database.
         Args:
-            User to delete from the database
+            Audit to delete from the database
         Returns:
-            True if the user was successfully deleted, False otherwise
+            True if the audit was successfully deleted, False otherwise
         """
         try:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
-                        "DELETE FROM user                               "
+                        "DELETE FROM audit                               "
                         " WHERE id_user = %(id_user)s                 ",
-                        {"id_user": user.id_user},
+                        {"id_user": audit.id_user},
                     )
                     res = cursor.rowcount
         except Exception as e:
@@ -175,13 +189,13 @@ class AuditDao(metaclass=Singleton):
         return res > 0
 
     @log
-    def login(self, username: str, password: str) -> User:
+    def login(self, username: str, password: str) -> Audit:
         """Login using username and password.
         Args:
             username (str)
             password (str)
         Returns:
-            User or None
+            Audit or None
         """
         res = None
         try:
@@ -189,7 +203,7 @@ class AuditDao(metaclass=Singleton):
                 with connection.cursor() as cursor:
                     cursor.execute(
                         "SELECT *                               "
-                        "  FROM user                          "
+                        "  FROM audit                          "
                         " WHERE username = %(username)s         "
                         "   AND password = %(password)s;        ",
                         {"username": username, "password": password},
@@ -199,10 +213,10 @@ class AuditDao(metaclass=Singleton):
             logger.error(e)
             raise
 
-        user = None
+        audit = None
 
         if res:
-            user = User(
+            audit = Audit(
                 username=res["username"],
                 password=res["password"],
                 email=res["email"],
@@ -210,15 +224,15 @@ class AuditDao(metaclass=Singleton):
                 id_player=res["id_player"],
             )
 
-        return user
+        return audit
 
     @log
-    def find_by_token(self, access_token: str) -> User:
-        """Find a user by their access token.
+    def find_by_token(self, access_token: str) -> Audit:
+        """Find a audit by their access token.
         Args:
             access_token (str): The token to search for.
         Returns:
-            User object if found, otherwise None.
+            Audit object if found, otherwise None.
         """
         if not access_token:
             return None
@@ -229,18 +243,18 @@ class AuditDao(metaclass=Singleton):
                 with connection.cursor() as cursor:
                     cursor.execute(
                         "SELECT *                                "
-                        "  FROM user                           "
+                        "  FROM audit                           "
                         " WHERE access_token = %(token)s;        ",
                         {"token": access_token},
                     )
                     res = cursor.fetchone()
         except Exception as e:
-            logger.error(f"Error finding user by token: {e}")
+            logger.error(f"Error finding audit by token: {e}")
             raise
 
-        user = None
+        audit = None
         if res:
-            user = User(
+            audit = Audit(
                 id_player=res["id_player"],
                 username=res["username"],
                 password=res["password"],
@@ -248,4 +262,4 @@ class AuditDao(metaclass=Singleton):
                 access_token=res["access_token"],
             )
 
-        return user
+        return audit
