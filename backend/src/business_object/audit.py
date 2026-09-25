@@ -38,7 +38,7 @@ class Audit:
         self.complexity = complexity
         self.energy_consumption_kwh = energy_consumption_kwh
         self.carbon_emission_gco2e = carbon_emission_gco2e
-        self. sbom = sbom
+        self.sbom = sbom
         self.quality_gate = quality_gate
 
     def __str__(self):
