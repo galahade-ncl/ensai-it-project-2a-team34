@@ -1,4 +1,3 @@
-
 # Diagramme de classes des objets métiers
 
 Ce diagramme est codé avec [mermaid](https://mermaid.js.org/syntax/classDiagram.html) :
@@ -24,94 +23,6 @@ Pour afficher ce diagramme dans VScode :
   "themeCSS": ".cluster:nth-of-type(1) rect {   fill: #b3ccf8 !important; stroke: #3086e8 !important; width: 700px !important; } .cluster:nth-of-type(2) rect { fill: #ccf0ff !important; stroke: #586cff !important; width: 1100px !important; } .cluster:nth-of-type(3) rect { fill: #e1baf1 !important; stroke: #8E44AD !important;}"}}%%
 
 classDiagram
-    %% Business objects
-    class User {
-        +id_user: int
-        +username: string
-        +password: string
-        +email: string
-    }
-
-    namespace ProjectClasses {
-        class Project {
-            +id_project: int
-            +name_project: string
-            +user: User
-            +codefile: CodeFile
-            +dependencyfile: DependencyFile
-            +HMACkey: hmac.HMAC
-        }
-
-        class File {
-            +id_file: int
-            +date: datetime
-            +path: str
-            +submit(): bool
-        }
-
-        class CodeFile {
-            +id_file: int
-            +date: datetime
-            +path: str
-            +tree: ast.Module
-            +submit(): bool
-        }
-
-        class DependencyFile {
-            +id_file: int
-            +date: datetime
-            +path: str
-            +dependencylist: list[str]
-            +submit(): bool
-        }
-    }
-
-    namespace AuditClasses {
-        class Audit {
-           +id_audit: int
-           +id_project: int
-            +date: datetime
-            +vulnerabilities: list[Vulnerability]
-            +licenses: list[License]
-            +anti_patterns: list[AntiPattern]
-            +complexity: float
-            +energy_consumption_kwh: float
-            +carbon_emission_gco2e: float
-            +sbom: SBOM
-            +quality_gate: QualityGate
-        }
-
-        class Vulnerability {
-            +id_vulnerability: int
-            +osv_id: str
-            +cve_id: str | None
-            +severity: str
-            +package: str
-            +version_package: str
-        }
-
-        class License {
-            +id_license: int
-            +name: str
-            +risk_level: str
-        }
-
-        class AntiPattern {
-            +id_antipattern: int
-            +type: str
-            +line: int
-            +description: str
-        }
-
-        class QualityGate {
-            +id_quality_gate: int
-            +max_vulnerabilities: int
-            +max_critical_vulnerabilities: int
-            +max_carbon_emission: float
-            +status: string
-        }
-    }
-
     %% Data Access Objects
     class UserDAO {
         +create(User): bool
@@ -206,91 +117,52 @@ classDiagram
     }
 
     %% Controllers
-    namespace API {
-        class UserController {
-            +user_by_id(int): User
-            +create_user(UserModel): User
-            +update_user(int, UserModel): str
-            +delete_user(int): str
-        }
+    %% namespace API {
+    %%     class UserController {
+    %%         +user_by_id(int): User
+    %%         +create_user(UserModel): User
+    %%         +update_user(int, UserModel): str
+    %%         +delete_user(int): str
+    %%     }
 
-        class ProjectController {
-            +file_by_id(int): Project
-            +create_project(ProjectModel): Project
-            +update_project(int, ProjectModel): str
-            +delete_project(int): str
-            +all_audit(Project): list[Audit]
-            +last_audit(Project): Audit
-            +create_audit(AuditModel): Audit
+    %%     class ProjectController {
+    %%         +file_by_id(int): Project
+    %%         +create_project(ProjectModel): Project
+    %%         +update_project(int, ProjectModel): str
+    %%         +delete_project(int): str
+    %%         +all_audit(Project): list[Audit]
+    %%         +last_audit(Project): Audit
+    %%         +create_audit(AuditModel): Audit
+    %%     }
+    %% }
+
+    class API {
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         }
-    }
 
     %% Relationships
-    User "1" ..> "0..*" Project : owns
-    Project "1" ..> "0..*" Audit : owns
     UserService ..> UserDAO : calls
-    UserService ..> User : uses
     UserService ..> FileDAO : calls
-    UserService ..> Project : uses
-    UserDAO ..> User : uses
-    UserController ..> UserService : calls
-    FileService ..> File : uses
-    ProjectService ..> Project : uses
+    API ..> UserService : calls
     ProjectService ..> ProjectDAO : calls
     ProjectService ..> FileService : uses
     ProjectService ..> FileDAO : calls
-    ProjectService ..> File : uses
-    ProjectService ..> User : uses
     ProjectService ..> UserDAO : calls
-    ProjectService ..> Audit : uses
     ProjectService ..> AuditDAO : calls
-    ProjectDAO ..> Project : uses
-    FileDAO ..> File : uses
-    ProjectController ..> ProjectService : calls
-    AuditService ..> Audit : uses
+    API ..> ProjectService : calls
     AuditService ..> AuditDAO : calls
-    AuditService ..> File : uses
     AuditService ..> FileDAO : calls
-    AuditDAO ..> Audit : uses
     ProjectService ..> AuditService : calls
-
-    Project ..> DependencyFile : uses
-    Project ..> CodeFile : uses
-    DependencyFile ..> File : uses
-    CodeFile ..> File : uses
-
-    Audit ..> Vulnerability : uses
-    Audit ..> License : uses
-    Audit ..> AntiPattern : uses
-    Audit ..> QualityGate : uses
 
     AuditService ..> SecurityService : uses
     AuditService ..> EcoService : uses
     AuditService ..> QualityGateService : uses
     AuditService ..> SBOMService : uses
 
-    QualityGateService ..> QualityGate : uses
-    QualityGateService ..> Audit : uses
-    SBOMService ..> Project : uses
-    SecurityService ..> Vulnerability : uses
-    SecurityService ..> License : uses
-    SecurityService ..> DependencyFile : uses
-    EcoService ..> AntiPattern : uses
-    EcoService ..> CodeFile : uses
-
     %% Colors
-
-    style User fill:#E3F0FF,stroke:#4A90E2
-    style Project fill:#E3F0FF,stroke:#4A90E2
-    style File fill:#E3F0FF,stroke:#4A90E2
-    style CodeFile fill:#E3F0FF,stroke:#4A90E2
-    style DependencyFile fill:#E3F0FF,stroke:#4A90E2
-    style Audit fill:#E3F0FF,stroke:#4A90E2
-    style Vulnerability fill:#E3F0FF,stroke:#4A90E2
-    style License fill:#E3F0FF,stroke:#4A90E2
-    style AntiPattern fill:#E3F0FF,stroke:#4A90E2
-    style SBOM fill:#E3F0FF,stroke:#4A90E2
-    style QualityGate fill:#E3F0FF,stroke:#4A90E2
 
     style UserDAO fill:#FFF3E0,stroke:#FB8C00
     style FileDAO fill:#FFF3E0,stroke:#FB8C00
