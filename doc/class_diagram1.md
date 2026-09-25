@@ -23,6 +23,7 @@ Pour afficher ce diagramme dans VScode :
   "themeCSS": ".cluster:nth-of-type(1) rect {   fill: #b3ccf8 !important; stroke: #3086e8 !important; width: 700px !important; } .cluster:nth-of-type(2) rect { fill: #ccf0ff !important; stroke: #586cff !important; width: 1100px !important; } .cluster:nth-of-type(3) rect { fill: #e1baf1 !important; stroke: #8E44AD !important;}"}}%%
 
 classDiagram
+    direction TB
     %% Data Access Objects
     class UserDAO {
         +create(User): bool
