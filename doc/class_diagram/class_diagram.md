@@ -20,7 +20,7 @@ Pour afficher ce diagramme dans VScode :
   "flowchart": {
     "htmlLabels": true,
     "curve": "basis"},
-  "themeCSS": ".cluster:nth-of-type(1) rect {   fill: #b3ccf8 !important; stroke: #3086e8 !important; width: 1000px !important; } .cluster:nth-of-type(2) rect { fill: #ccf0ff !important; stroke: #586cff !important; width: 1500px !important; } .cluster:nth-of-type(3) rect { fill: #e1baf1 !important; stroke: #8E44AD !important;}"}}%%
+  "themeCSS": ".cluster:nth-of-type(1) rect {   fill: #b3ccf8 !important; stroke: #3086e8 !important; width: 1000px !important; } .cluster:nth-of-type(2) rect { fill: #ccf0ff !important; stroke: #586cff !important; width: 2300px !important; } .cluster:nth-of-type(3) rect { fill: #e1baf1 !important; stroke: #8E44AD !important;}"}}%%
 
 classDiagram
     %% Business objects
@@ -124,11 +124,26 @@ classDiagram
         }
 
         class QualityGate {
-            +id_quality_gate: int
-            +max_vulnerabilities: int
-            +max_critical_vulnerabilities: int
-            +max_carbon_emission: float
-            +status: string
+            + id_quality_gate: int
+            + max_vulnerabilities: int
+            + max_critical_vulnerabilities: int
+            + max_carbon_emission: float
+            + max_energy_consumption: float
+        }
+
+        class SecurityQualityGate {
+            + evaluate(Audit): bool
+        }
+
+        class EcoQualityGate {
+            + evaluate(Audit): bool
+        }
+
+        class GlobalQualityGate {
+            + evaluate(Audit): bool
+        }
+        class QualityGateFactory {
+            + create(type: string): QualityGate
         }
     }
 
@@ -220,7 +235,7 @@ classDiagram
     }
 
     class QualityGateService {
-        +evaluate(Audit): QualityGate
+        +evaluate(Audit, QualityGate): bool
         +generate_certificate(Audit): str
     }
 
@@ -255,6 +270,12 @@ classDiagram
     AntiPattern <|-- NestedLoop
     AntiPattern <|-- RecursiveCall
 
+    QualityGate <|-- SecurityQualityGate
+    QualityGate <|-- EcoQualityGate
+    QualityGate <|-- GlobalQualityGate
+
+    QualityGateFactory ..> QualityGate : uses
+
     UserService ..> UserDAO : calls
     UserService ..> User : uses
     UserService ..> FileDAO : calls
@@ -287,8 +308,9 @@ classDiagram
     AuditService ..> QualityGateService : uses
     AuditService ..> SBOMService : uses
 
+    QualityGateService ..> QualityGateFactory : uses
     QualityGateService ..> QualityGate : uses
-    QualityGateService ..> Audit : uses
+    QualityGateService ..> Audit : analyzes
     SBOMService ..> Project : uses
     SecurityService ..> Dependency : uses
     SecurityService ..> Vulnerability : uses
@@ -317,6 +339,10 @@ classDiagram
     style RecursiveCall fill:#E3F0FF,stroke:#4A90E2
     style SBOM fill:#E3F0FF,stroke:#4A90E2
     style QualityGate fill:#E3F0FF,stroke:#4A90E2
+    style EcoQualityGate fill:#E3F0FF,stroke:#4A90E2
+    style SecurityQualityGate fill:#E3F0FF,stroke:#4A90E2
+    style GlobalQualityGate fill:#E3F0FF,stroke:#4A90E2
+    style QualityGateFactory fill:#E3F0FF,stroke:#4A90E2
 
     style UserDAO fill:#FFF3E0,stroke:#FB8C00
     style FileDAO fill:#FFF3E0,stroke:#FB8C00
