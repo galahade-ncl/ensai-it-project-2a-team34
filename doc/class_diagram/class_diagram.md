@@ -20,7 +20,7 @@ Pour afficher ce diagramme dans VScode :
   "flowchart": {
     "htmlLabels": true,
     "curve": "basis"},
-  "themeCSS": ".cluster:nth-of-type(1) rect {   fill: #b3ccf8 !important; stroke: #3086e8 !important; width: 1000px !important; } .cluster:nth-of-type(2) rect { fill: #ccf0ff !important; stroke: #586cff !important; width: 2300px !important; } .cluster:nth-of-type(3) rect { fill: #e1baf1 !important; stroke: #8E44AD !important;}"}}%%
+  "themeCSS": ".cluster:nth-of-type(1) rect {   fill: #b3ccf8 !important; stroke: #3086e8 !important; width: 800px !important; } .cluster:nth-of-type(2) rect { fill: #ccf0ff !important; stroke: #586cff !important; width: 2900px !important; } .cluster:nth-of-type(3) rect { fill: rgb(142, 214, 230) !important; stroke: #63c6c9 !important;} .cluster:nth-of-type(4) rect {   fill: #b2f4fb !important; stroke: #30e8e2 !important; }"}}%%
 
 classDiagram
     %% Business objects
@@ -77,30 +77,33 @@ classDiagram
             +carbon_emission_gco2e: float
             +sbom: SBOM
             +quality_gate: QualityGate
+            +certificates: list[Certificate]
         }
 
-        class Dependency {
-            +id_dependency: int
-            +name: str
-            +version: str
-        }
+        namespace VulnerabilityClasses {
+            class Dependency {
+                +id_dependency: int
+                +name: str
+                +version: str
+            }
 
-        class Vulnerability {
-            +id_vulnerability: int
-            +osv_id: str
-            +cve_id: str | None
-        }
+            class Vulnerability {
+                +id_vulnerability: int
+                +osv_id: str
+                +cve_id: str | None
+            }
 
-        class LowVulnerability {
-        }
+            class LowVulnerability {
+            }
 
-        class MediumVulnerability {
-        }
+            class MediumVulnerability {
+            }
 
-        class HighVulnerability {
-        }
+            class HighVulnerability {
+            }
 
-        class CriticalVulnerability {
+            class CriticalVulnerability {
+            }
         }
 
         class License {
@@ -123,27 +126,37 @@ classDiagram
             +function_name: str
         }
 
-        class QualityGate {
-            + id_quality_gate: int
-            + max_vulnerabilities: int
-            + max_critical_vulnerabilities: int
-            + max_carbon_emission: float
-            + max_energy_consumption: float
-        }
+        namespace QualityGateClasses{
+            class QualityGate {
+                + id_quality_gate: int
+                + max_vulnerabilities: int
+                + max_critical_vulnerabilities: int
+                + max_carbon_emission: float
+                + max_energy_consumption: float
+                + status: string
+            }
 
-        class SecurityQualityGate {
-            + evaluate(Audit): bool
-        }
+            class SecurityQualityGate {
+                + evaluate(Audit): QualityGate
+            }
 
-        class EcoQualityGate {
-            + evaluate(Audit): bool
-        }
+            class EcoQualityGate {
+                + evaluate(Audit): QualityGate
+            }
 
-        class GlobalQualityGate {
-            + evaluate(Audit): bool
+            class GlobalQualityGate {
+                + evaluate(Audit): QualityGate
+            }
+            class QualityGateFactory {
+                + get_qualitygate(type: string): QualityGate
+            }
         }
-        class QualityGateFactory {
-            + create(type: string): QualityGate
+        class Certificate {
+            +id_certificate: int
+            +date: datetime
+            +type: string
+            +status: string
+            +path: string
         }
     }
 
@@ -210,7 +223,7 @@ classDiagram
     }
 
     class AuditService {
-        +create(int, int, datetime, list[Vulnerability], list[License], list[AntiPattern], float, float, float, QualityGate): Audit
+        +create(int, int, datetime, list[Vulnerability], list[License], list[AntiPattern], float, float, float, QualityGate, list[Certificate]): Audit
         +list_all_audit(int) : list[Audit]
         +find_by_id(int): Audit
         +run_audit(Project): Audit
@@ -235,8 +248,8 @@ classDiagram
     }
 
     class QualityGateService {
-        +evaluate(Audit, QualityGate): bool
-        +generate_certificate(Audit): str
+        +evaluate(Audit): bool
+        +generate_certificate(Audit): Certificate
     }
 
     %% API
@@ -276,6 +289,8 @@ classDiagram
 
     QualityGateFactory ..> QualityGate : uses
 
+    Audit "1" --> "0..*" Certificate : owns
+
     UserService ..> UserDAO : calls
     UserService ..> User : uses
     UserService ..> FileDAO : calls
@@ -311,6 +326,7 @@ classDiagram
     QualityGateService ..> QualityGateFactory : uses
     QualityGateService ..> QualityGate : uses
     QualityGateService ..> Audit : analyzes
+    QualityGateService ..> Certificate : uses
     SBOMService ..> Project : uses
     SecurityService ..> Dependency : uses
     SecurityService ..> Vulnerability : uses
@@ -343,6 +359,7 @@ classDiagram
     style SecurityQualityGate fill:#E3F0FF,stroke:#4A90E2
     style GlobalQualityGate fill:#E3F0FF,stroke:#4A90E2
     style QualityGateFactory fill:#E3F0FF,stroke:#4A90E2
+    style Certificate fill:#E3F0FF,stroke:#4A90E2
 
     style UserDAO fill:#FFF3E0,stroke:#FB8C00
     style FileDAO fill:#FFF3E0,stroke:#FB8C00
