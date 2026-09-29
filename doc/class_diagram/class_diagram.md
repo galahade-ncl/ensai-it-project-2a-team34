@@ -77,7 +77,7 @@ classDiagram
             +carbon_emission_gco2e: float
             +sbom: SBOM
             +quality_gate: QualityGate
-            +certificates: list[Certificate]
+            +certificat: Certificate
         }
 
         namespace VulnerabilityClasses {
