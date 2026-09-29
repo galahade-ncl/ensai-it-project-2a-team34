@@ -180,7 +180,8 @@ classDiagram
         +list_all_project(int): list[Project]
         +update(Project): Project
         +delete(Project): bool
-        +verify_HMAC_key(Project): bool
+        +generate_HMAC_key(): bytes
+        +verify_signature(Project, bytes): bool
     }
 
     class FileService {
@@ -237,6 +238,16 @@ classDiagram
     DependencyFile ..> Dependency : uses
     Dependency "1" ..> "0..*" Vulnerability : affected by
 
+    Project ..> DependencyFile : uses
+    Project ..> CodeFile : uses
+    DependencyFile --|> File
+    CodeFile --|> File
+
+    Audit ..> Vulnerability : uses
+    Audit ..> License : uses
+    Audit ..> AntiPattern : uses
+    Audit ..> QualityGate : uses
+
     Vulnerability <|-- LowVulnerability
     Vulnerability <|-- MediumVulnerability
     Vulnerability <|-- HighVulnerability
@@ -270,16 +281,6 @@ classDiagram
     AuditService ..> FileDAO : calls
     AuditDAO ..> Audit : uses
     API ..> AuditService : calls
-
-    Project ..> DependencyFile : uses
-    Project ..> CodeFile : uses
-    DependencyFile --|> File
-    CodeFile --|> File
-
-    Audit ..> Vulnerability : uses
-    Audit ..> License : uses
-    Audit ..> AntiPattern : uses
-    Audit ..> QualityGate : uses
 
     AuditService ..> SecurityService : uses
     AuditService ..> EcoService : uses
