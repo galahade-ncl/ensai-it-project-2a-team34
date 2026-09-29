@@ -306,8 +306,7 @@ classDiagram
     style SBOMService fill:#E8F5E9,stroke:#43A047
     style QualityGateService fill:#E8F5E9,stroke:#43A047
 
-    %% style API fill:#F3E5F5,stroke:#8E44AD
-    %% style ProjectController fill:#F3E5F5,stroke:#8E44AD
-
-    style API fill:#F3E5F5,stroke:#8E44AD,color:#000
+    style API fill:#F3E5F5,stroke:#8E44AD
+    style UserController fill:#F3E5F5,stroke:#8E44AD
+    style ProjectController fill:#F3E5F5,stroke:#8E44AD
 ```

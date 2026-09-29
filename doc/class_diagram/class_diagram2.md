@@ -116,8 +116,8 @@ classDiagram
     User "1" ..> "0..*" Project : owns
     Project "1" ..> "0..*" Audit : owns
 
-    Project ..> DependencyFile : uses
-    Project ..> CodeFile : uses
+    Project "1" ..> "1" DependencyFile : owns
+    Project "1" ..> "1" CodeFile : owns
     DependencyFile ..> File : uses
     CodeFile ..> File : uses
 
