@@ -20,7 +20,7 @@ Pour afficher ce diagramme dans VScode :
   "flowchart": {
     "htmlLabels": true,
     "curve": "basis"},
-  "themeCSS": ".cluster:nth-of-type(1) rect {   fill: #b3ccf8 !important; stroke: #3086e8 !important; width: 700px !important; } .cluster:nth-of-type(2) rect { fill: #ccf0ff !important; stroke: #586cff !important; width: 1600px !important; } .cluster:nth-of-type(3) rect { fill: #e1baf1 !important; stroke: #8E44AD !important;}"}}%%
+  "themeCSS": ".cluster:nth-of-type(1) rect {   fill: #b3ccf8 !important; stroke: #3086e8 !important; width: 1000px !important; } .cluster:nth-of-type(2) rect { fill: #ccf0ff !important; stroke: #586cff !important; width: 1500px !important; } .cluster:nth-of-type(3) rect { fill: #e1baf1 !important; stroke: #8E44AD !important;}"}}%%
 
 classDiagram
     %% Business objects
@@ -52,7 +52,6 @@ classDiagram
             +id_file: int
             +date: datetime
             +path: str
-            +tree: ast.Module
             +submit(): bool
         }
 
@@ -60,7 +59,7 @@ classDiagram
             +id_file: int
             +date: datetime
             +path: str
-            +dependencylist: list[str]
+            +dependencies: list[Dependency]
             +submit(): bool
         }
     }
@@ -80,12 +79,16 @@ classDiagram
             +quality_gate: QualityGate
         }
 
+        class Dependency {
+            +id_dependency: int
+            +name: str
+            +version: str
+        }
+
         class Vulnerability {
             +id_vulnerability: int
             +osv_id: str
             +cve_id: str | None
-            +package: str
-            +version_package: str
         }
 
         class LowVulnerability {
@@ -198,17 +201,17 @@ classDiagram
     }
 
     class SecurityService {
-        +parse_dependencies(DependencyFile): list[str]
-        +find_vulnerabilities(DependencyFile): list[Vulnerability]
+        +parse_dependencies(DependencyFile): list[Dependency]
+        +find_vulnerabilities(list[Dependency]): list[Vulnerability]
         +find_licenses(DependencyFile): list[License]
     }
 
     class EcoService {
         +parse_ast(CodeFile): ast.Module
-        +detect_antipatterns(CodeFile): list[AntiPattern]
-        +estimate_complexity(CodeFile): float
-        +calculate_energy(CodeFile): float
-        +calculate_carbon(float): float
+        +detect_antipatterns(ast.Module): list[AntiPattern]
+        +estimate_complexity(ast.Module): float
+        +calculate_energy(): float
+        +calculate_carbon(): float
     }
 
     class SBOMService {
@@ -231,6 +234,8 @@ classDiagram
     %% Relationships
     User "1" ..> "0..*" Project : owns
     Project "1" ..> "0..*" Audit : owns
+    DependencyFile ..> Dependency : uses
+    Dependency "1" ..> "0..*" Vulnerability : affected by
 
     Vulnerability <|-- LowVulnerability
     Vulnerability <|-- MediumVulnerability
@@ -284,6 +289,7 @@ classDiagram
     QualityGateService ..> QualityGate : uses
     QualityGateService ..> Audit : uses
     SBOMService ..> Project : uses
+    SecurityService ..> Dependency : uses
     SecurityService ..> Vulnerability : uses
     SecurityService ..> License : uses
     SecurityService ..> DependencyFile : uses
@@ -298,6 +304,7 @@ classDiagram
     style CodeFile fill:#E3F0FF,stroke:#4A90E2
     style DependencyFile fill:#E3F0FF,stroke:#4A90E2
     style Audit fill:#E3F0FF,stroke:#4A90E2
+    style Dependency fill:#E3F0FF,stroke:#4A90E2
     style Vulnerability fill:#E3F0FF,stroke:#4A90E2
     style LowVulnerability fill:#E3F0FF,stroke:#4A90E2
     style MediumVulnerability fill:#E3F0FF,stroke:#4A90E2
