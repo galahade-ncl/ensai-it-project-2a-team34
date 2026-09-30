@@ -45,14 +45,14 @@ classDiagram
             +id_file: int
             +date: datetime
             +path: str
-            +submit(): bool
+            +get_content(): bool
         }
 
         class CodeFile {
             +id_file: int
             +date: datetime
             +path: str
-            +submit(): bool
+            +get_content(): bool
         }
 
         class DependencyFile {
@@ -60,7 +60,7 @@ classDiagram
             +date: datetime
             +path: str
             +dependencies: list[Dependency]
-            +submit(): bool
+            +get_content(): bool
         }
     }
 
@@ -219,7 +219,7 @@ classDiagram
         +find_project(int): Project
         +update(File): File
         +delete(File): bool
-        +submit(): bool
+        +get_content(): bool
     }
 
     class AuditService {
