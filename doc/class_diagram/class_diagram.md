@@ -20,7 +20,7 @@ Pour afficher ce diagramme dans VScode :
   "flowchart": {
     "htmlLabels": true,
     "curve": "basis"},
-  "themeCSS": ".cluster:nth-of-type(1) rect {   fill: #b3ccf8 !important; stroke: #3086e8 !important; width: 800px !important; } .cluster:nth-of-type(2) rect { fill: #ccf0ff !important; stroke: #586cff !important; width: 2900px !important; } .cluster:nth-of-type(3) rect { fill: rgb(142, 214, 230) !important; stroke: #63c6c9 !important;} .cluster:nth-of-type(4) rect {   fill: #b2f4fb !important; stroke: #30e8e2 !important; }"}}%%
+  "themeCSS": ".cluster:nth-of-type(1) rect {   fill: #b3ccf8 !important; stroke: #3086e8 !important; width: 800px !important; } .cluster:nth-of-type(2) rect { fill: #ccf0ff !important; stroke: #586cff !important; width: 2900px !important; } .cluster:nth-of-type(3) rect { fill: rgb(241, 254, 245) !important; stroke: #3ea053 !important;} .cluster:nth-of-type(4) rect { fill: rgb(142, 214, 230) !important; stroke: #63c6c9 !important;} .cluster:nth-of-type(5) rect {   fill: #b2f4fb !important; stroke: #30e8e2 !important; }"}}%%
 
 classDiagram
     %% Business objects
@@ -158,7 +158,9 @@ classDiagram
             +status: string
             +path: string
         }
+
     }
+
 
     %% Data Access Objects
     class UserDAO {
@@ -252,6 +254,13 @@ classDiagram
         +generate_certificate(Audit): Certificate
     }
 
+    %% API Externe
+    namespace ExternalAPI {
+        class OSVClient {
+            +find_vulnerabilities(Dependency): list[Vulnerability]
+        }
+    }
+
     %% API
     class API {
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -286,6 +295,10 @@ classDiagram
     QualityGate <|-- SecurityQualityGate
     QualityGate <|-- EcoQualityGate
     QualityGate <|-- GlobalQualityGate
+
+    SecurityService ..> OSVClient : uses
+    OSVClient ..> Dependency : analyze
+    OSVClient ..> Vulnerability : return
 
     QualityGateFactory ..> QualityGate : uses
 
@@ -360,6 +373,7 @@ classDiagram
     style GlobalQualityGate fill:#E3F0FF,stroke:#4A90E2
     style QualityGateFactory fill:#E3F0FF,stroke:#4A90E2
     style Certificate fill:#E3F0FF,stroke:#4A90E2
+    style OSVClient fill:#E3F0FF,stroke:#4A90E2
 
     style UserDAO fill:#FFF3E0,stroke:#FB8C00
     style FileDAO fill:#FFF3E0,stroke:#FB8C00
@@ -374,5 +388,7 @@ classDiagram
     style EcoService fill:#E8F5E9,stroke:#43A047
     style SBOMService fill:#E8F5E9,stroke:#43A047
     style QualityGateService fill:#E8F5E9,stroke:#43A047
+    style OSVClient fill:#E8F5E9,stroke:#43A047
+
     style API fill:#F3E5F5,stroke:#8E44AD,color:#000
 ```
