@@ -15,7 +15,7 @@ class User:
     username : string
         Nom de l'utilisateur.
 
-    passeword : string
+    password : string
         Le mot de passe de l'utilisateur
 
     email : string
@@ -31,13 +31,13 @@ class User:
     __eq__ : bool
         Renvoie True si les utilisateurs comparés sont identiques
     __hash__ : int
-        renvoie une version hashée de l'id de l'utilisateur. 
+        renvoie une version hashée de l'id de l'utilisateur.
         (Permet l'usage d'un set ou d'un dict).
     """
-    def __init__(self, id_user, username, passeword, email, access_token=None) -> None:
+    def __init__(self, id_user, username, password, email, access_token=None) -> None:
         self.id_user = id_user
         self.username = username
-        self.passeword = passeword
+        self.password = password
         self.email = email
         self.access_token = access_token
 
