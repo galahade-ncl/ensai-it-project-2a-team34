@@ -1,7 +1,7 @@
 class Licence:
     """Class representing a licence used by a project dependency
     Attributes:
-        id_license (int): The unique identifier of the licence
+        id_licence (int): The unique identifier of the licence
         name (str): The name of the licence
         risk_level (str): The risk level associated with the licence
     """
@@ -10,8 +10,8 @@ class Licence:
         self,
         name,
         risk_level,
-        id_license=None):
-        self.id_license = id_license
+        id_licence=None):
+        self.id_licence = id_licence
         self.name = name
         self.risk_level = risk_level
 

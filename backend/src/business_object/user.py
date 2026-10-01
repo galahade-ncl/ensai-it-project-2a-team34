@@ -30,3 +30,9 @@ class User:
         self.passeword = passeword
         self.email = email
         self.access_token = access_token
+
+    def __str__(self) -> str:
+        ...
+
+    def eq(self, other) -> bool:
+        ...

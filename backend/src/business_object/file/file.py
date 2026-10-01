@@ -28,4 +28,4 @@ class File:
         self.path = path
 
     def get_content(self) -> bool:
-        ...  # Regarder comment est envoyé le fichier et les modifs souhaitées par le groupe
+        ...  # Regarder ce que l'API demande en entrée
