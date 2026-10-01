@@ -1,0 +1,2 @@
+class CodeFile:
+    pass

@@ -1,0 +1,2 @@
+class ServiceQualityGate:
+    pass

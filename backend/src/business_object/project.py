@@ -1,3 +1,6 @@
+# from business_object.file.codefile import CodeFile
+# from business_object.file.dependencyfile import DependencyFile
+
 class Project:
     ''' Class representing a code project upload by a user
         Attributes:
