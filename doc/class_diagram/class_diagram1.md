@@ -134,7 +134,7 @@ classDiagram
     %% Relationships
 
     SecurityService ..> OSVClient : uses
-    
+
     UserService ..> UserDAO : calls
     UserService ..> FileDAO : calls
     API ..> UserService : calls

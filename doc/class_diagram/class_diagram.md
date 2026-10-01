@@ -128,24 +128,34 @@ classDiagram
 
         namespace QualityGateClasses{
             class QualityGate {
+                + evaluate(Audit): QualityGate
+
+            }
+
+            class SecurityQualityGate {
+                + id_quality_gate: int
+                + max_vulnerabilities: int
+                + max_critical_vulnerabilities: int
+                + status: string
+                + evaluate(Audit): bool
+            }
+
+            class EcoQualityGate {
+                + id_quality_gate: int
+                + max_carbon_emission: float
+                + max_energy_consumption: float
+                + status: string
+                + evaluate(Audit): bool
+            }
+
+            class GlobalQualityGate {
                 + id_quality_gate: int
                 + max_vulnerabilities: int
                 + max_critical_vulnerabilities: int
                 + max_carbon_emission: float
                 + max_energy_consumption: float
                 + status: string
-            }
-
-            class SecurityQualityGate {
-                + evaluate(Audit): QualityGate
-            }
-
-            class EcoQualityGate {
-                + evaluate(Audit): QualityGate
-            }
-
-            class GlobalQualityGate {
-                + evaluate(Audit): QualityGate
+                + evaluate(Audit): bool
             }
             class QualityGateFactory {
                 + get_qualitygate(type: string): QualityGate
