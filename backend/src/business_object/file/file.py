@@ -21,6 +21,8 @@ class File:
     get_content() : bool
         Méthode qui permet de récupérer le contenu du fichier
         et renvoie un booléen de confirmation si le fichier a bien été récupéré
+    get_type() : str
+        Méthode qui permet d'obtenir le type de fichier (fichier de dépendance ou fichier code)
     """
     def __init__(self, id_file, date, path) -> None:
         self.id_file = id_file
@@ -28,8 +30,13 @@ class File:
         self.path = path
 
     def get_content(self) -> bool:
-        ...  # Regarder ce que l'API demande en entrée
+        """
+        Récupère le contenu du fichier.
+        """
+        pass
 
-    def get_type(self) -> bool:
-        ''' Search for the type of the file '''
+    def get_type(self) -> str:
+        """
+        Récupère le type de fichier (fichier de dépendance ou fichier code).
+        """
         pass
