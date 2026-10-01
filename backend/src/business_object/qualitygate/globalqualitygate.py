@@ -7,7 +7,7 @@ class GlobalQualityGate(QualityGate):
     """
     Class representing the global quality gate expected for an audit of a project
     Attributes:
-        id_qualitygate (int): The unique identifier of the quality gate
+        id_qualitygate (int): The unique identifier of the global quality gate
         max_vulnerabilities (int): Max vulnerabilities tolerated for a project
         max_critical_vulnerabilities (int): Max critical vulnerabilities tolerated for a project
         max_carbon_emission (int): Max carbon emission tolerated for a project
@@ -43,7 +43,7 @@ class GlobalQualityGate(QualityGate):
             + f"Details : {self.max_vulnerabilities} max vulnerabilities, {self.max_critical_vulnerabilities} max critical vulnerabilities, {self.max_carbon_emission} max carbon emission, {self.max_energy_consumption} max energy consumption"
         )
 
-    def evaluate(audit: Audit) -> bool:
+    def evaluate(self, audit: Audit) -> bool:
         """Evaluate the Audit"""
 
         # Count of vulnerabilities of audit
@@ -55,4 +55,11 @@ class GlobalQualityGate(QualityGate):
             if isinstance(vul, CriticalVulnerability):
                 audit_crit_vul += 1
 
-        # Count of
+        conditions = (
+            (audit_vul <= self.max_vulnerabilities)
+            & (audit_crit_vul <= self.max_critical_vulnerabilities)
+            & (audit.carbon_emission_gco2e <= self.max_carbon_emission)
+            & (audit.energy_consumption_kwh <= self.max_energy_consumption)
+        )
+
+        return conditions
