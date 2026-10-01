@@ -128,7 +128,7 @@ classDiagram
 
         namespace QualityGateClasses{
             class QualityGate {
-                + evaluate(Audit): QualityGate
+                + evaluate(Audit): bool
 
             }
 
