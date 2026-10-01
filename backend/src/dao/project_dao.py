@@ -10,7 +10,7 @@ class ProjectDao(metaclass=Singleton):
     """Class containing methods to access Projects in the database."""
 
     @log
-    def create(self, project) -> bool:
+    def create(self, project: Project) -> bool:
         """Create a project in the database.
         Args:
             Project to create

@@ -7,7 +7,6 @@ class GlobalQualityGate(QualityGate):
     """
     Class representing the global quality gate expected for an audit of a project
     Attributes:
-        id_qualitygate (int): The unique identifier of the global quality gate
         max_vulnerabilities (int): Max vulnerabilities tolerated for a project
         max_critical_vulnerabilities (int): Max critical vulnerabilities tolerated for a project
         max_carbon_emission (int): Max carbon emission tolerated for a project
@@ -22,10 +21,8 @@ class GlobalQualityGate(QualityGate):
         max_carbon_emission,
         max_energy_consumption,
         status,
-        id_qualitygate=None,
     ):
         """Constructor"""
-        self.id_qualitygate = id_qualitygate
         self.max_vulnerabilities = max_vulnerabilities
         self.max_critical_vulnerabilities = max_critical_vulnerabilities
         self.max_carbon_emission = max_carbon_emission

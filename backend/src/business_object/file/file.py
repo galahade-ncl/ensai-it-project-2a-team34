@@ -29,3 +29,7 @@ class File:
 
     def get_content(self) -> bool:
         ...  # Regarder ce que l'API demande en entrée
+
+    def get_type(self) -> bool:
+        ''' Search for the type of the file '''
+        pass
