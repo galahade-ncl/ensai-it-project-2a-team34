@@ -116,7 +116,7 @@ classDiagram
     class UserDAO {
         +create(User): bool
         +find_by_id(int): User
-        +list_all(): list[User]
+        +find_all(): list[User]
         +delete(User): bool
         +update(User): User
         +login(str,str): User
@@ -131,14 +131,14 @@ classDiagram
     class FileDAO {
         +create(File): bool
         +find_by_id(int): File
-        +list_all(): list[File]
+        +find_all(): list[File]
         +delete(File): bool
         +update(File): File
     }
     class AuditDAO {
         +create(Audit): bool
         +find_by_id(int): Audit
-        +list_all(): list[Audit]
+        +find_all(): list[Audit]
     }
 
     %% Service layer
@@ -306,8 +306,7 @@ classDiagram
     style SBOMService fill:#E8F5E9,stroke:#43A047
     style QualityGateService fill:#E8F5E9,stroke:#43A047
 
+    style API fill:#F3E5F5,stroke:#8E44AD
     style UserController fill:#F3E5F5,stroke:#8E44AD
     style ProjectController fill:#F3E5F5,stroke:#8E44AD
-
-    style API fill:#F3E5F5,stroke:#8E44AD,color:#000
 ```
