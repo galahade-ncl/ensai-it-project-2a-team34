@@ -42,10 +42,8 @@ classDiagram
         }
 
         class File {
-            +id_file: int
-            +date: datetime
-            +path: str
             +get_content(): bool
+            +get_type(): str
         }
 
         class CodeFile {
@@ -53,6 +51,7 @@ classDiagram
             +date: datetime
             +path: str
             +get_content(): bool
+            +get_type(): str
         }
 
         class DependencyFile {
@@ -61,6 +60,7 @@ classDiagram
             +path: str
             +dependencies: list[Dependency]
             +get_content(): bool
+            +get_type(): str
         }
     }
 
@@ -192,7 +192,7 @@ classDiagram
     class FileDAO {
         +create(File): bool
         +find_by_id(int): File
-        +find_all(): list[File]
+        +find_all_by_project(int): list[File]
         +update(File): File
         +delete(File): bool
     }
@@ -213,9 +213,9 @@ classDiagram
     }
 
     class ProjectService {
-        +upload(int, string, User, CodeFile, DependencyFile, hmac.HMAC): Project
-        +upload_dependency_file(int, datetime, str, list[str]): DependencyFile
-        +upload_code_file(int, datetime, str, ast.Module): CodeFile
+        +upload(int, str, User, CodeFile, DependencyFile, hmac.HMAC): Project
+        +upload_dependency_file(int, datetime, str, int): DependencyFile
+        +upload_code_file(int, datetime, str, int): CodeFile
         +find_by_id(int): Project
         +list_all_project(int): list[Project]
         +update(Project): Project
@@ -225,8 +225,9 @@ classDiagram
     }
 
     class FileService {
-        +create_file(int, datetime, str): File
+        +create_file(int, datetime, str, int): File
         +find_by_id(int): File
+        +find_all_by_project(int): list[File]
         +find_user(int): User
         +find_project(int): Project
         +update(File): File

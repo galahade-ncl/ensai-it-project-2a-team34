@@ -30,6 +30,8 @@ DROP TABLE IF EXISTS user CASCADE;
 CREATE TABLE file (
     id_file         SERIAL PRIMARY KEY,
     name_file       VARCHAR,
+    date            TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    path            VARCHAR,
     type_file       VARCHAR,
     project_file    FOREIGN KEY,
 );
