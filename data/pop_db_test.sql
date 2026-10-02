@@ -7,7 +7,7 @@ INSERT INTO user(username, password, email) VALUES
 ('gilbert',   'toto',     'gilbert@project.io' ),
 ('junior',    'aaaa',     'junior@project.io'  ),
 (5,           'kelkel',   '5@gmail.com'        ),
-("bonjour",   5438,       'bonjour@test.fr'    ),
+("bonjour",    5438,      'bonjour@test.fr'    ),
 ("arty",      'password', []                   );
 
 INSERT INTO project(name_project, id_user, HMAC_key) VALUES
