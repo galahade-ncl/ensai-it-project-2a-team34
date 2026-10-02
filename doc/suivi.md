@@ -116,7 +116,7 @@ gantt
 ## Code
 
 * [x] Créer dépôt Git commun
-  * [ ] vérifier que tout le monde peut **push** et **pull**
+  * [X] vérifier que tout le monde peut **push** et **pull**
 * [x] Lister classes et méthodes à coder
 * [x] Réflechir à l'architecture du code
 * [ ] Version 0 de l'application
@@ -126,7 +126,10 @@ gantt
   * [ ] coder l'API (main + controller)
   * [ ] tests unitaires
 * [ ] Gérer les éventuels bugs
+* [ ] Solution plus propre pour l'enregistrement de la clé HMAC
+* [ ] Solution plus propre pour l'enregistrement des fichiers du projet
 * [ ] Créer un frontend
+
 
 ## Rendu final
 
