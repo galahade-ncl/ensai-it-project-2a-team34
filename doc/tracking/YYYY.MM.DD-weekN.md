@@ -39,10 +39,10 @@ Semaine n° ...
 
 > Liste des tâches en attente de prise en charge.
 
-### Prioritaires
+### :red_circle: Prioritaires
 
 - 
 
-### Secondaires
+### :yellow_circle: Secondaires
 
 - 
