@@ -1,24 +1,31 @@
-INSERT INTO user(username, password, email, access_token) VALUES
-('admin',     '0000',  'admin@project.io', 'GwXGr1IJVEjovcrKDT1Io0I10mWo-BMyx70UpOvniqQ'),
-('a',         'a',     'a@ensai.fr', 'uokEUQhmJ3ptKKJ_ry9zwgJJZ10ctRFGdFS4A_w3A3M'),
-('maurice',   '1234',  'maurice@ensai.fr', 'xNjLMwOI0KYt7IkSqYZ4t2AALDeHYKs1cs3E5WU3U7M'),
-('batricia',  '9876',  'bat@project.io', '9pTGKrQYCsR_J9lIIxuw74K82t1U8QvJcjRsz5ByqXA'),
-('miguel',    'abcd',  'miguel@project.io', null),
-('gilbert',   'toto',  'gilbert@project.io', null),
-('junior',    'aaaa',  'junior@project.io', null);
+INSERT INTO user(username, password, email) VALUES
+('admin',     '0000',  'admin@project.io'),
+('a',         'a',     'a@ensai.fr'),
+('maurice',   '1234',  'maurice@ensai.fr'),
+('batricia',  '9876',  'bat@project.io'),
+('miguel',    'abcd',  'miguel@project.io'),
+('gilbert',   'toto',  'gilbert@project.io'),
+('junior',    'aaaa',  'junior@project.io');
 
-INSERT INTO file(name_file, id_user, HMAC_key) VALUES
-('code1',     1,  'admin@project.io', hmac('code1', 'GwXGr1IJVEjovcrKDT1Io0I10mWo-BMyx70UpOvniqQ', 'sha256')),
-('voiture',   1,     'a@ensai.fr', hmac('voiture', 'GwXGr1IJVEjovcrKDT1Io0I10mWo-BMyx70UpOvniqQ', 'sha256')),
-('projet_info',   3,  'maurice@ensai.fr', hmac('projet_info', 'xNjLMwOI0KYt7IkSqYZ4t2AALDeHYKs1cs3E5WU3U7M', 'sha256')),
-('projet_stat',  3,  'bat@project.io', hmac('projet_stat', 'xNjLMwOI0KYt7IkSqYZ4t2AALDeHYKs1cs3E5WU3U7M', 'sha256')),
-('miguel',    3,  'miguel@project.io', hmac('miguel', 'xNjLMwOI0KYt7IkSqYZ4t2AALDeHYKs1cs3E5WU3U7M', 'sha256')),
-('code2',   4,  'gilbert@project.io', hmac('code2', '9pTGKrQYCsR_J9lIIxuw74K82t1U8QvJcjRsz5ByqXA', 'sha256')),
-('tp4',    4,  'junior@project.io'hmac('tp4', '9pTGKrQYCsR_J9lIIxuw74K82t1U8QvJcjRsz5ByqXA', 'sha256'))
-;
+INSERT INTO project(name_project, HMAC_key) VALUES
+('projet_info',     'bGoa+V7g/yqDXvKRqq+JTFn4uQZbPiQJo4pf9RzJ'),
+('MIGUEL',          'VGVzdEtleUZvckhNQUNBcGlWYWxpZGF0aW9uMjAyNg=='),
+('tp4',             'secret-key-pour-les-tests-locaux'),
+('voiture',         '000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f'),
+('camion',          'TFn4uQa+4vcleUZV7IeyDXvKAyn4cNg=c=Zb/P'),
+(1,                 'proHV7g/apMFIeyr+JTFFARQZbGiQJo4*pf9RzJ'),
+("tp3",             [])
 
-'''
-INSERT INTO audit(...) VALUES
+INSERT INTO file(name_file, path, type_file, project_file) VALUES
+('code1',         None, "code", 3),
+('roue',          None, "code", 4),
+('codetest',      None, "code", 1),
+('2e_fichier',    None, "dependency", 1),
+('miguel',        None, "dependency", 2),
+('code2',         None, "dependency", 3),
+('tp3_python',    None, "code", 6)
+(5,               None, "dependency", 5),
 ()
-;
-'''
+
+INSERT INTO audit(id_project, total_vulnerability, total_critical_vulnerability, complexity, energy_comsumption, carbon_emission_gco2e, status_qualitygate) VALUES
+(5,      1,      )

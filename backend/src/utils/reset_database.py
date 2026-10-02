@@ -3,9 +3,10 @@ from pathlib import Path
 from unittest import mock
 
 import dotenv
-from dao.player_dao import PlayerDao
 
+# from dao.project_dao import ProjectDao
 from dao.db_connection import DBConnection
+from dao.user_dao import UserDao
 from utils.log_utils import get_logger, log
 from utils.security import hash_password
 from utils.singleton import Singleton
@@ -60,10 +61,13 @@ class ResetDatabase(metaclass=Singleton):
             logger.info(e)
             raise
 
-        # Apply password hashing to all players
-        for p in PlayerDao().find_all():
+        # Apply password hashing to all users
+        for p in UserDao().find_all():
             p.password = hash_password(p.password, p.username)
-            PlayerDao().update(p)
+            UserDao().update(p)
+
+        # Apply HMAC Key hashing to all projects -> on sauvegarde la clé HMAC ou la signature ?
+        # A faire
 
         return True
 

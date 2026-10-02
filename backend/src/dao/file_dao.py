@@ -30,6 +30,7 @@ class FileDao(metaclass=Singleton):
                             "path": file.path,
                             "type": file.get_type(),
                             "project_file": id_project,
+                            "name_file": file.name,
                         },
                     )
                     res = cursor.fetchone()
@@ -71,6 +72,7 @@ class FileDao(metaclass=Singleton):
         if res_file["type"] == "code":
             file = CodeFile(
                 id_file=res_file["id_file"],
+                name=res_file["name_file"],
                 date=res_file["date"],
                 path=res_file["path"],
             )
@@ -78,6 +80,7 @@ class FileDao(metaclass=Singleton):
         if res_file["type"] == "dependency":
             return DependencyFile(
                 id_file=res_file["id_file"],
+                name=res_file["name_file"],
                 date=res_file["date"],
                 path=res_file["path"],
                 dependencies=[],
@@ -113,6 +116,7 @@ class FileDao(metaclass=Singleton):
                 if row["type"] == "code":
                     file = CodeFile(
                         id_file=row["id_file"],
+                        name=row["name_file"],
                         date=row["date"],
                         path=row["path"],
                     )
@@ -120,6 +124,7 @@ class FileDao(metaclass=Singleton):
                 elif row["type"] == "dependency":
                     file = DependencyFile(
                         id_file=row["id_file"],
+                        name=row["name_file"],
                         date=row["date"],
                         path=row["path"],
                         dependencies=[],
@@ -151,11 +156,11 @@ class FileDao(metaclass=Singleton):
                         "       project_file = %(project_file)s "
                         " WHERE id_file = %(id_file)s;                              ",
                         {
-                            "name_file": file.name_file,
-                            "password": file.password,
-                            "email": file.email,
-                            "access_token": file.access_token,
-                            "id_user": file.id_user,
+                            "name_file": file.name,
+                            "path": file.path,
+                            "date": file.date,
+                            "type_file": file.get_type(),
+                            "project_file": id_project,
                         },
                     )
                     nb_affected_rows = cursor.rowcount
@@ -166,20 +171,20 @@ class FileDao(metaclass=Singleton):
         return nb_affected_rows == 1
 
     @log
-    def delete(self, user) -> bool:
-        """Delete a user from the database.
+    def delete(self, file: File) -> bool:
+        """Delete a file from the database.
         Args:
-            User to delete from the database
+            File to delete from the database
         Returns:
-            True if the user was successfully deleted, False otherwise
+            True if the file was successfully deleted, False otherwise
         """
         try:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
-                        "DELETE FROM user                               "
-                        " WHERE id_user = %(id_user)s                 ",
-                        {"id_user": user.id_user},
+                        "DELETE FROM file                               "
+                        " WHERE id_file = %(id_file)s                 ",
+                        {"id_file": file.id_file},
                     )
                     res = cursor.rowcount
         except Exception as e:

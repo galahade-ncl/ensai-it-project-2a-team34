@@ -18,6 +18,9 @@ def hash_password(password: str, salt: str = "") -> str:
     return hash_object.hexdigest()
 
 
+# fonction hashage clé HMAC <-> signature -> à faire
+
+
 def verify_token(x_auth_token=Header(None)) -> PlayerDao:
     """Verifies the authenticity of a player via the provided auth token.
 
