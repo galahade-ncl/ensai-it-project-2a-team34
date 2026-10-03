@@ -23,18 +23,23 @@ gantt
     Diagramme des classes                       :active, 2023-09-01, 14d
     Diagramme d'activité                        :milestone, 2023-09-08,
     Diagramme de cas d'utilisation et de Gantt             :milestone, 2023-09-13
-    rédaction dossier d'analyse                           :active,    2023-09-12, 2023-09-17
-    relecture                                   :active,    2023-09-16, 2023-09-17
-    rédaction du rapport                           :active,    2023-10-12, 2023-11-17
-    relecture                                   :active,    2023-11-16, 2023-11-17
+    Rédaction dossier d'analyse                           :active,    2023-09-12, 2023-09-17
+    Relecture                                   :active,    2023-09-16, 2023-09-17
+    Rédaction du rapport                           :active,    2023-10-12, 2023-11-20
+    Relecture                                   :active,    2023-11-17, 2023-11-20
 
 
     section Code
     Adaptation du template du projet            :milestone, 2023-09-01, 
-    Création des BDD user et file               :milestone, 2023-09-01, 
-    lister classes à coder                      :active,    2023-09-07, 7d
-    coder une v0                                :active,    2023-09-20, 15d
-    étapes de code à définir                                :active,    2023-10-10, 40d
+    Création des BDD                      :active, 2023-09-01, 33d 
+    Lister les classes à coder                       :active,    2023-09-07, 7d
+    Implémenter les classes business object       :active, 2023-09-20, 14d
+    Mise en place de la DAO (v0)                        :active,    2023-09-30, 15d
+    Coder user et project service (v0)                        :active,    2023-10-4, 15d
+    Mise en place de l'API (v0)                        :active,    2023-10-4, 15d
+    Coder l'audit service (v0)                            :active,    2023-10-10, 25d
+    Gestion des bugs et améliorations                      :active,    2023-10-18, 33d
+    Ajout de fonctionnalités obtionnelles (facultatif)   :active, 2023-11-01, 19d
 
     
     section Rendu
