@@ -1,5 +1,7 @@
-class AntiPattern:
-    """ Class representing an antipattern found in a project
+from abc import ABC, abstractmethod
+
+class AntiPattern(ABC):
+    """ Abstract Class representing all detected antipatterns found in a project
         Attributes:
             id_antipattern (int): The unique identifier of the antipattern
             type(str): The type of the antipattern
@@ -9,16 +11,15 @@ class AntiPattern:
 
     def __init__(
         self,
-        type,
         line,
-        descrpition,
-        id_antipattern=None):
+        description,
+        id_antipattern:int | None=None):
         self.id_antipattern = id_antipattern
-        self.type = type
         self.line = line
-        self.description = descrpition
+        self.description = description
 
+    @abstractmethod
     def __str__(self):
         """Returns a string representation of the audit
         """
-        return f"Type : {self.type}" + "\n" + f"Detected on line number : {self.line}" + "\n" + f"Description : {self.description}"
+        pass
