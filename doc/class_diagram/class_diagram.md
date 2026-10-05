@@ -36,8 +36,8 @@ classDiagram
             +id_project: int
             +name_project: string
             +user: User
-            +codefile: CodeFile
-            +dependencyfile: DependencyFile
+            +codefile: CodeFile | None
+            +dependencyfile: DependencyFile | None
             +HMACkey: hmac.HMAC
         }
 
@@ -213,14 +213,14 @@ classDiagram
     }
 
     class ProjectService {
-        +upload(int, str, User, CodeFile, DependencyFile, hmac.HMAC): Project
+        +upload(int, str, User, Optional : CodeFile, Optional : DependencyFile): Project, hmac.HMAC
         +upload_dependency_file(int, datetime, str, int): DependencyFile
         +upload_code_file(int, datetime, str, int): CodeFile
         +find_by_id(int): Project
         +list_all_project(int): list[Project]
         +update(Project): Project
         +delete(Project): bool
-        +generate_HMAC_key(): bytes
+        +generate_HMAC_key(): hmac.HMAC
         +verify_signature(Project, bytes): bool
     }
 
