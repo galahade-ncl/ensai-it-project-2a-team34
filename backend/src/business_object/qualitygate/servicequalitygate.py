@@ -11,4 +11,4 @@ class ServiceQualityGate:
     def evaluate(self, audit : Audit):
         if len(audit.vulnerabilities) > self.max_vulnerabilities:
             return ("The number of vulnerabilities is too high")
-            
+
