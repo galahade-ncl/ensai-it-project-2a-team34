@@ -25,8 +25,8 @@ class Project:
         self.id_project = id_project
         self.name_project = name_project
         self.user = user
-        self.codefile = codefile
-        self.dependencyfile = dependencyfile
+        self.codefile = codefile | None
+        self.dependencyfile = dependencyfile | None
         self.secretHMACkey = secretHMACkey
 
     def __str__(self):
