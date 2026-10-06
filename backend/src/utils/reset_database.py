@@ -66,9 +66,6 @@ class ResetDatabase(metaclass=Singleton):
             p.password = hash_password(p.password, p.username)
             UserDao().update(p)
 
-        # Apply HMAC Key hashing to all projects -> on sauvegarde la clé HMAC ou la signature ?
-        # A faire
-
         return True
 
 
