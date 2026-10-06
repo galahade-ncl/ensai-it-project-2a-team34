@@ -213,7 +213,7 @@ classDiagram
     }
 
     class ProjectService {
-        +upload(int, str, User, Optional : CodeFile, Optional : DependencyFile): Project, hmac.HMAC
+        +upload(int, str, User, Optional : CodeFile, Optional : DependencyFile): Project
         +upload_dependency_file(int, datetime, str, int): DependencyFile
         +upload_code_file(int, datetime, str, int): CodeFile
         +find_by_id(int): Project
