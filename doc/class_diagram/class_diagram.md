@@ -219,6 +219,8 @@ classDiagram
         +find_by_id(int): Project
         +list_all_project(int): list[Project]
         +update(Project): Project
+        +update_dependency_file(int, datetime, str, int): DependencyFile
+        +update_code_file(int, datetime, str, int): CodeFile
         +delete(Project): bool
         +generate_HMAC_key(): hmac.HMAC
         +verify_signature(Project, bytes): bool
