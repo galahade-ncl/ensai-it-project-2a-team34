@@ -9,7 +9,7 @@ class Project:
             user (User): User that owns the project
             codefile (CodeFile): the code file of the project
             dependencyfile (DependencyFile): the dependency file of the project
-            HMACkey (hmac.HMAC): The HMACkey associated with the project
+            secretHMACkey (hmac.HMAC): The secretHMACkey associated with the project
     '''
 
     def __init__(
@@ -18,7 +18,7 @@ class Project:
         user,
         codefile,
         dependencyfile,
-        HMACkey,
+        secretHMACkey,
         id_project=None
     ):
         """Constructor"""
@@ -27,7 +27,7 @@ class Project:
         self.user = user
         self.codefile = codefile
         self.dependencyfile = dependencyfile
-        self.HMACkey = HMACkey
+        self.secretHMACkey = secretHMACkey
 
     def __str__(self):
         """Returns a string representation of the project

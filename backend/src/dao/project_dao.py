@@ -24,12 +24,12 @@ class ProjectDao(metaclass=Singleton):
                 with connection.cursor() as cursor:
                     cursor.execute(
                         "INSERT INTO project() VALUES "
-                        "(%(name_project)s, %(id_user)s, %(HMACkey)s) "
+                        "(%(name_project)s, %(id_user)s, %(secretHMACkey)s) "
                         "RETURNING id_project;",
                         {
                             "name_project": project.name_project,
                             "id_user": project.user.id_user,
-                            "HMACkey": project.HMACkey,
+                            "secretHMACkey": project.secretHMACkey,
                         },
                     )
                     res = cursor.fetchone()
@@ -71,7 +71,7 @@ class ProjectDao(metaclass=Singleton):
             project = Project(
                 name_project=res_project["name_project"],
                 id_user=res_project["id_user"],
-                HMACkey=res_project["HMACkey"],
+                secretHMACkey=res_project["secretHMACkey"],
             )
 
         return project
