@@ -1,4 +1,6 @@
 import hashlib
+import hmac
+import secrets
 
 from dao.player_dao import PlayerDao
 from fastapi import Header, HTTPException
@@ -45,6 +47,18 @@ def verify_token(x_auth_token=Header(None)) -> PlayerDao:
     return player
 
 
-def generate_secret_HMAC_key():
+def generate_secret_HMAC_key() -> bytes:
     """generate a new secret key"""
-    pass
+    return secrets.token_bytes(32)
+
+
+def generate_signature(secret: bytes, code: bytes, dependencies: bytes) -> bytes:
+    hmac_key = hmac.new(secret, digestmod=hashlib.sha256)
+
+    hmac_key.update(len(code).to_bytes(8, "big"))
+    hmac_key.update(code)
+
+    hmac_key.update(len(dependencies).to_bytes(8, "big"))
+    hmac_key.update(dependencies)
+
+    return hmac_key.digest()
