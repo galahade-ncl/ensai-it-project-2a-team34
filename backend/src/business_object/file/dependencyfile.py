@@ -18,7 +18,7 @@ class DependencyFile(File):
     def __init__(self, id_file, name, date, path, dependencies) -> None:
         self.id_file = id_file
         self.name = name
-        self.date = date
+        self.date = date | None
         self.path = path
         self.dependencies = dependencies | []
 
