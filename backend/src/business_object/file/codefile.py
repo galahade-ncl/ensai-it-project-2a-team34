@@ -18,7 +18,7 @@ class CodeFile(File):
     def __init__(self, id_file, name, date, path) -> None:
         self.id_file = id_file
         self.name = name
-        self.date = date
+        self.date = date | None
         self.path = path
 
     def get_content(self):
