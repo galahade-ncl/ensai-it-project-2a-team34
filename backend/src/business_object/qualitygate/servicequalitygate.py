@@ -8,7 +8,6 @@ class ServiceQualityGate:
         self.max_critical_vulnerabilities = max_critical_vulnerabilities
         self.status = status
 
-    def evaluate(self, audit : Audit):
+    def evaluate(self, audit: Audit):
         if len(audit.vulnerabilities) > self.max_vulnerabilities:
             return ("The number of vulnerabilities is too high")
-

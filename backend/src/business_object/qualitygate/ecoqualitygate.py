@@ -8,7 +8,7 @@ class EcoQualityGate:
         self.max_energy_consumption = max_energy_consumption
         self.status = status
 
-    def evaluate(self, audit : Audit) -> bool:
+    def evaluate(self, audit: Audit) -> bool:
         if audit.carbon_emission_gco2e > self.max_carbon_emission:
             return ("The carbon emission is too high")
 
