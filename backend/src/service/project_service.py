@@ -1,6 +1,8 @@
 from business_object.project import Project
 from business_object.user import User
 from dao.project_dao import ProjectDao
+from utils.log_utils import log
+from utils.security import generate_secret_HMAC_key
 
 
 class ProjectService:
@@ -16,13 +18,8 @@ class ProjectService:
             Project object created or None if creation failed.
         """
         secret_HMAC_key = generate_secret_HMAC_key(self)
-        new_project = Project(
-            name_project=project_name,
-            user=user,
-            secretHMACkey=secret_HMAC_key
-        )
+        new_project = Project(name_project=project_name, user=user, secretHMACkey=secret_HMAC_key)
         return new_project if ProjectDao().create(new_project) else None
-
 
     @log
     def find_by_id(self, id_project: int):
@@ -38,11 +35,6 @@ class ProjectService:
 
     @log
     def delete(self, project: Project):
-        pass
-
-    @log
-    def generate_secret_HMAC_key(self):
-        """ generate a new secret key """
         pass
 
     @log

@@ -43,3 +43,8 @@ def verify_token(x_auth_token=Header(None)) -> PlayerDao:
         raise HTTPException(status_code=401, detail="Invalid token.")
 
     return player
+
+
+def generate_secret_HMAC_key():
+    """generate a new secret key"""
+    pass
