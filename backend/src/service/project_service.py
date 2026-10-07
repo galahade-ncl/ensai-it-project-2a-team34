@@ -18,24 +18,51 @@ class ProjectService:
             Project object created or None if creation failed.
         """
         secret_HMAC_key = generate_secret_HMAC_key(self)
-        new_project = Project(name_project=project_name, user=user, secretHMACkey=secret_HMAC_key)
+        new_project = Project(
+            name_project=project_name,
+            user=user,
+            secretHMACkey=secret_HMAC_key
+            )
         return new_project if ProjectDao().create(new_project) else None
 
     @log
     def find_by_id(self, id_project: int):
-        pass
+        """Finds a specific project by their unique id.
+        Args:
+            id_project (int) : id of the project
+        Returns:
+            Project object if found, otherwise None.
+        """
+        return ProjectDao().find_by_id(id_project)
 
     @log
     def list_all_project(self, id_user: int):
-        pass
+        """List all projects owned by the user corresponding with the id.
+        Args:
+            id_user (int) : id of the user
+        Returns:
+            list[Project]"""
+        return ProjectDao().find_all()
 
     @log
     def update(self, project: Project):
-        pass
+        """Updates an existing project's information.
+        Args:
+            Project object containing updated information.
+        Returns:
+            The updated Project object, or None if the update failed.
+        """
+        return project if ProjectDao().update(project) else None
 
     @log
     def delete(self, project: Project):
-        pass
+        """Delete a project.
+        Args:
+            Project object to be deleted.
+        Returns:
+            True if deletion was successful, False otherwise.
+        """
+        return ProjectDao().delete(project)
 
     @log
     def verify_signature(self, project: Project, signature: bytes):
