@@ -8,20 +8,20 @@ class FileService:
     """Service that handles business logic related to a project (upload, update, etc.)."""
 
     @log
-    def upload(self, project_name: str, user: User) -> Project:
-        """Creates a new project in the system.
+    def upload(self, file_name: str, id_project: int, type: str) -> File:
+        """Creates a new file in the system.
         Args:
-            name_project (str) : name of the project
-            user (User) : user that owns the project
+            file_name (str) : name of the file
+            id_project (int) : id of the project that owns the file
         Returns:
-            Project object created or None if creation failed.
+            File object created or None if creation failed.
         """
-        secret_HMAC_key = generate_secret_HMAC_key(self)
-        new_project = Project(
-            name_project=project_name,
-            user=user,
-            secretHMACkey=secret_HMAC_key
-        )
+        if type == "dependency":
+            new_file = DependencyFile(
+                name_project=project_name,
+                user=user,
+                secretHMACkey=secret_HMAC_key
+            )
         return new_project if ProjectDao().create(new_project) else None
 
 
