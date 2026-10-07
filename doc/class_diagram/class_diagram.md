@@ -212,11 +212,15 @@ classDiagram
         +username_already_used(str): bool
     }
 
-    class ProjectService {
+   class ProjectService {
         +upload(str, User, Optional : CodeFile, Optional : DependencyFile): Project
+        +upload_dependency_file(str, int): DependencyFile
+        +upload_code_file(str, int): CodeFile
         +find_by_id(int): Project
         +list_all_project(int): list[Project]
         +update(Project): Project
+        +update_dependency_file(str, int): DependencyFile
+        +update_code_file(str, int): CodeFile
         +delete(Project): bool
         +generate_HMAC_key(): hmac.HMAC
         +verify_signature(Project, bytes): bool
