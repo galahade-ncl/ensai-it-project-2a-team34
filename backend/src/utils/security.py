@@ -1,4 +1,5 @@
 import hashlib
+import secrets
 
 from dao.player_dao import PlayerDao
 from fastapi import Header, HTTPException
@@ -43,3 +44,8 @@ def verify_token(x_auth_token=Header(None)) -> PlayerDao:
         raise HTTPException(status_code=401, detail="Invalid token.")
 
     return player
+
+
+def generate_secret_HMAC_key() -> bytes:
+    """generate a new secret key"""
+    return secrets.token_bytes(32)
