@@ -48,17 +48,30 @@ def verify_token(x_auth_token=Header(None)) -> PlayerDao:
 
 
 def generate_secret_HMAC_key() -> bytes:
-    """generate a new secret key"""
+    """
+    Generate a new secret key
+    Returns:
+        New secret key (bytes object)
+    """
     return secrets.token_bytes(32)
 
 
-def generate_signature(secret: bytes, code: bytes, dependencies: bytes) -> bytes:
+def generate_signature(secret: bytes, code: bytes, dependency: bytes) -> bytes:
+    """
+    Generate a new signature
+    Args:
+        secret (str): A secret key
+        code (bytes): The binary version of a codefile
+        dependency (bytes): The binary version of a dependencyfile
+    Returns:
+        Signature associated with the secret and the files (bytes object)
+    """
     hmac_key = hmac.new(secret, digestmod=hashlib.sha256)
 
     hmac_key.update(len(code).to_bytes(8, "big"))
     hmac_key.update(code)
 
-    hmac_key.update(len(dependencies).to_bytes(8, "big"))
-    hmac_key.update(dependencies)
+    hmac_key.update(len(dependency).to_bytes(8, "big"))
+    hmac_key.update(dependency)
 
     return hmac_key.digest()

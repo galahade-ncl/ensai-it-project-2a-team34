@@ -1,8 +1,10 @@
+import hmac
+
 from business_object.project import Project
 from business_object.user import User
 from dao.project_dao import ProjectDao
 from utils.log_utils import log
-from utils.security import generate_secret_HMAC_key
+from utils.security import generate_secret_HMAC_key, generate_signature
 
 
 class ProjectService:
@@ -18,11 +20,7 @@ class ProjectService:
             Project object created or None if creation failed.
         """
         secret_HMAC_key = generate_secret_HMAC_key(self)
-        new_project = Project(
-            name_project=project_name,
-            user=user,
-            secretHMACkey=secret_HMAC_key
-            )
+        new_project = Project(name_project=project_name, user=user, secretHMACkey=secret_HMAC_key)
         return new_project if ProjectDao().create(new_project) else None
 
     @log
@@ -42,7 +40,7 @@ class ProjectService:
             id_user (int) : id of the user
         Returns:
             list[Project]"""
-        return ProjectDao().find_all()
+        return ProjectDao().find_all_project(id_user)
 
     @log
     def update(self, project: Project):
@@ -64,6 +62,19 @@ class ProjectService:
         """
         return ProjectDao().delete(project)
 
+    # Est-ce qu'on garde la méthode là ?
     @log
-    def verify_signature(self, project: Project, signature: bytes):
-        pass
+    def verify_signature(project: Project, code: bytes, dependency: bytes, signature: bytes) -> bool:
+        """
+        Verify the signature given
+        Args:
+            project (Project): Project related to the signature
+            code (bytes): The binary version of a codefile
+            dependency (bytes): The binary version of a dependencyfile,
+            signature (bytes): the signature given
+        Returns:
+            Boolean object indicating whether the signature is valid or not
+        """
+        expected_signature = generate_signature(project.secretHMACkey, code, dependency)
+
+        return hmac.compare_digest(expected_signature, signature)
