@@ -15,7 +15,7 @@ class DependencyFile(File):
     path :str
         Chemin d'accès du fichier
     """
-    def __init__(self, id_file, name, date, path, dependencies) -> None:
+    def __init__(self, id_file, name, date, path, dependencies):
         self.id_file = id_file
         self.name = name
         self.date = date | None

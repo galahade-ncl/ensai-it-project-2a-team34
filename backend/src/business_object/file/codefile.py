@@ -15,7 +15,7 @@ class CodeFile(File):
     path :str
         Chemin d'accès du fichier
     """
-    def __init__(self, id_file, name, date, path) -> None:
+    def __init__(self, id_file, name, date, path):
         self.id_file = id_file
         self.name = name
         self.date = date | None
