@@ -21,6 +21,7 @@ class QualityGateService:
         audit.quality_gate = qualitygate
         return qualitygate.evaluate(audit)
 
+    # méthode qui n'a rien a faire dans qualitygateservice
     @log
     def generate_certificate(self, audit: Audit) -> Certificate:
         """Generate a certificate for a project during its audit
