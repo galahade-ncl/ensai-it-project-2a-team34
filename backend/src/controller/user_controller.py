@@ -1,3 +1,4 @@
+
 from fastapi import APIRouter, Depends, HTTPException
 
 from schema.user_model import UserModel, UserReadModel
@@ -25,93 +26,94 @@ async def find_all_users(user_service=Depends(get_user_service)):
     return users_list
 
 
-@router.get("/{id_player}", response_model=PlayerReadModel, tags=["Players"])
-async def player_by_id(id_player: int, player_service=Depends(get_player_service)):
-    """Find a player by their unique ID.
+@router.get("/{id_user}", response_model=UserReadModel, tags=["Users"])
+async def user_by_id(id_user: int, user_service=Depends(get_user_service)):
+    """Find a user by their unique ID.
     Args:
-        id_player (int)
-        player_service (PlayerService): The service used to interact with player data
+        id_user (int)
+        user_service (UserService): The service used to interact with user data
     Returns:
-        PlayerReadModel: The player data if found
+        UserReadModel: The user data if found
     Raises:
-        HTTPException: 404 error if the player is not found
+        HTTPException: 404 error if the user is not found
     """
-    logger.info("Find a player by id")
-    player = player_service.find_by_id(id_player)
-    if not player:
-        raise HTTPException(status_code=404, detail="Player (id={id_player}) not found.")
-    return player
+    logger.info("Find a user by id")
+    user = user_service.find_by_id(id_user)
+    if not user:
+        raise HTTPException(status_code=404, detail="User (id={id_user}) not found.")
+    return user
 
 
-@router.post("/", response_model=PlayerReadModel, tags=["Players"])
-async def create_player(p: PlayerModel, player_service=Depends(get_player_service)):
-    """Create a new player.
+@router.post("/", response_model=UserReadModel, tags=["Users"])
+async def create_user(u: UserModel, user_service=Depends(get_user_service)):
+    """Create a new user.
     Args:
-        p (PlayerModel): The player data to create.
-        player_service (PlayerService): The service used to interact with player data.
+        u (UserModel): The user data to create.
+        user_service (UserService): The service used to interact with user data.
     Returns:
-        PlayerReadModel: The newly created player data.
+        UserReadModel: The newly created user data.
     Raises:
         HTTPException: 400 error if the username is already taken.
         HTTPException: 500 error if the creation process fails.
     """
     logger.info("Create a player")
-    if player_service.username_already_used(p.username):
+    if user_service.username_already_used(u.username):
         raise HTTPException(status_code=400, detail="Username already used.")
 
-    player = player_service.create(p.username, p.password, p.elo, p.email, p.pokemon_fan)
-    if not player:
-        raise HTTPException(status_code=500, detail="Error while creating player.")
+    user = user_service.create(u.username, u.password, u.email,u.access_token)
+    if not user:
+        raise HTTPException(status_code=500, detail="Error while creating user.")
 
-    return player
+    return user
 
 
-@router.put("/{id_player}", response_model=PlayerReadModel, tags=["Players"])
-async def update_player(id_player: int, p: PlayerModel, player_service=Depends(get_player_service)):
-    """Update an existing player's information.
+@router.put("/{id_user}", response_model=UserReadModel, tags=["Users"])
+async def update_user(id_user: int, u: UserModel, user_service=Depends(get_user_service)):
+    """Update an existing user's information.
     Args:
-        id_player (int)
-        p (PlayerModel): The new data for the player.
-        player_service (PlayerService): The service used to interact with player data.
+        id_user (int)
+        u (UserModel): The new data for the user.
+        user_service (UserService): The service used to interact with user data.
     Returns:
-        str: A confirmation message indicating the player was updated.
+        str: A confirmation message indicating the user was updated.
     Raises:
-        HTTPException: 404 error if the player is not found.
+        HTTPException: 404 error if the user is not found.
         HTTPException: 500 error if the update process fails.
     """
-    logger.info("Update a player")
-    player = player_service.find_by_id(id_player)
-    if not player:
-        raise HTTPException(status_code=404, detail="Player (id={id_player}) not found.")
-
-    player.username = p.username
+    logger.info("Update a user")
+    user = user_service.find_by_id(id_user)
+    if not user:
+        raise HTTPException(status_code=404, detail="User (id={id_user}) not found.")
+    
+    ## ------ A MODIFIER--------
+    user.username = u.username
     player.password = p.password
-    player.elo = p.elo
-    player.email = p.email
-    player.pokemon_fan = p.pokemon_fan
+    user.elo = u.elo
+    user.email = u.email
+    usr.pokemon_fan = u.pokemon_fan
 
-    player = player_service.update(player)
-    if not player:
+    user = user_service.update(user)
+    if not user:
         raise HTTPException(status_code=500, detail="Error while updating player.")
 
-    return player
+    return user
 
 
-@router.delete("/{id_player}", tags=["Players"])
-async def delete_player(id_player: int, player_service=Depends(get_player_service)):
-    """Delete a player from the system.
+@router.delete("/{id_user}", tags=["Users"])
+async def delete_user(id_user: int, player_service=Depends(get_user_service)):
+    """Delete a user from the system.
     Args:
-        id_player (int)
-        player_service (PlayerService): The service used to interact with player data.
+        id_user (int)
+        user_service UserService): The service used to interact with user data.
     Returns:
-        str: A confirmation message indicating the player was deleted.
+        str: A confirmation message indicating the user was deleted.
     Raises:
-        HTTPException: 404 error if the player is not found.
+        HTTPException: 404 error if the user is not found.
     """
-    logger.info("Delete a player")
-    player = player_service.find_by_id(id_player)
-    if not player:
-        raise HTTPException(status_code=404, detail="Player (id={id_player}) not found.")
+    logger.info("Delete a user")
+    user = user_service.find_by_id(id_user)
+    if not user:
+        raise HTTPException(status_code=404, detail="User (id={id_user}) not found.")
 
-    player_service.delete(player)
-    return f"Player {player.username} deleted"
+    user_service.delete(user)
+    return f"User {user.username} deleted"
