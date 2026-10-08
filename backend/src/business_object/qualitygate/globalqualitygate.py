@@ -53,10 +53,10 @@ class GlobalQualityGate(QualityGate):
                 audit_crit_vul += 1
 
         conditions = (
-            (audit_vul <= self.max_vulnerabilities)
-            & (audit_crit_vul <= self.max_critical_vulnerabilities)
-            & (audit.carbon_emission_gco2e <= self.max_carbon_emission)
-            & (audit.energy_consumption_kwh <= self.max_energy_consumption)
+            (audit_vul >= self.max_vulnerabilities)
+            & (audit_crit_vul >= self.max_critical_vulnerabilities)
+            & (audit.carbon_emission_gco2e >= self.max_carbon_emission)
+            & (audit.energy_consumption_kwh >= self.max_energy_consumption)
         )
 
         return conditions
