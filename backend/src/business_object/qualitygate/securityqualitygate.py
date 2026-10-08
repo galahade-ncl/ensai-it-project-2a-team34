@@ -10,6 +10,7 @@ class SecurityQualityGate:
         max_critical_vulnerabilities (int): Max critical vulnerabilities tolerated for a project
         status (str): Status of the quality gate
     """
+
     def __init__(self, id_quality_gate, max_vulnerabilities, max_critical_vulnerabilities, status):
         self.id_quality_gate = id_quality_gate
         self.max_vulnerabilities = max_vulnerabilities
@@ -26,3 +27,9 @@ class SecurityQualityGate:
 
         """
         return len(audit.vulnerabilities) <= self.max_vulnerabilities
+
+    def get_type(self) -> str:
+        """
+        Récupère le type du qualitygate (ici security)
+        """
+        return "security"

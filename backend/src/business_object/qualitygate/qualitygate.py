@@ -10,3 +10,10 @@ class QualityGate(ABC):
     def evaluate(self, audit: Audit) -> bool:
         """Analyse the audit and returns a Boolean object."""
         pass
+
+    @abstractmethod
+    def get_type(self) -> str:
+        """
+        Récupère le type de qualitygate (eco, security or global).
+        """
+        pass

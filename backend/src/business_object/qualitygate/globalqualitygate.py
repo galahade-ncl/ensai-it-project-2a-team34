@@ -66,3 +66,9 @@ class GlobalQualityGate(QualityGate):
         )
 
         return conditions
+
+    def get_type(self) -> str:
+        """
+        Récupère le type du qualitygate (ici global)
+        """
+        return "global"
