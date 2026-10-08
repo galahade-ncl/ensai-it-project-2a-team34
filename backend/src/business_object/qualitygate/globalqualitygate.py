@@ -41,7 +41,13 @@ class GlobalQualityGate(QualityGate):
         )
 
     def evaluate(self, audit: Audit) -> bool:
-        """Evaluate the Audit"""
+        """Evaluate the Audit
+        Args:
+            audit: The audit to evaluate
+
+        Returns
+            boolean object: True if the qualitygate is respected, False otherwise
+        """
 
         # Count of vulnerabilities of audit
         audit_vul = len(audit.vulnerabilities)

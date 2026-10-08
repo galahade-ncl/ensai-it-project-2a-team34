@@ -8,5 +8,5 @@ class QualityGate(ABC):
 
     @abstractmethod
     def evaluate(self, audit: Audit) -> bool:
-        """Analyse the audit and returns a QualityGate object."""
+        """Analyse the audit and returns a Boolean object."""
         pass
