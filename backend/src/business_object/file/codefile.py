@@ -30,4 +30,4 @@ class CodeFile(File):
             return False
 
     def get_type(self) -> str:
-        pass
+        return "code"
