@@ -16,7 +16,7 @@ class SecurityQualityGate:
         self.max_critical_vulnerabilities = max_critical_vulnerabilities
         self.status = status
 
-    def evaluate(self, audit : Audit):
+    def evaluate(self, audit: Audit):
         """Returns if the project exceed the permissible vulnerability threshold
         Parameters:
             audit: The audit of the project
@@ -25,8 +25,4 @@ class SecurityQualityGate:
             bool: True if the project does not exceed the threshold
 
         """
-        if len(audit.vulnerabilities) > self.max_vulnerabilities:
-            return (False)
-        else:
-            return(True)
-
+        return len(audit.vulnerabilities) <= self.max_vulnerabilities
