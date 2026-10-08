@@ -26,3 +26,9 @@ class SecurityQualityGate:
 
         """
         return len(audit.vulnerabilities) >= self.max_vulnerabilities
+
+    def get_type(self) -> str:
+        """
+        Récupère le type du qualitygate (ici security)
+        """
+        return "security"
