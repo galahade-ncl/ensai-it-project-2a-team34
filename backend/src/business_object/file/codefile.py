@@ -21,8 +21,13 @@ class CodeFile(File):
         self.date = date | None
         self.path = path
 
-    def get_content(self):
-        pass
+     def get_content(self) -> bool:
+        try:
+            with open(self.path, "r", encoding="utf-8") as file:
+                self.content = file.read()
+            return True
+        except (FileNotFoundError, OSError):
+            return False
 
     def get_type(self) -> str:
         pass
