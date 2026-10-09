@@ -77,6 +77,8 @@ class ProjectDao(metaclass=Singleton):
                 id_project=res_project["id_project"],
                 name_project=res_project["name_project"],
                 user=res_project["user"],
+                codefile=res_project["codefile"],
+                dependencyfile=res_project["dependencyfile"],
                 secretHMACkey=res_project["secretHMACkey"],
             )
 
