@@ -74,8 +74,9 @@ class ProjectDao(metaclass=Singleton):
         project = None
         if res_project:
             project = Project(
+                id_project=res_project["id_project"],
                 name_project=res_project["name_project"],
-                id_user=res_project["id_user"],
+                user=res_project["user"],
                 secretHMACkey=res_project["secretHMACkey"],
             )
 
