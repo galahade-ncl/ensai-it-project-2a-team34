@@ -11,7 +11,7 @@ class ProjectService:
     """Service that handles business logic related to a project (upload, update, etc.)."""
 
     @log
-    def upload(self, project_name: str, user: User) -> Project:
+    def upload(self, project_name: str, user: User) -> Project | None:
         """Creates a new project in the system.
         Args:
             name_project (str) : name of the project
@@ -24,7 +24,7 @@ class ProjectService:
         return new_project if ProjectDao().create(new_project) else None
 
     @log
-    def find_by_id(self, id_project: int):
+    def find_by_id(self, id_project: int) -> Project | None:
         """Finds a specific project by their unique id.
         Args:
             id_project (int) : id of the project
@@ -34,16 +34,16 @@ class ProjectService:
         return ProjectDao().find_by_id(id_project)
 
     @log
-    def list_all_project(self, id_user: int):
+    def list_all_project(self, id_user: int) -> list[Project]:
         """List all projects owned by the user corresponding with the id.
         Args:
             id_user (int) : id of the user
         Returns:
-            list[Project]"""
+            A list of Project owned by the user"""
         return ProjectDao().find_all_project(id_user)
 
     @log
-    def update(self, project: Project):
+    def update(self, project: Project) -> Project | None:
         """Updates an existing project's information.
         Args:
             Project object containing updated information.
@@ -53,12 +53,12 @@ class ProjectService:
         return project if ProjectDao().update(project) else None
 
     @log
-    def delete(self, project: Project):
+    def delete(self, project: Project) -> bool:
         """Delete a project.
         Args:
             Project object to be deleted.
         Returns:
-            True if deletion was successful, False otherwise.
+            A booléan object: True if the deletion was successful, False otherwise.
         """
         return ProjectDao().delete(project)
 
