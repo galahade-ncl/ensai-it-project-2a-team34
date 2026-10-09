@@ -11,7 +11,9 @@ class ProjectDao(metaclass=Singleton):
 
     @log
     def create(self, project: Project) -> bool:
-        """Create a project in the database.
+        """
+        Create a project in the database.
+
         Arguments
         ---------
         project : Project
@@ -83,3 +85,62 @@ class ProjectDao(metaclass=Singleton):
             )
 
         return project
+
+    @log
+    def update(self, project: Project) -> bool:
+        """Update a project in the database.
+
+        Args:
+            project (Project): Project to be updated
+
+        Returns:
+            True if update is successful, False otherwise
+        """
+        nb_affected_rows = 0
+
+        try:
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        "UPDATE project "
+                        "   SET name_project = %(name_project)s, "
+                        "       id_user = %(id_user)s, "
+                        "       secretHMACkey = COALESCE(%(secretHMACkey)s, secretHMACkey) "
+                        " WHERE id_project = %(id_project)s;",
+                        {
+                            "name_project": project.name_project,
+                            "id_user": project.user.id_user,
+                            "secretHMACkey": project.secretHMACkey,
+                            "id_project": project.id_project,
+                        },
+                    )
+                    nb_affected_rows = cursor.rowcount
+        except Exception as e:
+            logger.error(e)
+            raise
+
+        return nb_affected_rows == 1
+
+    @log
+    def delete(self, project: Project) -> bool:
+        """Delete a project from the database.
+
+        Args:
+            project (Project): Project to delete
+
+        Returns:
+            True if the project was deleted, False otherwise
+        """
+        try:
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        "DELETE FROM project WHERE id_project = %(id_project)s;",
+                        {"id_project": project.id_project},
+                    )
+                    res = cursor.rowcount
+        except Exception as e:
+            logger.error(e)
+            raise
+
+        return res > 0
