@@ -1,5 +1,6 @@
 from business_object.project import Project
 from dao.db_connection import DBConnection
+from dao.user_dao import UserDao
 from utils.log_utils import get_logger, log
 from utils.singleton import Singleton
 
@@ -52,20 +53,27 @@ class ProjectDao(metaclass=Singleton):
         return created
 
     @log
-    def find_by_id(self, id_project: int) -> Project:
-        """Find a project by its id.
-        Args:
-            id_project (int): The ID of the project to find
-        Returns:
-            Project matching the given id
+    def find_by_id(self, id_project: int) -> Project | None:
+        """
+        Find a project by its id.
+
+        Arguments
+        ---------
+        id_project : int
+            The ID of the project to find
+
+        Returns
+        -------
+        Project
+            Project matching the given id, or None if not found
         """
         try:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
-                        "SELECT *                            "
-                        "FROM project                     "
-                        "WHERE id_project = %(id_project)s;   ",
+                        "SELECT * "
+                        "  FROM project "
+                        " WHERE id_project = %(id_project)s;",
                         {"id_project": id_project},
                     )
                     res_project = cursor.fetchone()
@@ -75,25 +83,29 @@ class ProjectDao(metaclass=Singleton):
 
         project = None
         if res_project:
+            user = UserDao().find_by_id(res_project["id_user"])
             project = Project(
                 id_project=res_project["id_project"],
                 name_project=res_project["name_project"],
-                user=res_project["user"],
-                codefile=res_project["codefile"],
-                dependencyfile=res_project["dependencyfile"],
-                secretHMACkey=res_project["secretHMACkey"],
+                user=user,
+                secretHMACkey=res_project["secrethmackey"],
             )
 
         return project
 
     @log
     def update(self, project: Project) -> bool:
-        """Update a project in the database.
+        """
+        Update a project in the database.
 
-        Args:
-            project (Project): Project to be updated
+        Arguments
+        ---------
+        project : Project
+            Project to be updated
 
-        Returns:
+        Returns
+        -------
+        bool
             True if update is successful, False otherwise
         """
         nb_affected_rows = 0
@@ -123,12 +135,17 @@ class ProjectDao(metaclass=Singleton):
 
     @log
     def delete(self, project: Project) -> bool:
-        """Delete a project from the database.
+        """
+        Delete a project from the database.
 
-        Args:
-            project (Project): Project to delete
+        Arguments
+        ---------
+        project : Project
+            Project to delete
 
-        Returns:
+        Returns
+        -------
+        bool
             True if the project was deleted, False otherwise
         """
         try:
