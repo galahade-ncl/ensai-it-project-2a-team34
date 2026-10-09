@@ -2,7 +2,7 @@ from business_object.file.file import File
 
 
 class DependencyFile(File):
-    """ A compléter
+    """A compléter
 
     Attributes
     ----------
@@ -15,7 +15,8 @@ class DependencyFile(File):
     path :str
         Chemin d'accès du fichier
     """
-    def __init__(self, id_file, name, date, path, dependencies) -> None:
+
+    def __init__(self, id_file, name, path, date=None, dependencies=None) -> None:
         self.id_file = id_file
         self.name = name
         self.date = date | None

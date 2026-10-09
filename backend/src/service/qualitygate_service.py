@@ -10,16 +10,17 @@ class QualityGateService:
     """
 
     @log
-    def evaluate(self, qualitygate: QualityGate, audit: Audit) -> bool:
+    def evaluate(self, qualitygate: QualityGate, audit: Audit):
         """Evaluate a project during its audit with the qualitygate chosen
         Args:
             qualitygate (QualityGate) : the qualitygate chosen for the evaluation
             audit (Audit) : the audit of the project that is evaluate
-        Returns:
-            Boolean object: True if the qualitygate is respected, False otherwise
         """
         audit.quality_gate = qualitygate
-        return qualitygate.evaluate(audit)
+        if qualitygate.evaluate(audit):
+            audit.quality_gate.status = "Passed"
+        else:
+            audit.quality_gate.status = "Failed"
 
     # méthode qui n'a rien a faire dans qualitygateservice -> faire un certificate_service.py 😒
     @log
