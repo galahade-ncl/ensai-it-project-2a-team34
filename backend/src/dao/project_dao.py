@@ -12,9 +12,14 @@ class ProjectDao(metaclass=Singleton):
     @log
     def create(self, project: Project) -> bool:
         """Create a project in the database.
-        Args:
+        Arguments
+        ---------
+        project : Project
             Project to create
-        Returns:
+
+        Returns
+        -------
+        bool
             True if creation is successful, False otherwise
         """
         res = None
@@ -23,7 +28,7 @@ class ProjectDao(metaclass=Singleton):
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
-                        "INSERT INTO project() VALUES "
+                        "INSERT INTO project(name_project, id_user, secretHMACkey) VALUES "
                         "(%(name_project)s, %(id_user)s, %(secretHMACkey)s) "
                         "RETURNING id_project;",
                         {
