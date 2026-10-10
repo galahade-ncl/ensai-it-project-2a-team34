@@ -223,7 +223,7 @@ classDiagram
     }
 
     class FileService {
-        +create(str, str, int): File
+        +upload(str, str, int): File
         +find_by_id(int): File
         +find_all_by_project(int): list[File]
         +find_user(int): User
