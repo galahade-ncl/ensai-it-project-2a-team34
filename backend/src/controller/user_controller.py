@@ -40,7 +40,7 @@ async def user_by_id(id_user: int, user_service=Depends(get_user_service)):
     logger.info("Find a user by id")
     user = user_service.find_by_id(id_user)
     if not user:
-        raise HTTPException(status_code=404, detail="User (id={id_user}) not found.")
+        raise HTTPException(status_code=404, detail=f"User (id={id_user}) not found.")
     return user
 
 
@@ -83,14 +83,12 @@ async def update_user(id_user: int, u: UserModel, user_service=Depends(get_user_
     logger.info("Update a user")
     user = user_service.find_by_id(id_user)
     if not user:
-        raise HTTPException(status_code=404, detail="User (id={id_user}) not found.")
+        raise HTTPException(status_code=404, detail=f"User (id={id_user}) not found.")
     
-    ## ------ A MODIFIER--------
     user.username = u.username
-    player.password = p.password
-    user.elo = u.elo
+    user.password = u.password
     user.email = u.email
-    usr.pokemon_fan = u.pokemon_fan
+    user.access_token=u.access_token
 
     user = user_service.update(user)
     if not user:
@@ -100,7 +98,7 @@ async def update_user(id_user: int, u: UserModel, user_service=Depends(get_user_
 
 
 @router.delete("/{id_user}", tags=["Users"])
-async def delete_user(id_user: int, player_service=Depends(get_user_service)):
+async def delete_user(id_user: int, user_service=Depends(get_user_service)):
     """Delete a user from the system.
     Args:
         id_user (int)
@@ -113,7 +111,7 @@ async def delete_user(id_user: int, player_service=Depends(get_user_service)):
     logger.info("Delete a user")
     user = user_service.find_by_id(id_user)
     if not user:
-        raise HTTPException(status_code=404, detail="User (id={id_user}) not found.")
+        raise HTTPException(status_code=404, detail=f"User (id={id_user}) not found.")
 
     user_service.delete(user)
     return f"User {user.username} deleted"
