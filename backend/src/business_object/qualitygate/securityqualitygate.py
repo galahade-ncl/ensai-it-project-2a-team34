@@ -25,7 +25,7 @@ class SecurityQualityGate:
             bool: True if the project does not exceed the threshold
 
         """
-        return len(audit.vulnerabilities) >= self.max_vulnerabilities
+        return len(audit.vulnerabilities) <= self.max_vulnerabilities
 
     def get_type(self) -> str:
         """

@@ -23,8 +23,16 @@ class DependencyFile(File):
         self.path = path
         self.dependencies = dependencies | []
 
-    def get_content(self):
-        pass
+    # Méthode à retravailler (je sais pas encore ce qu'on en fait) (on la garde pour l'instant)
+    def get_content(self) -> bool:
+        try:
+            with open(self.path, "r", encoding="utf-8") as file:
+                self.content = file.read()
+            return True
+        except (FileNotFoundError, OSError):
+            return False
 
     def get_type(self) -> str:
-        pass
+        return "dependency"
+
+    # Méthode à réfléchir : récup la liste des dépendencies
