@@ -15,14 +15,20 @@ class CodeFile(File):
     path :str
         Chemin d'accès du fichier
     """
-    def __init__(self, id_file, name, date, path) -> None:
+    def __init__(self, id_file, name, path, date=None):
         self.id_file = id_file
         self.name = name
-        self.date = date
+        self.date = date | None
         self.path = path
 
-    def get_content(self):
-        pass
+    # Méthode à retravailler (je sais pas encore ce qu'on en fait) (on la garde pour l'instant)
+    def get_content(self) -> bool:
+        try:
+            with open(self.path, "r", encoding="utf-8") as file:
+                self.content = file.read()
+            return True
+        except (FileNotFoundError, OSError):
+            return False
 
     def get_type(self) -> str:
-        pass
+        return "code"

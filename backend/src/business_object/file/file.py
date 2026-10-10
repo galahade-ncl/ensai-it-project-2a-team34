@@ -36,6 +36,12 @@ class File(ABC):
     def __hash__(self) -> int:
         return hash(self.id_file)
 
+    def get_path(self) -> str:
+        """
+        Méthode pour récupérer le path (en attendant de savoir comment on enregistre les fichiers)
+        """
+        return "à compléter"
+
     @abstractmethod
     def get_content(self) -> bool:
         """
