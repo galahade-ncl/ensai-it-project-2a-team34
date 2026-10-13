@@ -21,7 +21,7 @@ INSERT INTO project_table(name_project, id_user, HMAC_key) VALUES
 ("aurevoir",          10,     'cka+GV4v5rhQZ3eyZIrgHiIR_fbGiQUREOJF'                                  ),
 ("tp3",               3,      []                                                                      );
 
-INSERT INTO file_table(name_file, path, type_file, project_file) VALUES
+INSERT INTO file_table(name_file, "path", type_file, project_file) VALUES
 ('code1',           None,     "code",         3   ),
 ('roue',            None,     "code",         4   ),
 ('codetest',        None,     "code",         1   ),
