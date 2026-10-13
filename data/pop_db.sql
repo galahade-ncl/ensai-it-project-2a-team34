@@ -22,7 +22,7 @@ INSERT INTO file_table(name_file, "path", type_file, project_file) VALUES
 ('roue',            'engrenage',         'code',         4   ),
 ('codetest',        'test_path',         'code',         1   ),
 ('2e_fichier',      '2eme_path',         'dependency',   1   ),
-('miguel',          'path_de_migutl',    'dependency',   2   ),
+('miguel',          'path_de_miguel',    'dependency',   2   ),
 ('code2',           'path2',             'dependency',   3   );
 
 INSERT INTO audit_table(id_project, total_vulnerability, total_critical_vulnerability, complexity, energy_comsumption, carbon_emission_gco2e, status_qualitygate) VALUES
