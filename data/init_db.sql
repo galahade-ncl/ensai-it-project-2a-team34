@@ -1,8 +1,8 @@
 -----------------------------------------------------
 -- User table
 -----------------------------------------------------
-DROP TABLE IF EXISTS user CASCADE;
-CREATE TABLE user (
+DROP TABLE IF EXISTS table_user CASCADE;
+CREATE TABLE user_table (
     id_user      SERIAL PRIMARY KEY,
     username     VARCHAR(30) UNIQUE,
     password     VARCHAR(256),
@@ -14,8 +14,8 @@ CREATE TABLE user (
 -- Project table
 -----------------------------------------------------
 
-DROP TABLE IF EXISTS user CASCADE;
-CREATE TABLE project (
+DROP TABLE IF EXISTS table_project CASCADE;
+CREATE TABLE project_table (
     id_project      SERIAL PRIMARY KEY,
     name_project    VARCHAR,
     id_user         FOREIGN KEY,
@@ -26,8 +26,8 @@ CREATE TABLE project (
 -- File table
 -----------------------------------------------------
 
-DROP TABLE IF EXISTS user CASCADE;
-CREATE TABLE file (
+DROP TABLE IF EXISTS table_file CASCADE;
+CREATE TABLE file_table (
     id_file         SERIAL PRIMARY KEY,
     name_file       VARCHAR,
     date            TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -40,8 +40,8 @@ CREATE TABLE file (
 -- Audit table
 -----------------------------------------------------
 
-DROP TABLE IF EXISTS user CASCADE;
-CREATE TABLE audit (
+DROP TABLE IF EXISTS table_audit CASCADE;
+CREATE TABLE audit_table (
     id_audit                                  SERIAL PRIMARY KEY,
     id_project                                FOREIGN KEY,
     date                                      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
