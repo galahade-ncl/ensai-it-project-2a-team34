@@ -1,10 +1,19 @@
 from datetime import datetime
 from unittest.mock import MagicMock
 
+import pytest
 from src.business_object.file.codefile import CodeFile
 from src.business_object.file.dependencyfile import DependencyFile
 from src.dao.file_dao import FileDao
 from src.service.file_service import FileService
+
+
+@pytest.fixture(autouse=True)
+def reset_dao_singleton():
+    yield
+    # Nettoyage après chaque test
+    FileDao._instances.clear()
+
 
 # For the list_all_by_project test
 file_list_project_michel = [
@@ -93,7 +102,7 @@ def test_find_by_id_successful():
     file = file_list[1]
     id_of_file = file.id_file
 
-    FileDao().find_by_id = MagicMock(result=file)
+    FileDao().find_by_id = MagicMock(return_value=file)
 
     # WHEN
     file_found = FileService().find_by_id(id_of_file)
@@ -109,7 +118,7 @@ def test_find_by_id_failed():
     file = file_list[2]
     id_of_file = file.id_file
 
-    FileDao().find_by_id = MagicMock(result=None)
+    FileDao().find_by_id = MagicMock(return_value=None)
 
     # WHEN
     file_found = FileService().find_by_id(id_of_file)
@@ -143,7 +152,7 @@ def test_update_successful():
     FileDao().update = MagicMock(return_value=file)
 
     # WHEN
-    updated_file = FileDao().update(file)
+    updated_file = FileService().update(file)
 
     # THEN
     assert updated_file.name == updated_name

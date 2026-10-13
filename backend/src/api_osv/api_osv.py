@@ -1,12 +1,12 @@
 import requests
-from critical_vulnerability import CriticalVulnerability
 from cvss import CVSS2, CVSS3, CVSS4
-from dependency import Dependency
-from high_vulnerability import HighVulnerability
-from low_vulnerability import LowVulnerability
-from medium_vulnerability import MediumVulnerability
-from vulnerability import Vulnerability
 
+from business_object.dependency import Dependency
+from business_object.vulnerability.critical_vulnerability import CriticalVulnerability
+from business_object.vulnerability.high_vulnerability import HighVulnerability
+from business_object.vulnerability.low_vulnerability import LowVulnerability
+from business_object.vulnerability.medium_vulnerability import MediumVulnerability
+from business_object.vulnerability.vulnerability import Vulnerability
 from utils.log_utils import log
 
 
@@ -48,11 +48,13 @@ class API_OSV:
         vulnerabilities = []
 
         for osv_vuln in data.get("vulns", []):
+            # call of _get_severity
             severity = API_OSV._get_severity(osv_vuln)
 
             if severity is None:
                 continue
 
+            # call of _to_vulnerability
             vulnerability = API_OSV._to_vulnerability(
                 osv_vuln,
                 dependency,
@@ -63,6 +65,7 @@ class API_OSV:
         return vulnerabilities
 
     @staticmethod
+    @log
     def _get_severity(osv_vuln: dict) -> str | None:
         """
         Determine severity from a CVSS vector
@@ -102,6 +105,7 @@ class API_OSV:
         return None
 
     @staticmethod
+    @log
     def _to_vulnerability(osv_vuln: dict, dependency: Dependency, severity: str) -> Vulnerability:
         """
         Transform the response of the API to a Vulnerability object

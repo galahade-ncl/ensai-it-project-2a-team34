@@ -19,7 +19,7 @@ class ProjectService:
         Returns:
             Project object created or None if creation failed.
         """
-        secret_HMAC_key = generate_secret_HMAC_key(self)
+        secret_HMAC_key = generate_secret_HMAC_key()
         new_project = Project(name_project=project_name, user=user, secretHMACkey=secret_HMAC_key)
         return new_project if ProjectDao().create(new_project) else None
 
@@ -63,6 +63,7 @@ class ProjectService:
         return ProjectDao().delete(project)
 
     # Est-ce qu'on garde la méthode là ?
+    @staticmethod
     @log
     def verify_signature(project: Project, code: bytes, dependency: bytes, signature: bytes) -> bool:
         """

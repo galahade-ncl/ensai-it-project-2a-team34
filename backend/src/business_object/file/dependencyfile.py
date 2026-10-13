@@ -19,9 +19,9 @@ class DependencyFile(File):
     def __init__(self, id_file, name, path, date=None, dependencies=None) -> None:
         self.id_file = id_file
         self.name = name
-        self.date = date | None
+        self.date = date
         self.path = path
-        self.dependencies = dependencies | []
+        self.dependencies = dependencies
 
     # Méthode à retravailler (je sais pas encore ce qu'on en fait) (on la garde pour l'instant)
     def get_content(self) -> bool:
