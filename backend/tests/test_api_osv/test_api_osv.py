@@ -1,7 +1,7 @@
 import pytest
+from src.api_osv.api_osv import API_OSV
+from src.business_object.dependency import Dependency
 
-from api_osv import API_OSV
-from business_object.dependency import Dependency
 from business_object.vulnerability.critical_vulnerability import CriticalVulnerability
 from business_object.vulnerability.high_vulnerability import HighVulnerability
 from business_object.vulnerability.low_vulnerability import LowVulnerability
@@ -19,7 +19,7 @@ class TestGetSeverity:
             ("CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L", "MEDIUM"),  # 5.3
             (
                 "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N",
-                "LOW",
+                None,
             ),  # 0.0 (retourne None en logique)
         ],
     )
