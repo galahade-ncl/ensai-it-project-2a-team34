@@ -4,7 +4,6 @@ from unittest.mock import MagicMock
 from src.business_object.audit import Audit
 from src.business_object.qualitygate.ecoqualitygate import EcoQualityGate
 from src.business_object.qualitygate.globalqualitygate import GlobalQualityGate
-from src.business_object.qualitygate.qualitygate import QualityGate
 from src.business_object.qualitygate.securityqualitygate import SecurityQualityGate
 from src.business_object.vulnerability.critical_vulnerability import CriticalVulnerability
 from src.business_object.vulnerability.high_vulnerability import HighVulnerability
