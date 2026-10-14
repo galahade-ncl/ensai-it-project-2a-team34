@@ -25,3 +25,8 @@ class AuditReadModel(BaseModel):
     #sbom: SBOM
     quality_gate: QualityGate
     certificate: Certificate
+
+
+class AuditCreateModel(BaseModel):
+    id_project: int
+    date: datetime
