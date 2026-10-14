@@ -17,14 +17,6 @@ INSERT INTO project_table(name_project, id_user, HMAC_key) VALUES
 ('test_de_projet',    6,      'fdslirgHR_rhoP3ZIJF5ruefiUREOIZPhflz568ro*àa_h5eAZEIjf'                );
 
 
-INSERT INTO file_table(name_file, "path", type_file, project_file) VALUES
-('code1',           'path_de_code1',     'code',         3   ),
-('roue',            'engrenage',         'code',         4   ),
-('codetest',        'test_path',         'code',         1   ),
-('2e_fichier',      '2eme_path',         'dependency',   1   ),
-('miguel',          'path_de_miguel',    'dependency',   2   ),
-('code2',           'path2',             'dependency',   3   );
-
 INSERT INTO audit_table(id_project, total_vulnerability, total_critical_vulnerability, complexity, energy_comsumption, carbon_emission_gco2e, status_qualitygate) VALUES
 (1,         5,       1,        25,       120,         1584,      'passed'),
 (3,         10,      2,        10,       200,         126,       'passed');

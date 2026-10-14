@@ -25,22 +25,6 @@ CREATE TABLE project_table (
 );
 
 -----------------------------------------------------
--- File table
------------------------------------------------------
-
-DROP TABLE IF EXISTS file_table CASCADE;
-CREATE TABLE file_table (
-    id_file         SERIAL PRIMARY KEY,
-    name_file       VARCHAR,
-    date            TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    "path"          VARCHAR,
-    type_file       VARCHAR,
-    project_file    INT,
-    FOREIGN KEY (project_file)
-    REFERENCES project_table(id_project)
-);
-
------------------------------------------------------
 -- Audit table
 -----------------------------------------------------
 

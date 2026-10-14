@@ -21,18 +21,6 @@ INSERT INTO project_table(name_project, id_user, HMAC_key) VALUES
 ('aurevoir',          10,     'cka+GV4v5rhQZ3eyZIrgHiIR_fbGiQUREOJF'                                  ),
 ('tp3',               3,      'petite_cle'                                                            );
 
-INSERT INTO file_table(name_file, "path", type_file, project_file) VALUES
-('code1',           'path_de_code1',      'code',         3   ),
-('roue',            'engrenage',          'code',         4   ),
-('codetest',        'test_path',          'code',         1   ),
-('2e_fichier',      '2eme_path',          'dependency',   1   ),
-('miguel',          'path_de_miguel',     'dependency',   2   ),
-('code2',           'path2',              'dependency',   3   ),
-('tp3_python',      'tp3_path',           'code',         7   ),
-(5,                 '5',                  'dependency',   6   ),
-('test_test_test',  'test_test_de_path',  'miguel',       2   ),
-('bonjour',         'hello',              'code',         '1' );
-
 INSERT INTO audit_table(id_project, total_vulnerability, total_critical_vulnerability, complexity, energy_comsumption, carbon_emission_gco2e, status_qualitygate) VALUES
 (1,         5,       1,        25,       120,         1584,      'passed'),
 (2,         10,      0,        20,       520,         126,       'passed'),
