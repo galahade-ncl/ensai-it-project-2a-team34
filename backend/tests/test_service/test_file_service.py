@@ -7,6 +7,14 @@ from src.business_object.file.dependencyfile import DependencyFile
 # from src.dao.file_dao import FileDao
 # from src.service.file_service import FileService
 
+
+@pytest.fixture(autouse=True)
+def reset_dao_singleton():
+    yield
+    # Nettoyage après chaque test
+    FileDao._instances.clear()
+
+
 # For the list_all_by_project test
 file_list_project_michel = [
     CodeFile(

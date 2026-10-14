@@ -47,4 +47,4 @@ class Audit:
     def __str__(self):
         """Returns a string representation of the audit
         """
-        return f"Audit:{self.audit} of the project {self.id_project}. It consume {self.energy_consumption_kwh} kwh."
+        return f"Audit: Audit of the project {self.id_project}. It consume {self.energy_consumption_kwh} kwh."

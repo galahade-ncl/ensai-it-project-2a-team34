@@ -16,17 +16,17 @@ class Project:
         self,
         name_project,
         user,
-        codefile,
-        dependencyfile,
         secretHMACkey,
-        id_project=None
+        id_project=None,
+        codefile=None,
+        dependencyfile=None,
     ):
         """Constructor"""
         self.id_project = id_project
         self.name_project = name_project
         self.user = user
-        self.codefile = codefile | None
-        self.dependencyfile = dependencyfile | None
+        self.codefile = codefile
+        self.dependencyfile = dependencyfile
         self.secretHMACkey = secretHMACkey
 
     def __str__(self):

@@ -54,7 +54,7 @@ class GlobalQualityGate(QualityGate):
 
         # Count of critical vulnerabilities of audit
         audit_crit_vul = 0
-        for vul in audit.max_vulnerabilities:
+        for vul in audit.vulnerabilities:
             if isinstance(vul, CriticalVulnerability):
                 audit_crit_vul += 1
 

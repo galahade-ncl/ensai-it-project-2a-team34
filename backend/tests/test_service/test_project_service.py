@@ -1,12 +1,21 @@
 from datetime import datetime
 from unittest.mock import MagicMock
 
+import pytest
 from src.business_object.file.codefile import CodeFile
 from src.business_object.file.dependencyfile import DependencyFile
 from src.business_object.project import Project
 from src.business_object.user import User
 from src.dao.project_dao import ProjectDao
 from src.service.project_service import ProjectService
+
+
+@pytest.fixture(autouse=True)
+def reset_dao_singleton():
+    yield
+    # Nettoyage après chaque test
+    ProjectDao._instances.clear()
+
 
 # For the list_all_project test
 project_list_michel = [
@@ -81,7 +90,7 @@ project_list = [
     Project(
         id_project=7,
         name_project="impressions",
-        user=User("Jean_Edouard", "je@mail.oo", password="tropical"),
+        user=User(id_user=4, username="Jean-Edouard", email="je@mail.oo", password="tropical"),
         codefile=CodeFile(
             id_file=5, name="le_fichier_code", date=datetime(2026, 4, 8, 13, 45, 9), path=""
         ),
@@ -99,7 +108,7 @@ project_list = [
     Project(
         id_project=8,
         name_project="project_numero_1502",
-        user=User("Jean_Nemard", "jn@hotmail.nul", password="desert"),
+        user=User(id_user=5, username="Jean-Nemard", email="jn@hotmail.nul", password="desert"),
         codefile=CodeFile(
             id_file=7, name="fichier_1", date=datetime(2026, 5, 6, 15, 10, 42), path=""
         ),
@@ -123,7 +132,7 @@ def test_upload_successful():
 
     # GIVEN
     name_project = "inspirations"
-    user = User("Jean_Edouard", "je@mail.oo", password="tropical")
+    user = User(id_user=4, username="Jean-Edouard", email="je@mail.oo", password="tropical")
     ProjectDao().create = MagicMock(return_value=True)
 
     # WHEN
@@ -138,7 +147,7 @@ def test_upload_failed():
 
     # GIVEN
     name_project = "project_numero_512"
-    user = User("Jean_Nemard", "jn@hotmail.nul", password="desert")
+    user = User(id_user=5, username="Jean-Nemard", email="jn@hotmail.nul", password="desert")
     ProjectDao().create = MagicMock(return_value=False)
 
     # WHEN
@@ -155,7 +164,7 @@ def test_find_by_id_successful():
     project = project_list[1]
     project_id = project.id_project
 
-    ProjectDao().find_by_id = MagicMock(result=project)
+    ProjectDao().find_by_id = MagicMock(return_value=project)
 
     # WHEN
     project_found = ProjectService().find_by_id(project_id)
@@ -171,7 +180,7 @@ def test_find_by_id_failed():
     project = project_list[2]
     project_id = project.id_project
 
-    ProjectDao().find_by_id = MagicMock(result=None)
+    ProjectDao().find_by_id = MagicMock(return_value=None)
 
     # WHEN
     project_found = ProjectService().find_by_id(project_id)
