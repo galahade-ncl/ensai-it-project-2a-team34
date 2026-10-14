@@ -1,5 +1,6 @@
 from datetime import datetime
 
+# import pytest
 # from unittest.mock import MagicMock
 from src.business_object.file.codefile import CodeFile
 from src.business_object.file.dependencyfile import DependencyFile
@@ -8,11 +9,11 @@ from src.business_object.file.dependencyfile import DependencyFile
 # from src.service.file_service import FileService
 
 
-@pytest.fixture(autouse=True)
-def reset_dao_singleton():
-    yield
-    # Nettoyage après chaque test
-    FileDao._instances.clear()
+# @pytest.fixture(autouse=True)
+# def reset_dao_singleton():
+#     yield
+#     # Nettoyage après chaque test
+#     FileDao._instances.clear()
 
 
 # For the list_all_by_project test

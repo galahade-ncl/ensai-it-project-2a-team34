@@ -22,7 +22,7 @@ class CodeFile(File):
     # Méthode a déplacer dans utils, sauf si différente de méthode de dépendencyfile
     def get_content(self) -> bool:
         try:
-            with open(self.path, "r", encoding="utf-8") as file:
+            with open(self.path, encoding="utf-8") as file:
                 self.content = file.read()
             return True
         except (FileNotFoundError, OSError):
