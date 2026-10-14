@@ -42,12 +42,12 @@ class File(ABC):
     #     """
     #     return "à compléter"
 
-    @abstractmethod
-    def get_content(self) -> bool:
-        """
-        Récupère le contenu du fichier.
-        """
-        pass
+    # @abstractmethod
+    # def get_content(self) -> bool:
+    #     """
+    #     Récupère le contenu du fichier.
+    #     """
+    #     pass
 
     @abstractmethod
     def get_type(self) -> str:

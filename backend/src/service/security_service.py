@@ -1,21 +1,12 @@
 from api_osv.api_osv import API_OSV
-from business_object.dependency import Dependency
 from business_object.file.dependencyfile import DependencyFile
 from business_object.licence import Licence
 from business_object.vulnerability.vulnerability import Vulnerability
+from utils.log_utils import log
 
 
 class SecurityService:
-    def parse_dependencies(self, dependencyfile: DependencyFile) -> list[Dependency]:
-        """
-        Find all the dependencies in the dependencyfile
-        Args:
-            dependencyfile (DependencyFile): file containing all the dependencies
-        Returns:
-            List of Dependency object found in the file
-        """
-        pass
-
+    @log
     def detect_ecosystem(self, dependencyfile: DependencyFile) -> str:
         """
         Find the ecosystem related to the type of the dependencyfile
@@ -33,9 +24,8 @@ class SecurityService:
             return "Maven"
         raise ValueError(f"Fichier non supporté : {filename}")
 
-    def find_vulnerabilities(
-        self, dep_file: DependencyFile
-    ) -> list[Vulnerability]:
+    @log
+    def find_vulnerabilities(self, dep_file: DependencyFile) -> list[Vulnerability]:
         """
         Found vulnerabilities from the dependencyfile and with the call of API_OSV
         Args:
@@ -52,6 +42,7 @@ class SecurityService:
             )
         return list_vuln
 
+    @log
     def find_licences(self, dep_file=DependencyFile) -> list[Licence]:
         """
         Find all the licences in the dependencyfile

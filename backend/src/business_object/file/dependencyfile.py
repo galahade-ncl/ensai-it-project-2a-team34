@@ -21,13 +21,13 @@ class DependencyFile(File):
         # self.dependencies = dependencies -> retiré pour l'instant
 
     # Méthode a déplacer dans utils, sauf si différente de méthode de codefile
-    def get_content(self) -> bool:
-        try:
-            with open(self.path, encoding="utf-8") as file:
-                self.content = file.read()
-            return True
-        except (FileNotFoundError, OSError):
-            return False
+    # def get_content(self) -> bool:
+    #     try:
+    #         with open(self.path, encoding="utf-8") as file:
+    #             self.content = file.read()
+    #         return True
+    #     except (FileNotFoundError, OSError):
+    #         return False
 
     def get_type(self) -> str:
         return "dependency"
