@@ -1,3 +1,5 @@
+from file_service import FileService
+
 from api_osv.api_osv import API_OSV
 from business_object.file.dependencyfile import DependencyFile
 from business_object.licence import Licence
@@ -34,7 +36,7 @@ class SecurityService:
             List of Vulnerability object found related to dependencyfile
         """
         list_vuln = []
-        list_dep = SecurityService.parse_dependencies(dependencyfile=dep_file)
+        list_dep = FileService.parse_dependencies(dependencyfile=dep_file)
         chosen_ecosystem = SecurityService.detect_ecosystem(dependencyfile=dep_file)
         for dep in list_dep:
             list_vuln = list_vuln + API_OSV.find_vulnerabilities(
