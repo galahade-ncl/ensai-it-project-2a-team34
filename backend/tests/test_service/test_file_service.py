@@ -19,50 +19,77 @@ from src.business_object.file.dependencyfile import DependencyFile
 # For the list_all_by_project test
 file_list_project_michel = [
     CodeFile(
-        id_file=1,
         name="Le code du projet",
+        content=b"print('Hello World')\n",
         date=datetime(2026, 1, 5, 8, 15, 23),
-        path="chemin imaginaire",
     ),
-    CodeFile(id_file=2, name="Le code optionel du projet", path="chemin imaginaire 2"),
+    CodeFile(
+        name="Le code optionel du projet",
+        content=b"print('Hello World, aRe yoU Ok ?')\n",
+        date=datetime(2026, 1, 11, 11, 47, 5),
+    ),
     DependencyFile(
-        id_file=3,
         name="Il faut bien un fichier de dépendance au moins",
+        content=b"requests==2.32.3\npytest==8.3.3\n",
         date=datetime(2026, 1, 18, 10, 42, 5),
-        path="chemin imaginaire 3",
-        dependencies=[],
     ),
 ]
 
 # For the other tests
 file_list = [
-    CodeFile(id_file=4, name="citron", date=datetime(2026, 2, 3, 14, 30, 12), path=""),
-    DependencyFile(
-        id_file=5, name="myrtille", date=datetime(2026, 2, 21, 9, 5, 47), path="", dependencies=[]
+    CodeFile(
+        name="citron",
+        content=b"""def presser_citron():
+    return "Jus de citron"
+
+print(presser_citron())
+""",
+        date=datetime(2026, 2, 3, 14, 30, 12),
     ),
-    CodeFile(id_file=6, name="sucre", date=datetime(2026, 3, 12, 16, 22, 31), path=""),
     DependencyFile(
-        id_file=7,
+        name="myrtille",
+        content=b"""requests==2.32.3\npytest==8.3.3""",
+        date=datetime(2026, 2, 21, 9, 5, 47),
+    ),
+    CodeFile(
+        name="sucre",
+        content=b"""def ajouter_sucre(quantite):
+    return f"Ajout de {quantite} grammes de sucre"
+
+print(ajouter_sucre(10))
+""",
+        date=datetime(2026, 3, 12, 16, 22, 31),
+    ),
+    DependencyFile(
         name="casserole",
+        content=b'{"dependencies": {"express": "^4.21.0"}}',
         date=datetime(2026, 3, 27, 11, 18, 54),
-        path="",
-        dependencies=[],
     ),
-    CodeFile(id_file=8, name="le_fichier_code", date=datetime(2026, 4, 8, 13, 45, 9), path=""),
+    CodeFile(
+        name="le_fichier_code",
+        content="function add(a, b) { return a + b; }\n",
+        date=datetime(2026, 4, 8, 13, 45, 9),
+    ),
     DependencyFile(
-        id_file=9,
         name="le_fichier_dependences",
+        content=b"""<project>
+                        <modelVersion>4.0.0</modelVersion>
+                        <groupId>com.example</groupId>
+                        <artifactId>my-app</artifactId>
+                        <version>1.0.0</version>
+                    </project>
+                    """,
         date=datetime(2026, 4, 19, 7, 32, 16),
-        path="",
-        dependencies=[],
     ),
-    CodeFile(id_file=10, name="fichier_1", date=datetime(2026, 5, 6, 15, 10, 42), path=""),
+    CodeFile(
+        name="fichier_1",
+        content="def multiply(a, b):\n    return a * b\n",
+        date=datetime(2026, 5, 6, 15, 10, 42),
+    ),
     DependencyFile(
-        id_file=11,
         name="fichier_2",
+        content=b'[project]\nname = "my-app"\ndependencies = ["requests>=2.0"]\n',
         date=datetime(2026, 5, 24, 12, 55, 28),
-        path="",
-        dependencies=[],
     ),
 ]
 
