@@ -59,7 +59,7 @@ class TestToVulnerability:
 
     def test_sets_correct_fields(self):
         osv_vuln = {"id": "GHSA-XXXX", "aliases": ["CVE-2024-5678"]}
-        dep = Dependency(1, "express", "4.17.1")
+        dep = Dependency(id_dependency=1, name="express", version="4.17.1")
         vuln = API_OSV._to_vulnerability(osv_vuln, dep, "MEDIUM")
 
         assert vuln.osv_id == "GHSA-XXXX"

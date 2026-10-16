@@ -1,13 +1,11 @@
 from datetime import datetime
 
-# import pytest
+import pytest
+
 # from unittest.mock import MagicMock
 from src.business_object.file.codefile import CodeFile
 from src.business_object.file.dependencyfile import DependencyFile
-
-# from src.dao.file_dao import FileDao
-# from src.service.file_service import FileService
-
+from src.service.file_services.file_service import FileService
 
 # @pytest.fixture(autouse=True)
 # def reset_dao_singleton():
@@ -72,6 +70,12 @@ print(ajouter_sucre(10))
         type_file="json",
         date=datetime(2026, 3, 27, 11, 18, 54),
     ),
+    DependencyFile(
+        name="requirements",
+        content=b"requests==2.0",
+        type_file="txt",
+        date=datetime(2026, 6, 10, 8, 46, 54),
+    ),
     CodeFile(
         name="le_fichier_code",
         content="function add(a, b) { return a + b; }\n",
@@ -105,4 +109,49 @@ print(ajouter_sucre(10))
 ]
 
 
-# manque get_content (je sais pas si on les garde cette méthode)
+def test_get_filename_successful():
+    # GIVEN
+    dependencyfile = file_list[1]
+
+    # WHEN
+    filename = FileService().get_filename(dependencyfile)
+
+    # THEN
+    assert filename == "myrtille.txt"
+
+
+def test_get_filename_strips_leading_dot():
+    # GIVEN
+    dependencyfile = DependencyFile(name="package", type_file=".json", content=b"")
+
+    # WHEN
+    filename = FileService().get_filename(dependencyfile)
+
+    # THEN
+    assert filename == "package.json"
+
+
+def test_parse_dependencies_successful():
+    # GIVEN
+    dependencyfile = file_list[4]
+    list_result = [("requests", "2.0")]
+
+    # WHEN
+    list_dep = FileService().parse_dependencies(dependencyfile)
+
+    # THEN
+    for i in range(len(list_dep)):
+        assert list_dep[i].name == list_result[i][0]
+        assert list_dep[i].version == list_result[i][1]
+
+
+def test_parse_dependencies_failed():
+    # GIVEN
+    dependencyfile = DependencyFile(name="doc", type_file="pdf", content=b"")
+
+    # THEN
+    with pytest.raises(ValueError):
+        FileService().parse_dependencies(dependencyfile)
+
+
+# manque get_content (je sais pas si on les garde cette méthode), parse_ast
