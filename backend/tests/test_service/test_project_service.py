@@ -55,13 +55,13 @@ project_list = [
         codefile=CodeFile(
             name="citron",
             content=b"print('Hello World')\n",
-            type="py",
+            type_file="py",
             date=datetime(2026, 2, 3, 14, 30, 12)
             ),
         dependencyfile=DependencyFile(
             name="myrtille",
             content=b"requests==2.32.3\npytest==8.3.3\n",
-            type="txt",
+            type_file="txt",
             date=datetime(2026, 2, 21, 9, 5, 47)
         ),
         secretHMACkey=bytes.fromhex(
@@ -75,12 +75,12 @@ project_list = [
         codefile=CodeFile(
             name="sucre",
             content=b"function add(a, b) { return a + b; }\n",
-            type="js",
+            type_file="js",
             date=datetime(2026, 3, 12, 16, 22, 31)),
         dependencyfile=DependencyFile(
             name="casserole",
             content=b'{"dependencies": {"express": "^4.21.0"}}',
-            type="json",
+            type_file="json",
             date=datetime(2026, 3, 27, 11, 18, 54)
         ),
         secretHMACkey=bytes.fromhex(
@@ -102,13 +102,13 @@ project_list = [
         codefile=CodeFile(
             name="le_fichier_code",
             content=b"def multiply(a, b):\n    return a * b\n",
-            type="py",
+            type_file="py",
             date=datetime(2026, 4, 8, 13, 45, 9)
         ),
         dependencyfile=DependencyFile(
             name="le_fichier_dependences",
             content=b'[project]\nname = "my-app"\ndependencies = ["requests>=2.0"]\n',
-            type="toml",
+            type_file="toml",
             date=datetime(2026, 4, 19, 7, 32, 16)
         ),
         secretHMACkey=bytes.fromhex(
@@ -122,7 +122,7 @@ project_list = [
         codefile=CodeFile(
             name="fichier_1",
             content=b"public class Main { public static void main(String[] args) {} }\n",
-            type="java",
+            type_file="java",
             date=datetime(2026, 5, 6, 15, 10, 42)
         ),
         dependencyfile=DependencyFile(
@@ -134,7 +134,7 @@ project_list = [
                         <version>1.0.0</version>
                     </project>
                     """,
-            type="xml",
+            type_file="xml",
             date=datetime(2026, 5, 24, 12, 55, 28)
         ),
         secretHMACkey=bytes.fromhex(

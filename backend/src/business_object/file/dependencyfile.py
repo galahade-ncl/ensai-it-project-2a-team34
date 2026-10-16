@@ -14,10 +14,10 @@ class DependencyFile(File):
         Date de dépot du fichier
     """
 
-    def __init__(self, name, content, type, date=None) -> None:
+    def __init__(self, name, content, type_file, date=None) -> None:
         self.name = name
         self.content = content
-        self.type = str
+        self.type_file = type_file
         self.date = date
         # self.dependencies = dependencies -> retiré pour l'instant
 

@@ -14,10 +14,10 @@ class CodeFile(File):
         Date de dépot du fichier
     """
 
-    def __init__(self, name, content, type, date=None) -> None:
+    def __init__(self, name, content, type_file, date=None) -> None:
         self.name = name
         self.content = content
-        self.type = str
+        self.type_file = type_file
         self.date = date
 
     # Méthode a déplacer dans utils, sauf si différente de méthode de dépendencyfile
