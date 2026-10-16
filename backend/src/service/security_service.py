@@ -1,4 +1,4 @@
-from file_service import FileService
+from file_services.file_service import FileService
 
 from api_osv.api_osv import API_OSV
 from business_object.file.dependencyfile import DependencyFile
