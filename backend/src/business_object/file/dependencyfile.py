@@ -14,9 +14,10 @@ class DependencyFile(File):
         Date de dépot du fichier
     """
 
-    def __init__(self, name, content, date=None) -> None:
+    def __init__(self, name, content, type, date=None) -> None:
         self.name = name
         self.content = content
+        self.type = str
         self.date = date
         # self.dependencies = dependencies -> retiré pour l'instant
 
@@ -29,7 +30,7 @@ class DependencyFile(File):
     #     except (FileNotFoundError, OSError):
     #         return False
 
-    def get_type(self) -> str:
+    def get_duty(self) -> str:
         return "dependency"
 
     # Méthode à réfléchir : récup la liste des dépendencies
