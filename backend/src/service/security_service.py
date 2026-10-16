@@ -43,8 +43,8 @@ class SecurityService:
             List of Vulnerability object found related to dependencyfile
         """
         list_vuln = []
-        list_dep = FileService.parse_dependencies(dependencyfile=dep_file)
-        chosen_ecosystem = SecurityService.detect_ecosystem(dependencyfile=dep_file)
+        chosen_ecosystem = SecurityService().detect_ecosystem(dependencyfile=dep_file)
+        list_dep = FileService().parse_dependencies(dependencyfile=dep_file)
         for dep in list_dep:
             list_vuln = list_vuln + API_OSV.find_vulnerabilities(
                 dependency=dep, ecosystem=chosen_ecosystem

@@ -7,6 +7,7 @@ from src.service.file_services.json_service import JsonService
 
 
 def test_parse_dependencies_json_merges_dependencies_and_dev():
+    """ Verify that the “dependencies” and “devDependencies” sections have been combined into a single list."""
     # GIVEN
     content = b'{"dependencies": {"express": "^4.0.0"}, "devDependencies": {"jest": "^29.0.0"}}'
     list_result = [("express", "^4.0.0"), ("jest", "^29.0.0")]
@@ -21,6 +22,7 @@ def test_parse_dependencies_json_merges_dependencies_and_dev():
 
 
 def test_parse_dependencies_json_without_dependencies():
+    """ Verify that a JSON without a dependencies section returns an empty list."""
     # GIVEN
     content = b'{"name": "x"}'
     list_result = []
@@ -33,6 +35,7 @@ def test_parse_dependencies_json_without_dependencies():
 
 
 def test_parse_dependencies_json_invalid_raises():
+    """ Verify that malformed JSON triggers an error."""
     # GIVEN
     content = b"{pas du json"
 

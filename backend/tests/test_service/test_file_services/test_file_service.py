@@ -110,6 +110,7 @@ print(ajouter_sucre(10))
 
 
 def test_get_filename_successful():
+    """ Verify that the file name is constructed from the name and the extension (requirements.txt)."""
     # GIVEN
     dependencyfile = file_list[1]
 
@@ -121,6 +122,7 @@ def test_get_filename_successful():
 
 
 def test_get_filename_strips_leading_dot():
+    """ Check to make sure that a dot at the beginning of the file extension (.json) isn't duplicated in the filename."""
     # GIVEN
     dependencyfile = DependencyFile(name="package", type_file=".json", content=b"")
 
@@ -132,6 +134,7 @@ def test_get_filename_strips_leading_dot():
 
 
 def test_parse_dependencies_successful():
+    """ Verify that parse_dependencies is delegated to the service corresponding to the file extension."""
     # GIVEN
     dependencyfile = file_list[4]
     list_result = [("requests", "2.0")]
@@ -146,6 +149,7 @@ def test_parse_dependencies_successful():
 
 
 def test_parse_dependencies_failed():
+    """ Check whether an unsupported file extension (e.g., .pdf) raises a ValueError."""
     # GIVEN
     dependencyfile = DependencyFile(name="doc", type_file="pdf", content=b"")
 

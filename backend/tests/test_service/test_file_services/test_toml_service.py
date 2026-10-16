@@ -6,6 +6,7 @@ from src.service.file_services.toml_service import TomlService
 
 
 def test_toml_string_and_table_versions():
+    """ Verify that the version is parsed correctly both as a string (“1.0”) and as a object ({ version = “1.2” })."""
     # GIVEN
     content = b'[dependencies]\nserde = "1.0"\ntokio = { version = "1.2", features = ["full"] }\n'
     list_result = [("serde", "1.0"), ("tokio", "1.2")]
@@ -20,6 +21,7 @@ def test_toml_string_and_table_versions():
 
 
 def test_toml_dependency_without_version():
+    """ Check that a dependency without a version (e.g., path = ...) returns None."""
     # GIVEN
     content = b'[dependencies]\nlocal = { path = "../local" }\n'
     list_result = [("local", None)]
@@ -34,6 +36,7 @@ def test_toml_dependency_without_version():
 
 
 def test_toml_no_dependencies_section():
+    """ Verify that a TOML file without a [dependencies] section returns an empty list."""
     # GIVEN
     content = b'[package]\nname = "x"\n'
     list_result = []
