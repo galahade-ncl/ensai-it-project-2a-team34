@@ -23,7 +23,7 @@ class AuditDao(metaclass=Singleton):
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
-                        "INSERT INTO audit(id_project, date, complexity, energy_consumption_kwh, carbon_emission_gco2e, vulnerabilities, sbom) VALUES "
+                        "INSERT INTO audit_table(id_project, date, complexity, energy_consumption_kwh, carbon_emission_gco2e, vulnerabilities, sbom) VALUES "
                         "(%(id_project)s, %(date)s, %(complexity)s, %(energy_consumption_kwh)s, %(carbon_emission_gco2e)s, %(vulnerabilities)s, %(sbom)s) "
                         "RETURNING id_audit;",
                         {
@@ -61,7 +61,7 @@ class AuditDao(metaclass=Singleton):
                 with connection.cursor() as cursor:
                     cursor.execute(
                         "SELECT *                            "
-                        "  FROM audit                       "
+                        "  FROM audit_table                  "
                         " WHERE id_audit = %(id_audit)s;   ",
                         {"id_audit": id_audit},
                     )
@@ -100,7 +100,7 @@ class AuditDao(metaclass=Singleton):
                 with connection.cursor() as cursor:
                     cursor.execute(
                         "SELECT *                                "
-                        "  FROM audit                           "
+                        "  FROM audit_table                      "
                         " ORDER BY username;                     "
                     )
                     res = cursor.fetchall()
@@ -144,7 +144,7 @@ class AuditDao(metaclass=Singleton):
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
-                        "UPDATE audit                                                  "
+                        "UPDATE audit_table                                             "
                         "   SET username = %(username)s,                                "
                         "       password = COALESCE(%(password)s, password),            "
                         "       email = %(email)s,                                      "
@@ -177,7 +177,7 @@ class AuditDao(metaclass=Singleton):
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
-                        "DELETE FROM audit                               "
+                        "DELETE FROM audit_table                      "
                         " WHERE id_user = %(id_user)s                 ",
                         {"id_user": audit.id_user},
                     )
@@ -203,7 +203,7 @@ class AuditDao(metaclass=Singleton):
                 with connection.cursor() as cursor:
                     cursor.execute(
                         "SELECT *                               "
-                        "  FROM audit                          "
+                        "  FROM audit_table                     "
                         " WHERE username = %(username)s         "
                         "   AND password = %(password)s;        ",
                         {"username": username, "password": password},
@@ -243,7 +243,7 @@ class AuditDao(metaclass=Singleton):
                 with connection.cursor() as cursor:
                     cursor.execute(
                         "SELECT *                                "
-                        "  FROM audit                           "
+                        "  FROM audit_table                      "
                         " WHERE access_token = %(token)s;        ",
                         {"token": access_token},
                     )

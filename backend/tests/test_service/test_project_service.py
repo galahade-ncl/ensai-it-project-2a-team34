@@ -2,12 +2,13 @@ from datetime import datetime
 from unittest.mock import MagicMock
 
 import pytest
-from src.business_object.file.codefile import CodeFile
-from src.business_object.file.dependencyfile import DependencyFile
-from src.business_object.project import Project
-from src.business_object.user import User
-from src.dao.project_dao import ProjectDao
-from src.service.project_service import ProjectService
+
+from business_object.file.codefile import CodeFile
+from business_object.file.dependencyfile import DependencyFile
+from business_object.project import Project
+from business_object.user import User
+from dao.project_dao import ProjectDao
+from service.project_service import ProjectService
 
 
 @pytest.fixture(autouse=True)
@@ -51,13 +52,15 @@ project_list = [
         id_project=4,
         name_project="salade_de_fruit",
         user=User(id_user=2, username="Clémentine", email="poire@pomme.fr", password="banane"),
-        codefile=CodeFile(id_file=1, name="citron", date=datetime(2026, 2, 3, 14, 30, 12), path=""),
+        codefile=CodeFile(
+            name="citron",
+            content=b"print('Hello World')\n",
+            date=datetime(2026, 2, 3, 14, 30, 12)
+            ),
         dependencyfile=DependencyFile(
-            id_file=2,
             name="myrtille",
-            date=datetime(2026, 2, 21, 9, 5, 47),
-            path="",
-            dependencies=[],
+            content=b"requests==2.32.3\npytest==8.3.3\n",
+            date=datetime(2026, 2, 21, 9, 5, 47)
         ),
         secretHMACkey=bytes.fromhex(
             "7f55be633e93f7de0d8ac2ab8a3993fb7123c84f73582da121c2c62051596297"
@@ -67,13 +70,14 @@ project_list = [
         id_project=5,
         name_project="compote",
         user=User(id_user=2, username="Clémentine", email="poire@pomme.fr", password="banane"),
-        codefile=CodeFile(id_file=3, name="sucre", date=datetime(2026, 3, 12, 16, 22, 31), path=""),
+        codefile=CodeFile(
+            name="sucre",
+            content=b"function add(a, b) { return a + b; }\n",
+            date=datetime(2026, 3, 12, 16, 22, 31)),
         dependencyfile=DependencyFile(
-            id_file=4,
             name="casserole",
-            date=datetime(2026, 3, 27, 11, 18, 54),
-            path="",
-            dependencies=[],
+            content=b'{"dependencies": {"express": "^4.21.0"}}',
+            date=datetime(2026, 3, 27, 11, 18, 54)
         ),
         secretHMACkey=bytes.fromhex(
             "a63d3f3e91dd4a09906d89caa4ccf7f45862f9e2e3c1a30268585b078aec2fda"
@@ -92,14 +96,14 @@ project_list = [
         name_project="impressions",
         user=User(id_user=4, username="Jean-Edouard", email="je@mail.oo", password="tropical"),
         codefile=CodeFile(
-            id_file=5, name="le_fichier_code", date=datetime(2026, 4, 8, 13, 45, 9), path=""
+            name="le_fichier_code",
+            content=b"def multiply(a, b):\n    return a * b\n",
+            date=datetime(2026, 4, 8, 13, 45, 9)
         ),
         dependencyfile=DependencyFile(
-            id_file=6,
             name="le_fichier_dependences",
-            date=datetime(2026, 4, 19, 7, 32, 16),
-            path="",
-            dependencies=[],
+            content=b'[project]\nname = "my-app"\ndependencies = ["requests>=2.0"]\n',
+            date=datetime(2026, 4, 19, 7, 32, 16)
         ),
         secretHMACkey=bytes.fromhex(
             "858470290e217b99b5bf2b6fdbaaeb43c8a903d87cd03de2705ca56ca8a3ce3e"
@@ -110,14 +114,20 @@ project_list = [
         name_project="project_numero_1502",
         user=User(id_user=5, username="Jean-Nemard", email="jn@hotmail.nul", password="desert"),
         codefile=CodeFile(
-            id_file=7, name="fichier_1", date=datetime(2026, 5, 6, 15, 10, 42), path=""
+            name="fichier_1",
+            content=b"public class Main { public static void main(String[] args) {} }\n",
+            date=datetime(2026, 5, 6, 15, 10, 42)
         ),
         dependencyfile=DependencyFile(
-            id_file=8,
             name="fichier_2",
-            date=datetime(2026, 5, 24, 12, 55, 28),
-            path="",
-            dependencies=[],
+            content=b"""<project>
+                        <modelVersion>4.0.0</modelVersion>
+                        <groupId>com.example</groupId>
+                        <artifactId>my-app</artifactId>
+                        <version>1.0.0</version>
+                    </project>
+                    """,
+            date=datetime(2026, 5, 24, 12, 55, 28)
         ),
         secretHMACkey=bytes.fromhex(
             "822931904fd51a85179d0af5408dd461297be80066289afc08ad0980fd8fa755"
@@ -161,7 +171,7 @@ def test_find_by_id_successful():
     """Successfully found the Project related to the id"""
 
     # GIVEN
-    project = project_list[1]
+    project = project_list[0]
     project_id = project.id_project
 
     ProjectDao().find_by_id = MagicMock(return_value=project)
@@ -177,7 +187,7 @@ def test_find_by_id_failed():
     """Fail to found the Project related to the id because ProjectDao().find_by_id returns None"""
 
     # GIVEN
-    project = project_list[2]
+    project = project_list[1]
     project_id = project.id_project
 
     ProjectDao().find_by_id = MagicMock(return_value=None)
@@ -206,7 +216,7 @@ def test_update_successful():
     """Successfully update the name of an existing Project"""
 
     # GIVEN
-    project = project_list[4]
+    project = project_list[3]
 
     updated_name = "new_impressions"
     project.name_project = updated_name
@@ -224,7 +234,7 @@ def test_update_failed():
     """Fail to update the name of an existing Project because ProjectDao().update returns None"""
 
     # GIVEN
-    project = project_list[5]
+    project = project_list[4]
 
     updated_name = "project_numero_0"
     project.name_project = updated_name
@@ -242,7 +252,7 @@ def test_delete_successful():
     """Successfully delete an existing Project"""
 
     # GIVEN
-    project = project_list[2]
+    project = project_list[1]
     ProjectDao().delete = MagicMock(return_value=True)
 
     # WHEN
@@ -256,7 +266,7 @@ def test_delete_failed():
     """Fail to delete an existing Project because ProjectDao().delete returns False"""
 
     # GIVEN
-    project = project_list[3]
+    project = project_list[2]
     ProjectDao().delete = MagicMock(return_value=False)
 
     # WHEN

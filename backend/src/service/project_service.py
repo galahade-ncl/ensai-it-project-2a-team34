@@ -40,7 +40,7 @@ class ProjectService:
             id_user (int) : id of the user
         Returns:
             A list of Project owned by the user"""
-        return ProjectDao().find_all_project(id_user)
+        return ProjectDao().list_all_project(id_user)
 
     @log
     def update(self, project: Project) -> Project | None:
