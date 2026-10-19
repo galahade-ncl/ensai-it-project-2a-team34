@@ -1,3 +1,4 @@
+
 from business_object.audit import Audit
 from dao.db_connection import DBConnection
 from utils.log_utils import get_logger, log
@@ -7,259 +8,220 @@ logger = get_logger(__name__)
 
 
 class AuditDao(metaclass=Singleton):
-    """Class containing methods to access Audit in the database."""
+    """Class containing methods to access Audits in the database."""
+
+    @staticmethod
+    def _row_to_audit(row) -> Audit:
+        """Convert a database row into an Audit object."""
+        return Audit(
+            id_audit=row["id_audit"],
+            id_project=row["id_project"],
+            date=row["date"],
+            vulnerabilities=[],
+            licenses=[],
+            anti_patterns=[],
+            complexity=row["complexity"],
+            energy_consumption_kwh=row["energy_comsumption"],
+            carbon_emission_gco2e=row["carbon_emission_gco2e"],
+            sbom=None,
+            quality_gate=row["status_qualitygate"],
+            certificate=None,
+        )
+
+    @staticmethod
+    def _get_critical_vulnerability_count(audit) -> int:
+        """Count critical vulnerabilities."""
+        count = 0
+
+        for vulnerability in (audit.vulnerabilities or []):
+            if isinstance(vulnerability, dict):
+                severity = vulnerability.get("severity")
+            else:
+                severity = getattr(vulnerability, "severity", None)
+
+            if severity and str(severity).lower() in (
+                "critical", "critique"
+            ):
+                count += 1
+
+        return count
 
     @log
-    def create(self, audit) -> bool:
-        """Create an audit in the database.
-        Args:
-            Audit to create
-        Returns:
-            True if creation is successful, False otherwise
-        """
-        res = None
-
+    def create(self, audit: Audit) -> bool:
+        """Create an audit in the database."""
         try:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
-                        "INSERT INTO audit_table(id_project, date, complexity, energy_consumption_kwh, carbon_emission_gco2e, vulnerabilities, sbom) VALUES "
-                        "(%(id_project)s, %(date)s, %(complexity)s, %(energy_consumption_kwh)s, %(carbon_emission_gco2e)s, %(vulnerabilities)s, %(sbom)s) "
-                        "RETURNING id_audit;",
+                        """
+                        INSERT INTO audit_table (
+                            id_project,
+                            date,
+                            total_vulnerability,
+                            total_critical_vulnerability,
+                            complexity,
+                            energy_comsumption,
+                            carbon_emission_gco2e,
+                            status_qualitygate
+                        )
+                        VALUES (
+                            %(id_project)s,
+                            COALESCE(%(date)s, CURRENT_TIMESTAMP),
+                            %(total_vulnerability)s,
+                            %(total_critical_vulnerability)s,
+                            %(complexity)s,
+                            %(energy_comsumption)s,
+                            %(carbon_emission_gco2e)s,
+                            %(status_qualitygate)s
+                        )
+                        RETURNING id_audit, date;
+                        """,
                         {
                             "id_project": audit.id_project,
                             "date": audit.date,
+                            "total_vulnerability": len(
+                                audit.vulnerabilities or []
+                            ),
+                            "total_critical_vulnerability":
+                                self._get_critical_vulnerability_count(audit),
                             "complexity": audit.complexity,
-                            "energy_consumption_kwh": audit.energy_consumption_kwh,
-                            "carbon_emission_gco2e": audit.carbon_emission_gco2e,
-                            "vulnerabilities": audit.vulnerabilities,
-                            "sbom": audit.sbom,
+                            "energy_comsumption":
+                                audit.energy_consumption_kwh,
+                            "carbon_emission_gco2e":
+                                audit.carbon_emission_gco2e,
+                            "status_qualitygate": (
+                                audit.quality_gate
+                                if isinstance(audit.quality_gate, str)
+                                else getattr(
+                                    audit.quality_gate, "status", None
+                                )
+                            ),
                         },
                     )
                     res = cursor.fetchone()
+
+            if res:
+                audit.id_audit = res["id_audit"]
+                audit.date = res["date"]
+                return True
+
+            return False
+
         except Exception as e:
             logger.error(e)
             raise
-
-        created = False
-        if res:
-            audit.id_audit = res["id_audit"]
-            created = True
-
-        return created
 
     @log
     def find_by_id(self, id_audit: int) -> Audit:
-        """Find an audit by their id.
-        Args:
-            id_audit (int): The ID of the audit to find
-        Returns:
-            Audit matching the given id
-        """
+        """Find an audit by its ID."""
         try:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
-                        "SELECT *                            "
-                        "  FROM audit_table                  "
-                        " WHERE id_audit = %(id_audit)s;   ",
+                        """
+                        SELECT *
+                        FROM audit_table
+                        WHERE id_audit = %(id_audit)s;
+                        """,
                         {"id_audit": id_audit},
                     )
                     res = cursor.fetchone()
+
+            if res:
+                return self._row_to_audit(res)
+
+            return None
+
         except Exception as e:
             logger.error(e)
             raise
-
-        audit = None
-        if res:
-            audit = Audit(
-                id_audit=res["id_audit"],
-                id_project=res["id_project"],
-                date=res["date"],
-                vulnerabilities=res["vulnerabilities"],
-                licenses=res["licenses"],
-                antipatterns=res["antipattern"],
-                complexity=res["complexity"],
-                energy_consumption_kwh=res["energy_consumption_kwh"],
-                carbon_emission_gco2e=res["carbon_emission_gco2e"],
-                sbom=res["sbom"],
-                quality_gate=res["quality_gate"],
-            )
-
-        return audit
 
     @log
     def find_all(self) -> list[Audit]:
-        """List all audits in the database.
-        Returns:
-            list[Audit] sorted by username
-        """
-
+        """Return all audits ordered by ID."""
         try:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
-                        "SELECT *                                "
-                        "  FROM audit_table                      "
-                        " ORDER BY username;                     "
+                        """
+                        SELECT *
+                        FROM audit_table
+                        ORDER BY id_audit;
+                        """
                     )
-                    res = cursor.fetchall()
+                    rows = cursor.fetchall()
+
+            return [self._row_to_audit(row) for row in rows]
+
         except Exception as e:
             logger.error(e)
             raise
 
-        users_list = []
-
-        if res:
-            for row in res:
-                audit = Audit(
-                    id_audit=row["id_audit"],
-                    id_project=row["id_project"],
-                    date=row["date"],
-                    vulnerabilities=row["vulnerabilities"],
-                    licenses=row["licenses"],
-                    antipatterns=row["antipattern"],
-                    complexity=row["complexity"],
-                    energy_consumption_kwh=row["energy_consumption_kwh"],
-                    carbon_emission_gco2e=row["carbon_emission_gco2e"],
-                    sbom=row["sbom"],
-                    quality_gate=row["quality_gate"],
-                )
-
-                users_list.append(audit)
-
-        return users_list
-
     @log
-    def update(self, audit) -> bool:
-        """Update a audit in the database.
-        Args:
-            Audit to be updated
-        Returns:
-            True if update is successful, False otherwise
-        """
-        nb_affected_rows = 0
-
+    def update(self, audit: Audit) -> bool:
+        """Update an existing audit."""
         try:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
-                        "UPDATE audit_table                                             "
-                        "   SET username = %(username)s,                                "
-                        "       password = COALESCE(%(password)s, password),            "
-                        "       email = %(email)s,                                      "
-                        "       access_token = COALESCE(%(access_token)s, access_token) "
-                        " WHERE id_user = %(id_user)s;                              ",
+                        """
+                        UPDATE audit_table
+                        SET id_project = %(id_project)s,
+                            date = %(date)s,
+                            total_vulnerability = %(total_vulnerability)s,
+                            total_critical_vulnerability =
+                                %(total_critical_vulnerability)s,
+                            complexity = %(complexity)s,
+                            energy_comsumption = %(energy_comsumption)s,
+                            carbon_emission_gco2e =
+                                %(carbon_emission_gco2e)s,
+                            status_qualitygate = %(status_qualitygate)s
+                        WHERE id_audit = %(id_audit)s;
+                        """,
                         {
-                            "username": audit.username,
-                            "password": audit.password,
-                            "email": audit.email,
-                            "access_token": audit.access_token,
-                            "id_user": audit.id_user,
+                            "id_audit": audit.id_audit,
+                            "id_project": audit.id_project,
+                            "date": audit.date,
+                            "total_vulnerability": len(
+                                audit.vulnerabilities or []
+                            ),
+                            "total_critical_vulnerability":
+                                self._get_critical_vulnerability_count(audit),
+                            "complexity": audit.complexity,
+                            "energy_comsumption":
+                                audit.energy_consumption_kwh,
+                            "carbon_emission_gco2e":
+                                audit.carbon_emission_gco2e,
+                            "status_qualitygate": (
+                                audit.quality_gate
+                                if isinstance(audit.quality_gate, str)
+                                else getattr(
+                                    audit.quality_gate, "status", None
+                                )
+                            ),
                         },
                     )
-                    nb_affected_rows = cursor.rowcount
+                    return cursor.rowcount == 1
+
         except Exception as e:
             logger.error(e)
             raise
 
-        return nb_affected_rows == 1
-
     @log
-    def delete(self, audit) -> bool:
-        """Delete a audit from the database.
-        Args:
-            Audit to delete from the database
-        Returns:
-            True if the audit was successfully deleted, False otherwise
-        """
+    def delete(self, audit: Audit) -> bool:
+        """Delete an audit from the database."""
         try:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
-                        "DELETE FROM audit_table                      "
-                        " WHERE id_user = %(id_user)s                 ",
-                        {"id_user": audit.id_user},
+                        """
+                        DELETE FROM audit_table
+                        WHERE id_audit = %(id_audit)s;
+                        """,
+                        {"id_audit": audit.id_audit},
                     )
-                    res = cursor.rowcount
+                    return cursor.rowcount > 0
+
         except Exception as e:
             logger.error(e)
             raise
-
-        return res > 0
-
-    @log
-    def login(self, username: str, password: str) -> Audit:
-        """Login using username and password.
-        Args:
-            username (str)
-            password (str)
-        Returns:
-            Audit or None
-        """
-        res = None
-        try:
-            with DBConnection().connection as connection:
-                with connection.cursor() as cursor:
-                    cursor.execute(
-                        "SELECT *                               "
-                        "  FROM audit_table                     "
-                        " WHERE username = %(username)s         "
-                        "   AND password = %(password)s;        ",
-                        {"username": username, "password": password},
-                    )
-                    res = cursor.fetchone()
-        except Exception as e:
-            logger.error(e)
-            raise
-
-        audit = None
-
-        if res:
-            audit = Audit(
-                username=res["username"],
-                password=res["password"],
-                email=res["email"],
-                access_token=res["access_token"],
-                id_player=res["id_player"],
-            )
-
-        return audit
-
-    @log
-    def find_by_token(self, access_token: str) -> Audit:
-        """Find a audit by their access token.
-        Args:
-            access_token (str): The token to search for.
-        Returns:
-            Audit object if found, otherwise None.
-        """
-        if not access_token:
-            return None
-
-        res = None
-        try:
-            with DBConnection().connection as connection:
-                with connection.cursor() as cursor:
-                    cursor.execute(
-                        "SELECT *                                "
-                        "  FROM audit_table                      "
-                        " WHERE access_token = %(token)s;        ",
-                        {"token": access_token},
-                    )
-                    res = cursor.fetchone()
-        except Exception as e:
-            logger.error(f"Error finding audit by token: {e}")
-            raise
-
-        audit = None
-        if res:
-            audit = Audit(
-                id_player=res["id_player"],
-                username=res["username"],
-                password=res["password"],
-                email=res["email"],
-                access_token=res["access_token"],
-            )
-
-        return audit
