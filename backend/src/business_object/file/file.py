@@ -50,7 +50,7 @@ class File(ABC):
     #     pass
 
     @abstractmethod
-    def get_type(self) -> str:
+    def get_duty(self) -> str:
         """
         Récupère le type de fichier (fichier de dépendance ou fichier code).
         """

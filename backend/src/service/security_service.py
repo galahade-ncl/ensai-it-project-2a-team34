@@ -1,9 +1,8 @@
-from file_service import FileService
-
 from api_osv.api_osv import API_OSV
 from business_object.file.dependencyfile import DependencyFile
 from business_object.licence import Licence
 from business_object.vulnerability.vulnerability import Vulnerability
+from service.file_services.file_service import FileService
 from utils.log_utils import log
 
 
@@ -17,14 +16,22 @@ class SecurityService:
         Returns:
             String object if the name of the ecosystem is found
         """
-        filename = DependencyFile.name
-        if filename == "requirements.txt":
-            return "PyPI"
-        if filename == "package.json":
-            return "npm"
-        if filename == "pom.xml":
-            return "Maven"
-        raise ValueError(f"Fichier non supporté : {filename}")
+
+        SUPPORTED_FILES = {
+            "requirements.txt": "PyPI",
+            "package.json": "npm",
+            "pom.xml": "Maven",
+            "Cargo.toml": "crates.io",
+        }
+
+        filename = FileService().get_filename(dependencyfile)
+
+        if filename not in SUPPORTED_FILES:
+            raise ValueError(
+                f"Fichier non supporté : {filename}. "
+                f"Fichiers acceptés : {', '.join(SUPPORTED_FILES)}"
+            )
+        return SUPPORTED_FILES[filename]
 
     @log
     def find_vulnerabilities(self, dep_file: DependencyFile) -> list[Vulnerability]:
@@ -36,8 +43,8 @@ class SecurityService:
             List of Vulnerability object found related to dependencyfile
         """
         list_vuln = []
-        list_dep = FileService.parse_dependencies(dependencyfile=dep_file)
-        chosen_ecosystem = SecurityService.detect_ecosystem(dependencyfile=dep_file)
+        chosen_ecosystem = SecurityService().detect_ecosystem(dependencyfile=dep_file)
+        list_dep = FileService().parse_dependencies(dependencyfile=dep_file)
         for dep in list_dep:
             list_vuln = list_vuln + API_OSV.find_vulnerabilities(
                 dependency=dep, ecosystem=chosen_ecosystem

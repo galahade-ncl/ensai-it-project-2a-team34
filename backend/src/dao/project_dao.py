@@ -31,7 +31,7 @@ class ProjectDao(metaclass=Singleton):
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
-                        "INSERT INTO project(name_project, id_user, secretHMACkey) VALUES "
+                        "INSERT INTO project_table(name_project, id_user, secretHMACkey) VALUES "
                         "(%(name_project)s, %(id_user)s, %(secretHMACkey)s) "
                         "RETURNING id_project;",
                         {
@@ -71,9 +71,7 @@ class ProjectDao(metaclass=Singleton):
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
-                        "SELECT * "
-                        "  FROM project "
-                        " WHERE id_project = %(id_project)s;",
+                        "SELECT *   FROM project_table  WHERE id_project = %(id_project)s;",
                         {"id_project": id_project},
                     )
                     res_project = cursor.fetchone()
@@ -153,7 +151,7 @@ class ProjectDao(metaclass=Singleton):
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
-                        "UPDATE project "
+                        "UPDATE project_table "
                         "   SET name_project = %(name_project)s, "
                         "       id_user = %(id_user)s, "
                         "       secretHMACkey = COALESCE(%(secretHMACkey)s, secretHMACkey) "
@@ -191,7 +189,7 @@ class ProjectDao(metaclass=Singleton):
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
-                        "DELETE FROM project WHERE id_project = %(id_project)s;",
+                        "DELETE FROM project_table WHERE id_project = %(id_project)s;",
                         {"id_project": project.id_project},
                     )
                     res = cursor.rowcount

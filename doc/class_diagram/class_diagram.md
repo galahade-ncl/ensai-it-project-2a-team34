@@ -43,7 +43,7 @@ classDiagram
 
         class File {
             +get_content(): bool
-            +get_type(): str
+            +get_duty(): str
         }
 
         class CodeFile {
@@ -51,7 +51,7 @@ classDiagram
             +date: datetime
             +path: str
             +get_content(): bool
-            +get_type(): str
+            +get_duty(): str
         }
 
         class DependencyFile {
@@ -60,7 +60,7 @@ classDiagram
             +path: str
             +dependencies: list[Dependency]
             +get_content(): bool
-            +get_type(): str
+            +get_duty(): str
         }
     }
 
