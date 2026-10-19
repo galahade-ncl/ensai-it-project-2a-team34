@@ -1,4 +1,5 @@
 from business_object.project import Project
+from business_object.user import User
 from dao.db_connection import DBConnection
 from dao.user_dao import UserDao
 from utils.log_utils import get_logger, log
@@ -92,14 +93,19 @@ class ProjectDao(metaclass=Singleton):
         return project
 
     @log
-    def list_all_project(self) -> list[Project]:
+    def list_all_project(self, user: User) -> list[Project]:
         """
-        List all projects in the database.
+        List all projects belonging to a given user.
+
+        Arguments
+        ---------
+        user : User
+            User whose projects are to be listed
 
         Returns
         -------
         list[Project]
-            List of all projects, or an empty list if there are none
+            List of the user's projects, or an empty list if there are none
         """
         res = []
 
@@ -109,7 +115,9 @@ class ProjectDao(metaclass=Singleton):
                     cursor.execute(
                         "SELECT * "
                         "  FROM project "
-                        " ORDER BY id_project;"
+                        " WHERE id_user = %(id_user)s "
+                        " ORDER BY id_project;",
+                        {"id_user": user.id_user},
                     )
                     res = cursor.fetchall()
         except Exception as e:
@@ -118,7 +126,6 @@ class ProjectDao(metaclass=Singleton):
 
         projects = []
         for row in res:
-            user = UserDao().find_by_id(row["id_user"])
             projects.append(
                 Project(
                     id_project=row["id_project"],
