@@ -20,7 +20,7 @@ class TestGetSeverity:
             (
                 "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N",
                 None,
-            ),  # 0.0 (retourne None en logique)
+            ),  # 0.0
         ],
     )
     def test_severity_mapping(self, cvss_vector, expected):

@@ -11,7 +11,7 @@ class AuditDao(metaclass=Singleton):
     """Class containing methods to access Audits in the database."""
 
     @staticmethod
-    def _row_to_audit(row) -> Audit:
+    def _row_to_audit(row: dict) -> Audit:
         """Convert a database row into an Audit object."""
         return Audit(
             id_audit=row["id_audit"],
@@ -29,7 +29,7 @@ class AuditDao(metaclass=Singleton):
         )
 
     @staticmethod
-    def _get_critical_vulnerability_count(audit) -> int:
+    def _get_critical_vulnerability_count(audit: Audit) -> int:
         """Count critical vulnerabilities."""
         count = 0
 

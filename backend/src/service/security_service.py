@@ -52,7 +52,7 @@ class SecurityService:
         return list_vuln
 
     @log
-    def find_licences(self, dep_file=DependencyFile) -> list[Licence]:
+    def find_licences(self, dep_file: DependencyFile) -> list[Licence]:
         """
         Find all the licences in the dependencyfile
         Args:
@@ -61,3 +61,41 @@ class SecurityService:
             List of Licence object found in the file
         """
         pass
+
+# LICENCE_RISK = {
+#     "MIT": "low",
+#     "Apache-2.0": "low",
+#     "BSD-2-Clause": "low",
+#     "BSD-3-Clause": "low",
+#     "ISC": "low",
+#     "MPL-2.0": "medium",
+#     "LGPL-2.1": "medium",
+#     "LGPL-3.0": "medium",
+#     "GPL-2.0": "high",
+#     "GPL-3.0": "high",
+#     "AGPL-3.0": "high",
+# }
+# DEFAULT_RISK = "unknown"   # licence absente, "non-standard" ou non reconnue
+
+
+# @log
+# def find_licences(self, dep_file: DependencyFile) -> list[Licence]:
+#     """
+#     Find all the licences in the dependencyfile
+#     Args:
+#         dep_file (DependencyFile): file containing all the dependencies
+#     Returns:
+#         List of Licence object found in the file (without duplicates)
+#     """
+#     ecosystem = self.detect_ecosystem(dependencyfile=dep_file)
+#     list_dep = FileService().parse_dependencies(dependencyfile=dep_file)
+
+#     licences = {}   # key = licence name, to avoid duplicates
+#     for dep in list_dep:
+#         for name in API_DEPSDEV.find_licences(dependency=dep, ecosystem=ecosystem):
+#             if name not in licences:
+#                 licences[name] = Licence(
+#                     name=name,
+#                     risk_level=LICENCE_RISK.get(name, DEFAULT_RISK),
+#                 )
+#     return list(licences.values())
