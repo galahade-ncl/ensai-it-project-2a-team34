@@ -94,6 +94,45 @@ class ProjectDao(metaclass=Singleton):
         return project
 
     @log
+    def list_all_project(self) -> list[Project]:
+        """
+        List all projects in the database.
+
+        Returns
+        -------
+        list[Project]
+            List of all projects, or an empty list if there are none
+        """
+        res = []
+
+        try:
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        "SELECT * "
+                        "  FROM project "
+                        " ORDER BY id_project;"
+                    )
+                    res = cursor.fetchall()
+        except Exception as e:
+            logger.error(e)
+            raise
+
+        projects = []
+        for row in res:
+            user = UserDao().find_by_id(row["id_user"])
+            projects.append(
+                Project(
+                    id_project=row["id_project"],
+                    name_project=row["name_project"],
+                    user=user,
+                    secretHMACkey=row["secrethmackey"],
+                )
+            )
+
+        return projects
+
+    @log
     def update(self, project: Project) -> bool:
         """
         Update a project in the database.
