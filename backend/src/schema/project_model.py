@@ -20,5 +20,5 @@ class ProjectResponseModel(BaseModel):
 
 
 class ProjectCreateModel(BaseModel):
-    project_name: str
+    name_project: str
     user: User

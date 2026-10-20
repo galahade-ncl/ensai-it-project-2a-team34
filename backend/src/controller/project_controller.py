@@ -63,3 +63,49 @@ async def create_project(p: ProjectCreateModel, project_service=Depends(get_proj
     return project
 
 
+@router.delete("/{id_project}", tags=["Projects"])
+async def delete_project(id_project: int, project_service=Depends(get_project_service)):
+    """Delete a project from the system.
+    Args:
+        id_project (int)
+        project_service (ProjectService): The service used to interact with project data.
+    Returns:
+        str: A confirmation message indicating the project was deleted.
+    Raises:
+        HTTPException: 404 error if the project is not found.
+    """
+    logger.info("Delete a project")
+    project = project_service.find_by_id(id_project)
+    if not project:
+        raise HTTPException(status_code=404, detail="Project (id={id_project}) not found.")
+
+    project_service.delete(project)
+    return f"Project {project.name_project} deleted"
+
+
+@router.put("/{id_project}", response_model=ProjectReadModel, tags=["Projects"])
+async def update_project(id_project: int, p: ProjectCreateModel, project_service=Depends(get_project_service)):
+    """Update an existing project's information.
+    Args:
+        id_project (int)
+        p (ProjectCreateModel): The new data for the project.
+        project_service (ProjectService): The service used to interact with project data.
+    Returns:
+        str: A confirmation message indicating the project was updated.
+    Raises:
+        HTTPException: 404 error if the project is not found.
+        HTTPException: 500 error if the update process fails.
+    """
+    logger.info("Update a project")
+    project = project_service.find_by_id(id_project)
+    if not project:
+        raise HTTPException(status_code=404, detail="Project (id={id_project}) not found.")
+
+    project.name_project = p.name_project
+    project.user = p.user
+
+    project = project_service.update(project)
+    if not project:
+        raise HTTPException(status_code=500, detail="Error while updating project.")
+
+    return project
