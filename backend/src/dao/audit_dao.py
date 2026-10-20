@@ -29,12 +29,12 @@ class AuditDao(metaclass=Singleton):
         )
 
     @staticmethod
-    def _get_critical_vulnerability_count(audit: Audit) -> int:
+    def _get_critical_vulnerability_count(audit: Audit) -> int:          //  vulnerabilité setrvice
         """Count critical vulnerabilities."""
         count = 0
 
         for vulnerability in (audit.vulnerabilities or []):
-            if isinstance(vulnerability, dict):
+            if isinstance(vulnerability, dict):                                ///
                 severity = vulnerability.get("severity")
             else:
                 severity = getattr(vulnerability, "severity", None)
