@@ -11,7 +11,8 @@ class Audit:
             energy_consumption_kwh (float): The energy consumption of the code (kwh)
             carbon_emission_gco2e (float): The carbon emission of the code
             sbom (SBOM): Software Bill of Materials, the inventory of components used for the project
-            quality_gate (QualityGate): The quality gate associed to the project
+            quality_gate (QualityGate): The quality gate associated to the project
+            certificate (Certificate): The certificate associated to the audit
 
     '''
 
@@ -27,7 +28,8 @@ class Audit:
         energy_consumption_kwh,
         carbon_emission_gco2e,
         sbom,
-        quality_gate
+        quality_gate,
+        certificate
     ):
         self.id_audit = id_audit
         self.id_project = id_project
@@ -40,8 +42,9 @@ class Audit:
         self.carbon_emission_gco2e = carbon_emission_gco2e
         self.sbom = sbom
         self.quality_gate = quality_gate
+        self.certificate = certificate
 
     def __str__(self):
         """Returns a string representation of the audit
         """
-        return f"Audit:{self.audit} of the project {self.id_project}. It consume {self.energy_consumption_kwh} kwh."
+        return f"Audit: Audit of the project {self.id_project}. It consume {self.energy_consumption_kwh} kwh."

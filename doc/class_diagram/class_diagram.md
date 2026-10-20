@@ -43,7 +43,7 @@ classDiagram
 
         class File {
             +get_content(): bool
-            +get_type(): str
+            +get_duty(): str
         }
 
         class CodeFile {
@@ -51,7 +51,7 @@ classDiagram
             +date: datetime
             +path: str
             +get_content(): bool
-            +get_type(): str
+            +get_duty(): str
         }
 
         class DependencyFile {
@@ -60,7 +60,7 @@ classDiagram
             +path: str
             +dependencies: list[Dependency]
             +get_content(): bool
-            +get_type(): str
+            +get_duty(): str
         }
     }
 
@@ -213,21 +213,17 @@ classDiagram
     }
 
     class ProjectService {
-        +upload(int, str, User, Optional : CodeFile, Optional : DependencyFile): Project
-        +upload_dependency_file(int, datetime, str, int): DependencyFile
-        +upload_code_file(int, datetime, str, int): CodeFile
+        +upload(str, User, Optional : CodeFile, Optional : DependencyFile): Project
         +find_by_id(int): Project
         +list_all_project(int): list[Project]
         +update(Project): Project
-        +update_dependency_file(int, datetime, str, int): DependencyFile
-        +update_code_file(int, datetime, str, int): CodeFile
         +delete(Project): bool
         +generate_HMAC_key(): hmac.HMAC
         +verify_signature(Project, bytes): bool
     }
 
     class FileService {
-        +create_file(int, datetime, str, int): File
+        +upload(str, str, int): File
         +find_by_id(int): File
         +find_all_by_project(int): list[File]
         +find_user(int): User

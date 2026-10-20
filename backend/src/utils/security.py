@@ -1,7 +1,10 @@
 import hashlib
+import hmac
+import secrets
 
-from dao.player_dao import PlayerDao
 from fastapi import Header, HTTPException
+
+from dao.user_dao import UserDao
 
 
 def hash_password(password: str, salt: str = "") -> str:
@@ -21,8 +24,8 @@ def hash_password(password: str, salt: str = "") -> str:
 # fonction hashage clé HMAC <-> signature -> à faire
 
 
-def verify_token(x_auth_token=Header(None)) -> PlayerDao:
-    """Verifies the authenticity of a player via the provided auth token.
+def verify_token(x_auth_token=Header(None)) -> UserDao:
+    """Verifies the authenticity of a user via the provided auth token.
 
     This function checks if a token is present in the request headers and
     validates it against the database.
@@ -30,7 +33,7 @@ def verify_token(x_auth_token=Header(None)) -> PlayerDao:
         x_auth_token (str, optional): The token extracted from the
             'X-Auth-Token' HTTP header. Defaults to None.
     Returns:
-        Player object associated with the valid token.
+        User object associated with the valid token.
     Raises:
         HTTPException: 401 error if the token is missing.
         HTTPException: 401 error if the token is not found in the database.
@@ -38,8 +41,38 @@ def verify_token(x_auth_token=Header(None)) -> PlayerDao:
     if not x_auth_token:
         raise HTTPException(status_code=401, detail="Missing token.")
 
-    player = PlayerDao().find_by_token(x_auth_token)
-    if not player:
+    user = UserDao().find_by_token(x_auth_token)
+    if not user:
         raise HTTPException(status_code=401, detail="Invalid token.")
 
-    return player
+    return user
+
+
+def generate_secret_HMAC_key() -> bytes:
+    """
+    Generate a new secret key
+    Returns:
+        New secret key (bytes object)
+    """
+    return secrets.token_bytes(32)
+
+
+def generate_signature(secret: bytes, code: bytes, dependency: bytes) -> bytes:
+    """
+    Generate a new signature
+    Args:
+        secret (str): A secret key
+        code (bytes): The binary version of a codefile
+        dependency (bytes): The binary version of a dependencyfile
+    Returns:
+        Signature associated with the secret and the files (bytes object)
+    """
+    hmac_key = hmac.new(secret, digestmod=hashlib.sha256)
+
+    hmac_key.update(len(code).to_bytes(8, "big"))
+    hmac_key.update(code)
+
+    hmac_key.update(len(dependency).to_bytes(8, "big"))
+    hmac_key.update(dependency)
+
+    return hmac_key.digest()

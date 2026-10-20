@@ -26,25 +26,31 @@ class File(ABC):
     """
 
     def __str__(self) -> str:
-        return f"{self.name} (id :{self.id_file}, path : {self.path}, date : {self.date})"
+        return f"{self.name} (date : {self.date})"
 
-    def __eq__(self, other) -> bool:
-        if not isinstance(other, File):
-            return NotImplemented
-        return self.id_file == other.id_file
+    # def __eq__(self, other) -> bool:
+    #     if not isinstance(other, File):
+    #         return NotImplemented
+    #     return self.id_file == other.id_file
 
-    def __hash__(self) -> int:
-        return hash(self.id_file)
+    # def __hash__(self) -> int:
+    #     return hash(self.id_file)
+
+    # def get_path(self) -> str:
+    #     """
+    #     Méthode pour récupérer le path (en attendant de savoir comment on enregistre les fichiers)
+    #     """
+    #     return "à compléter"
+
+    # @abstractmethod
+    # def get_content(self) -> bool:
+    #     """
+    #     Récupère le contenu du fichier.
+    #     """
+    #     pass
 
     @abstractmethod
-    def get_content(self) -> bool:
-        """
-        Récupère le contenu du fichier.
-        """
-        pass
-
-    @abstractmethod
-    def get_type(self) -> str:
+    def get_duty(self) -> str:
         """
         Récupère le type de fichier (fichier de dépendance ou fichier code).
         """

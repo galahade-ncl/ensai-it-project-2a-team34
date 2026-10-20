@@ -15,6 +15,7 @@ dependencies = [
     "requests",
     "regex",
     "uvicorn",
+    "cvss",
 ]
 
 # Dependencies used only for development, not for runtime

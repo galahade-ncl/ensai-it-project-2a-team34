@@ -41,14 +41,20 @@ class GlobalQualityGate(QualityGate):
         )
 
     def evaluate(self, audit: Audit) -> bool:
-        """Evaluate the Audit"""
+        """Evaluate the Audit
+        Args:
+            audit: The audit to evaluate
+
+        Returns
+            boolean object: True if the qualitygate is respected, False otherwise
+        """
 
         # Count of vulnerabilities of audit
         audit_vul = len(audit.vulnerabilities)
 
         # Count of critical vulnerabilities of audit
         audit_crit_vul = 0
-        for vul in audit.max_vulnerabilities:
+        for vul in audit.vulnerabilities:
             if isinstance(vul, CriticalVulnerability):
                 audit_crit_vul += 1
 
@@ -60,3 +66,9 @@ class GlobalQualityGate(QualityGate):
         )
 
         return conditions
+
+    def get_type(self) -> str:
+        """
+        Récupère le type du qualitygate (ici global)
+        """
+        return "global"

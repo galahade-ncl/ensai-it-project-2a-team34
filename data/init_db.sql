@@ -1,8 +1,8 @@
 -----------------------------------------------------
 -- User table
 -----------------------------------------------------
-DROP TABLE IF EXISTS user CASCADE;
-CREATE TABLE user (
+DROP TABLE IF EXISTS user_table CASCADE;
+CREATE TABLE user_table (
     id_user      SERIAL PRIMARY KEY,
     username     VARCHAR(30) UNIQUE,
     password     VARCHAR(256),
@@ -14,36 +14,24 @@ CREATE TABLE user (
 -- Project table
 -----------------------------------------------------
 
-DROP TABLE IF EXISTS user CASCADE;
-CREATE TABLE project (
+DROP TABLE IF EXISTS project_table CASCADE;
+CREATE TABLE project_table (
     id_project      SERIAL PRIMARY KEY,
     name_project    VARCHAR,
-    id_user         FOREIGN KEY,
+    id_user         INT,
     HMAC_key        BYTEA,
-);
-
------------------------------------------------------
--- File table
------------------------------------------------------
-
-DROP TABLE IF EXISTS user CASCADE;
-CREATE TABLE file (
-    id_file         SERIAL PRIMARY KEY,
-    name_file       VARCHAR,
-    date            TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    path            VARCHAR,
-    type_file       VARCHAR,
-    project_file    FOREIGN KEY,
+    FOREIGN KEY (id_user)
+    REFERENCES user_table(id_user)
 );
 
 -----------------------------------------------------
 -- Audit table
 -----------------------------------------------------
 
-DROP TABLE IF EXISTS user CASCADE;
-CREATE TABLE audit (
+DROP TABLE IF EXISTS audit_table CASCADE;
+CREATE TABLE audit_table (
     id_audit                                  SERIAL PRIMARY KEY,
-    id_project                                FOREIGN KEY,
+    id_project                                INT,
     date                                      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     total_vulnerability                       FLOAT,
     total_critical_vulnerability              FLOAT,
@@ -51,4 +39,6 @@ CREATE TABLE audit (
     energy_comsumption                        FLOAT,
     carbon_emission_gco2e                     FLOAT,
     status_qualitygate                        VARCHAR,
+    FOREIGN KEY (id_project)
+    REFERENCES project_table(id_project)
 );

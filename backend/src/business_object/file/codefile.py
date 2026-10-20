@@ -2,27 +2,32 @@ from business_object.file.file import File
 
 
 class CodeFile(File):
-    """ A compléter
+    """A compléter
 
     Attributes
     ----------
     name : str
         Nom du fichier
-    id_file : int
-        Identifiant du fichier
+    content : bytes
+        Contenu du fichier en format bytes
     date : datetime
         Date de dépot du fichier
-    path :str
-        Chemin d'accès du fichier
     """
-    def __init__(self, id_file, name, date, path) -> None:
-        self.id_file = id_file
+
+    def __init__(self, name, content, type_file, date=None) -> None:
         self.name = name
+        self.content = content
+        self.type_file = type_file
         self.date = date
-        self.path = path
 
-    def get_content(self):
-        pass
+    # Méthode a déplacer dans utils, sauf si différente de méthode de dépendencyfile
+    # def get_content(self) -> bool:
+    #     try:
+    #         with open(self.path, encoding="utf-8") as file:
+    #             self.content = file.read()
+    #         return True
+    #     except (FileNotFoundError, OSError):
+    #         return False
 
-    def get_type(self) -> str:
-        pass
+    def get_duty(self) -> str:
+        return "code"

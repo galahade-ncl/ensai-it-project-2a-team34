@@ -1,7 +1,8 @@
+from business_object.qualitygate.servicequalitygate import SecurityQualityGate
+
 from business_object.qualitygate.ecoqualitygate import EcoQualityGate
 from business_object.qualitygate.globalqualitygate import GlobalQualityGate
 from business_object.qualitygate.qualitygate import QualityGate
-from business_object.qualitygate.servicequalitygate import SecurityQualityGate
 
 
 class QualityGateFactory:
