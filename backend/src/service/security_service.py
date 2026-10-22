@@ -62,6 +62,7 @@ class SecurityService:
         """
         pass
 
+
 # LICENCE_RISK = {
 #     "MIT": "low",
 #     "Apache-2.0": "low",
@@ -90,6 +91,7 @@ class SecurityService:
 #     ecosystem = self.detect_ecosystem(dependencyfile=dep_file)
 #     list_dep = FileService().parse_dependencies(dependencyfile=dep_file)
 
+# -> il nous faut des types licences, pas des dictionnaires
 #     licences = {}   # key = licence name, to avoid duplicates
 #     for dep in list_dep:
 #         for name in API_DEPSDEV.find_licences(dependency=dep, ecosystem=ecosystem):

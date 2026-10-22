@@ -70,3 +70,7 @@ class API_DEPSDEV:
             if v.get("isDefault"):
                 return v["versionKey"]["version"]
         return None
+
+
+# faire comme api_osv -> retourner des licences et pas des str
+# 
