@@ -1,0 +1,2 @@
+class EcoService:
+    pass

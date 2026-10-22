@@ -20,7 +20,7 @@ class TestGetSeverity:
             (
                 "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N",
                 None,
-            ),  # 0.0 (retourne None en logique)
+            ),  # 0.0
         ],
     )
     def test_severity_mapping(self, cvss_vector, expected):
@@ -59,7 +59,7 @@ class TestToVulnerability:
 
     def test_sets_correct_fields(self):
         osv_vuln = {"id": "GHSA-XXXX", "aliases": ["CVE-2024-5678"]}
-        dep = Dependency(1, "express", "4.17.1")
+        dep = Dependency(id_dependency=1, name="express", version="4.17.1")
         vuln = API_OSV._to_vulnerability(osv_vuln, dep, "MEDIUM")
 
         assert vuln.osv_id == "GHSA-XXXX"

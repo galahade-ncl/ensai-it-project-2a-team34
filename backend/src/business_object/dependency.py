@@ -12,7 +12,7 @@ class Dependency:
         Version de la dépendance
     """
 
-    def __init__(self, id_dependency, name, version):
+    def __init__(self, name, version, id_dependency=None):
         self.id_dependency = id_dependency
         self.name = name
         self.version = version

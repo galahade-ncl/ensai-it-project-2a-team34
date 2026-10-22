@@ -84,7 +84,7 @@ async def update_user(id_user: int, u: UserModel, user_service=Depends(get_user_
     user = user_service.find_by_id(id_user)
     if not user:
         raise HTTPException(status_code=404, detail=f"User (id={id_user}) not found.")
-    
+
     user.username = u.username
     user.password = u.password
     user.email = u.email
