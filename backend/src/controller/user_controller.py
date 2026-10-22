@@ -15,17 +15,6 @@ def get_user_service():
     return UserService()
 
 
-@router.get("/", response_model=list[UserReadModel], tags=["Users"])
-async def find_all_users(user_service=Depends(get_user_service)):
-    """List all users.
-    Returns:
-        list[UserReadModel]: A list of all registered users.
-    """
-    logger.info("List all users")
-    users_list = user_service.find_all()
-    return users_list
-
-
 @router.get("/{id_user}", response_model=UserReadModel, tags=["Users"])
 async def user_by_id(id_user: int, user_service=Depends(get_user_service)):
     """Find a user by their unique ID.
