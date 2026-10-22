@@ -4,6 +4,7 @@ from urllib.parse import quote
 import requests
 
 from business_object.dependency import Dependency
+from business_object.licence import Licence
 
 DEPSDEV_URL = "https://api.deps.dev/v3"
 
@@ -14,6 +15,21 @@ DEPSDEV_SYSTEMS = {
     "Maven": "MAVEN",
     "crates.io": "CARGO",
 }
+
+LICENCE_RISK = {
+    "MIT": "low",
+    "Apache-2.0": "low",
+    "BSD-2-Clause": "low",
+    "BSD-3-Clause": "low",
+    "ISC": "low",
+    "MPL-2.0": "medium",
+    "LGPL-2.1": "medium",
+    "LGPL-3.0": "medium",
+    "GPL-2.0": "high",
+    "GPL-3.0": "high",
+    "AGPL-3.0": "high",
+}
+DEFAULT_RISK = "unknown"   # licence absente, "non-standard" ou non reconnue
 
 
 class API_DEPSDEV:
@@ -71,6 +87,13 @@ class API_DEPSDEV:
                 return v["versionKey"]["version"]
         return None
 
+    @staticmethod
+    def _to_licence(licence_name_by_api: str) -> Licence:
+        return Licence(
+            name=licence_name_by_api,
+            risk_level=LICENCE_RISK.get(licence_name_by_api, DEFAULT_RISK)
+            )
+
 
 # faire comme api_osv -> retourner des licences et pas des str
-# 
+#
