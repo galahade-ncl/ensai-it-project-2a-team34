@@ -64,4 +64,3 @@ async def create_audit(p: AuditCreateModel, audit_service=Depends(get_audit_serv
         raise HTTPException(status_code=500, detail="Error while creating audit.")
 
     return audit
-

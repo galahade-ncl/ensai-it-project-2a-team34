@@ -9,8 +9,7 @@ from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, RedirectResponse
 
-# from controller import login_controller, project_controller
-# from controller import audit_controller, file_controller, user_controller
+from controller import audit_controller, login_controller, project_controller, user_controller
 from utils.env_variables import display_values, load_environment_variables
 from utils.log_utils import LogMiddleware, get_logger, initialize_logs
 from utils.reset_database import ResetDatabase
@@ -45,11 +44,12 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     )
 
 
-# app.include_router(user_controller.router, prefix="/user", tags=["Users"])
-# app.include_router(login_controller.router, prefix="/login", tags=["Login"])
-# app.include_router(project_controller.router, prefix="/project", tags=["Projects"])
+app.include_router(user_controller.router, prefix="/user", tags=["Users"])
+app.include_router(login_controller.router, prefix="/login", tags=["Login"])
+app.include_router(project_controller.router, prefix="/project", tags=["Projects"])
 # app.include_router(file_controller.router, prefix="/file", tags=["Files"])
-# app.include_router(audit_controller.router, prefix="/audit", tags=["Audits"])
+app.include_router(audit_controller.router, prefix="/audit", tags=["Audits"])
+
 
 @app.get("/", include_in_schema=False)
 async def redirect_to_docs():
