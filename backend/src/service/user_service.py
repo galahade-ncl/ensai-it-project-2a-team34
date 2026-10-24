@@ -80,4 +80,3 @@ class UserService:
             True if already used, False otherwise
         """
         return (UserDao().find_by_username(username) is not None)
-        
