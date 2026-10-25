@@ -15,8 +15,8 @@ class RecursiveCall(AntiPattern):
 
     """
 
-    def __init__(self, line, description, function_name, id_pattern: int | None = None):
-        super().__init__(line, description, id_pattern)
+    def __init__(self, line, description, function_name, id_antipattern: int | None = None):
+        super().__init__(line, description, id_antipattern)
         self.function_name = function_name
 
     def __str__(self):
