@@ -1,9 +1,10 @@
 from unittest.mock import MagicMock
 
 import pytest
-from src.business_object.user import User
-from src.dao.user_dao import UserDao
-from src.service.user_service import UserService
+
+from business_object.user import User
+from dao.user_dao import UserDao
+from service.user_service import UserService
 
 
 @pytest.mark.parametrize(
