@@ -12,10 +12,11 @@ class EcoService:
     Service that handles business logic related to the eco analyse of a Python code
     """
 
-    def outest_loop (tree: ast.AST) -> list[ast.stmt]:
+    @staticmethod
+    def _outest_loop (tree: ast.AST) -> list[ast.stmt]:
         """
         Find all the loop that is not nested in an other loop
-        Args: 
+        Args:
             tree (ast.AST) : The AST of the code
         Returns:
             A list of loop
@@ -27,20 +28,47 @@ class EcoService:
             if isinstance(child, loop_type):
                 loops.append(child)
             else:
-                loops.extend(outest_loop(child))
+                loops.extend(EcoService.outest_loop(child))
 
         return loops
 
-    def loop_depth(node: ast.AST) -> int:
+    @staticmethod
+    def _loop_depth(node: ast.AST) -> int:
         """
         Depth of a node
         Args:
             node (ast.AST) : The node
         Returns:
-            An intege that is the depth of the node
+            An integer that is the depth of the node
         """
+        loop_type = (ast.For, ast.While)
         depth = 0
         for child in ast.iter_child_nodes(node):
+            child_depth = EcoService.loop_depth(child)
+            if child_depth > depth:
+                depth = child_depth
+
+        return depth + isinstance(node, loop_type)
+
+    @staticmethod
+    def _is_recursive_call(call: ast.Call, function_name: str) -> bool:
+        """
+        Verify if call is a recursive call
+        Args:
+            call (ast.Call) : A call inside a function named function_name
+            function_name (str) : The name of the function
+        Returns:
+            True if the call is refered to the function named function_name
+        """
+        func = call.func
+
+        if isinstance(func, ast.Name):
+            return func.id == function_name
+        return (
+            isinstance(func, ast.Attribute) and
+            func.attr == function_name
+        )
+
 
     @log
     def detect_antipatterns(self, tree: ast.Module) -> list[Antipattern]:
@@ -51,3 +79,26 @@ class EcoService:
         Returns:
             A list of the Antipatterns of the code
         """
+    antipatterns = []
+
+    # Nested loop
+    for loop in _outest_loop(tree):
+        depth = _loop_depth(loop)
+        if depth >= 2:
+            antipatterns.append(
+                NestedLoop(
+                    line=loop.lineo,
+                    description="Nested loop",
+                    depth=depth,
+                    id_antipattern = None
+                )
+
+            )
+
+    # Recursive call
+    for func in ast.walk(tree):
+        if  isinstance (func, ast.FunctionDef):
+            for node in ast.walk(func):
+                if isinstance(node, ast.Call):
+                    
+
