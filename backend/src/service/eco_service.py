@@ -2,20 +2,18 @@ import ast
 
 from business_object.file.codefile import CodeFile
 
-class EcoService:
-    """Estimate the theoretical energy and carbon impact of Python code."""
 
-    # Hypothetical reference machine
+class EcoService:
+    """Service for estimating the energy consumption and carbon emissions of Python code."""
+
+    # Hypotheses for a theoretical estimation model
     CPU_POWER_W = 35.0
     OPERATIONS_PER_SECOND = 100_000_000
-
-    # Illustrative electricity carbon intensity
     CARBON_INTENSITY_GCO2E_PER_KWH = 50.0
 
     @staticmethod
     def analyze_ast(code_file: CodeFile) -> dict:
-        """Extract structural indicators from Python source code."""
-
+        """Analyze Python source code using its Abstract Syntax Tree (AST)."""
         content = code_file.content
 
         if isinstance(content, bytes):
@@ -88,44 +86,44 @@ class EcoService:
             "recursive_functions": recursive_functions,
         }
 
-    def energy(self, code_file: CodeFile, input_size: int = 1000) -> float:
-        """
-        Estimate theoretical energy in kWh.
-
-        The model uses AST indicators and a hypothetical reference CPU.
-        Results are estimates, not physical measurements.
-        """
-
+    def calculate_energy(
+        self, code_file: CodeFile, input_size: int = 1000
+    ) -> float:
+        """Estimate theoretical energy consumption in kWh."""
         if input_size < 1:
             raise ValueError("input_size must be positive.")
 
         metrics = self.analyze_ast(code_file)
 
-        # Estimate the number of operations for a reference input size.
-        operations = metrics["operations"] + metrics["function_calls"]
-        operations += metrics["ast_nodes"]
+        # Estimate the number of operations
+        operations = (
+            metrics["operations"]
+            + metrics["function_calls"]
+            + metrics["ast_nodes"]
+        )
 
+        # Apply a rough estimate based on nested loop depth
         if metrics["nested_loops_depth"] > 0:
             operations *= input_size ** metrics["nested_loops_depth"]
 
+        # Apply an additional estimate when recursive functions are detected
         if metrics["recursive_functions"]:
             operations *= input_size
 
-        # Convert estimated operations to execution time.
+        # Convert estimated execution time into energy in kWh
         runtime_seconds = operations / self.OPERATIONS_PER_SECOND
-
-        # E (kWh) = P (W) * t (s) / 3,600,000.
-        energy_kwh = self.CPU_POWER_W * runtime_seconds / 3_600_000
+        energy_kwh = (
+            self.CPU_POWER_W * runtime_seconds / 3_600_000
+        )
 
         return energy_kwh
 
-    def carbon(
+    def calculate_carbon(
         self,
         energy_kwh: float,
         carbon_intensity_gco2e_per_kwh: float = None,
     ) -> float:
-        """Convert estimated energy in kWh to emissions in gCO2e."""
-
+        """Calculate carbon emissions in gCO2e."""
         if energy_kwh < 0:
             raise ValueError("Energy cannot be negative.")
 
