@@ -29,11 +29,7 @@ LICENCE_RISK = {
     "GPL-3.0": "high",
     "AGPL-3.0": "high",
 }
-<<<<<<< HEAD
-DEFAULT_RISK = "unknown"   # licence absente, "non-standard" ou non reconnue
-=======
 DEFAULT_RISK = "unknown"  # licence absente, non standard ou non reconnue
->>>>>>> origin/main
 
 
 class API_DEPSDEV:
