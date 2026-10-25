@@ -1,8 +1,8 @@
-
 from business_object.audit import Audit
 from dao.db_connection import DBConnection
 from utils.log_utils import get_logger, log
 from utils.singleton import Singleton
+from service.vulnerability_service import VulnerabilityService
 
 logger = get_logger(__name__)
 
@@ -27,24 +27,6 @@ class AuditDao(metaclass=Singleton):
             quality_gate=row["status_qualitygate"],
             certificate=None,
         )
-
-    @staticmethod
-    def _get_critical_vulnerability_count(audit: Audit) -> int:          //  vulnerabilité setrvice
-        """Count critical vulnerabilities."""
-        count = 0
-
-        for vulnerability in (audit.vulnerabilities or []):
-            if isinstance(vulnerability, dict):                                ///
-                severity = vulnerability.get("severity")
-            else:
-                severity = getattr(vulnerability, "severity", None)
-
-            if severity and str(severity).lower() in (
-                "critical", "critique"
-            ):
-                count += 1
-
-        return count
 
     @log
     def create(self, audit: Audit) -> bool:
@@ -83,7 +65,9 @@ class AuditDao(metaclass=Singleton):
                                 audit.vulnerabilities or []
                             ),
                             "total_critical_vulnerability":
-                                self._get_critical_vulnerability_count(audit),
+                                VulnerabilityService().get_critical_vulnerability_count(
+                                    audit.vulnerabilities
+                                ),
                             "complexity": audit.complexity,
                             "energy_comsumption":
                                 audit.energy_consumption_kwh,
@@ -185,8 +169,10 @@ class AuditDao(metaclass=Singleton):
                             "total_vulnerability": len(
                                 audit.vulnerabilities or []
                             ),
-                            "total_critical_vulnerability":
-                                self._get_critical_vulnerability_count(audit),
+                           "total_critical_vulnerability":
+                                VulnerabilityService().get_critical_vulnerability_count(
+                                    audit.vulnerabilities
+                                ),
                             "complexity": audit.complexity,
                             "energy_comsumption":
                                 audit.energy_consumption_kwh,

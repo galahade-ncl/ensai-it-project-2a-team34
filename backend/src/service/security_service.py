@@ -1,3 +1,4 @@
+from api_deps_dev.api_deps_dev import API_DEPSDEV
 from api_osv.api_osv import API_OSV
 from business_object.file.dependencyfile import DependencyFile
 from business_object.licence import Licence
@@ -56,48 +57,22 @@ class SecurityService:
         """
         Find all the licences in the dependencyfile
         Args:
-            dependencyfile (DependencyFile): file containing all the dependencies
+            dep_file (DependencyFile): file containing all the dependencies
         Returns:
-            List of Licence object found in the file
+            List of Licence object found in the file (without duplicates)
         """
-        pass
+        ecosystem = self.detect_ecosystem(dependencyfile=dep_file)
+        list_dep = FileService().parse_dependencies(dependencyfile=dep_file)
 
+        # licences = {}  # key = licence name, to avoid duplicates
+        # for dep in list_dep:
+        #     for licence in API_DEPSDEV.find_licences(dependency=dep, ecosystem=ecosystem):
+        #         licences.setdefault(licence.name, licence)
+        # return list(licences.values())
 
-# LICENCE_RISK = {
-#     "MIT": "low",
-#     "Apache-2.0": "low",
-#     "BSD-2-Clause": "low",
-#     "BSD-3-Clause": "low",
-#     "ISC": "low",
-#     "MPL-2.0": "medium",
-#     "LGPL-2.1": "medium",
-#     "LGPL-3.0": "medium",
-#     "GPL-2.0": "high",
-#     "GPL-3.0": "high",
-#     "AGPL-3.0": "high",
-# }
-# DEFAULT_RISK = "unknown"   # licence absente, "non-standard" ou non reconnue
-
-
-# @log
-# def find_licences(self, dep_file: DependencyFile) -> list[Licence]:
-#     """
-#     Find all the licences in the dependencyfile
-#     Args:
-#         dep_file (DependencyFile): file containing all the dependencies
-#     Returns:
-#         List of Licence object found in the file (without duplicates)
-#     """
-#     ecosystem = self.detect_ecosystem(dependencyfile=dep_file)
-#     list_dep = FileService().parse_dependencies(dependencyfile=dep_file)
-
-# -> il nous faut des types licences, pas des dictionnaires
-#     licences = {}   # key = licence name, to avoid duplicates
-#     for dep in list_dep:
-#         for name in API_DEPSDEV.find_licences(dependency=dep, ecosystem=ecosystem):
-#             if name not in licences:
-#                 licences[name] = Licence(
-#                     name=name,
-#                     risk_level=LICENCE_RISK.get(name, DEFAULT_RISK),
-#                 )
-#     return list(licences.values())
+        list_licence = []
+        for dep in list_dep:
+            for licence in API_DEPSDEV.find_licences(dependency=dep, ecosystem=ecosystem):
+                if licence not in list_licence:
+                    list_licence.append(licence)
+            return list_licence

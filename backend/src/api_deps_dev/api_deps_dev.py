@@ -29,7 +29,11 @@ LICENCE_RISK = {
     "GPL-3.0": "high",
     "AGPL-3.0": "high",
 }
+<<<<<<< HEAD
 DEFAULT_RISK = "unknown"   # licence absente, "non-standard" ou non reconnue
+=======
+DEFAULT_RISK = "unknown"  # licence absente, non standard ou non reconnue
+>>>>>>> origin/main
 
 
 class API_DEPSDEV:
@@ -88,12 +92,14 @@ class API_DEPSDEV:
         return None
 
     @staticmethod
-    def _to_licence(licence_name_by_api: str) -> Licence:
-        return Licence(
-            name=licence_name_by_api,
-            risk_level=LICENCE_RISK.get(licence_name_by_api, DEFAULT_RISK)
-            )
-
-
-# faire comme api_osv -> retourner des licences et pas des str
-#
+    def _to_licences(names: list[str]) -> list[Licence]:
+        """
+        Convert licence names (SPDX identifiers) into Licence objects
+        Args:
+            names (list[str]): licence names returned by deps.dev
+        Returns:
+            List of Licence object with their risk level ('unknown' if the licence is not in LICENCE_RISK)
+        """
+        return [
+            Licence(name=name, risk_level=LICENCE_RISK.get(name, DEFAULT_RISK)) for name in names
+        ]
