@@ -4,6 +4,7 @@ from urllib.parse import quote
 import requests
 
 from business_object.dependency import Dependency
+from business_object.licence import Licence
 
 DEPSDEV_URL = "https://api.deps.dev/v3"
 
@@ -14,6 +15,21 @@ DEPSDEV_SYSTEMS = {
     "Maven": "MAVEN",
     "crates.io": "CARGO",
 }
+
+LICENCE_RISK = {
+    "MIT": "low",
+    "Apache-2.0": "low",
+    "BSD-2-Clause": "low",
+    "BSD-3-Clause": "low",
+    "ISC": "low",
+    "MPL-2.0": "medium",
+    "LGPL-2.1": "medium",
+    "LGPL-3.0": "medium",
+    "GPL-2.0": "high",
+    "GPL-3.0": "high",
+    "AGPL-3.0": "high",
+}
+DEFAULT_RISK = "unknown"  # licence absente, non standard ou non reconnue
 
 
 class API_DEPSDEV:
@@ -71,6 +87,15 @@ class API_DEPSDEV:
                 return v["versionKey"]["version"]
         return None
 
-
-# faire comme api_osv -> retourner des licences et pas des str
-# 
+    @staticmethod
+    def _to_licences(names: list[str]) -> list[Licence]:
+        """
+        Convert licence names (SPDX identifiers) into Licence objects
+        Args:
+            names (list[str]): licence names returned by deps.dev
+        Returns:
+            List of Licence object with their risk level ('unknown' if the licence is not in LICENCE_RISK)
+        """
+        return [
+            Licence(name=name, risk_level=LICENCE_RISK.get(name, DEFAULT_RISK)) for name in names
+        ]

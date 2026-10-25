@@ -25,6 +25,15 @@ Pour afficher ce diagramme dans VScode :
 
 classDiagram
     %% Business objects
+    class AuditService {
+        +create(
+            id_audit: int, id_project: int, date: datetime, vulnerabilities: list[Vulnerability], licenses: list[Licence], anti_patterns: list[AntiPattern], complexity: float, sbom, energy_consumption_kwh: float, carbon_emission_gco2e: float, quality_gate: QualityGate, certificate: list[Certificate]
+            ): Audit
+        +list_all_audit(int) : list[Audit]
+        +find_by_id(int): Audit
+        +run_audit(Project): Audit
+    }
+
     class User {
         +id_user: int
         +username: string
