@@ -1,9 +1,8 @@
 import ast
 
-from business_object.antipattern.antipattern import Antipattern
+from business_object.antipattern.antipattern import AntiPattern
 from business_object.antipattern.nestedloop import NestedLoop
 from business_object.antipattern.recursivecall import RecursiveCall
-
 from utils.log_utils import log
 
 
@@ -13,7 +12,7 @@ class EcoService:
     """
 
     @staticmethod
-    def _outest_loop (tree: ast.AST) -> list[ast.stmt]:
+    def _outest_loop(tree: ast.AST) -> list[ast.stmt]:
         """
         Find all the loop that is not nested in an other loop
         Args:
@@ -28,7 +27,7 @@ class EcoService:
             if isinstance(child, loop_type):
                 loops.append(child)
             else:
-                loops.extend(EcoService.outest_loop(child))
+                loops.extend(EcoService._outest_loop(child))
 
         return loops
 
@@ -44,7 +43,7 @@ class EcoService:
         loop_type = (ast.For, ast.While)
         depth = 0
         for child in ast.iter_child_nodes(node):
-            child_depth = EcoService.loop_depth(child)
+            child_depth = EcoService._loop_depth(child)
             if child_depth > depth:
                 depth = child_depth
 
@@ -71,34 +70,42 @@ class EcoService:
 
 
     @log
-    def detect_antipatterns(self, tree: ast.Module) -> list[Antipattern]:
+    def detect_antipatterns(self, tree: ast.Module) -> list[AntiPattern]:
         """
         Detect all the antipatterns in a Python code
         Args:
-            tree (ast.Module) : The AST (Abstract Synthax Tree) of the code
+            tree (ast.Module) : The AST (Abstract Syntax Tree) of the code
         Returns:
             A list of the Antipatterns of the code
         """
-    antipatterns = []
+        antipatterns = []
 
-    # Nested loop
-    for loop in _outest_loop(tree):
-        depth = _loop_depth(loop)
-        if depth >= 2:
-            antipatterns.append(
-                NestedLoop(
-                    line=loop.lineo,
-                    description="Nested loop",
-                    depth=depth,
-                    id_antipattern = None
+        # Nested loop
+        for loop in EcoService._outest_loop(tree):
+            depth = EcoService._loop_depth(loop)
+            if depth >= 2:
+                antipatterns.append(
+                    NestedLoop(
+                        line=loop.lineno,
+                        description="Nested loop",
+                        depth=depth,
+                        id_antipattern = None
+                    )
+
                 )
 
-            )
+        # Recursive call
+        for func in ast.walk(tree):
+            if  isinstance (func, ast.FunctionDef):
+                for node in ast.walk(func):
+                    if isinstance(node, ast.Call) and EcoService._is_recursive_call(node, func.name):
+                        antipatterns.append(
+                            RecursiveCall(
+                                line=node.lineno,
+                                description="Recursive_call",
+                                function_name=func.name,
+                                id_antipattern = None
 
-    # Recursive call
-    for func in ast.walk(tree):
-        if  isinstance (func, ast.FunctionDef):
-            for node in ast.walk(func):
-                if isinstance(node, ast.Call):
-                    
-
+                            )
+                        )
+        return antipatterns
