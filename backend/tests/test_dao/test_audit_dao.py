@@ -311,3 +311,26 @@ def test_delete_database_error_is_reraised(dao, audit):
         with pytest.raises(RuntimeError, match="db down"):
             dao.delete(audit)
 
+
+def test_create_with_none_vulnerabilities(dao, audit, mock_db):
+    """Create an audit when vulnerabilities is None."""
+    db, cursor = mock_db
+
+    cursor.fetchone.return_value = {
+        "id_audit": 42,
+        "date": audit.date,
+    }
+
+    audit.vulnerabilities = None
+
+    with patch("dao.audit_dao.DBConnection", return_value=db):
+        result = dao.create(audit)
+
+    assert result is True
+
+    params = cursor.execute.call_args.args[1]
+
+    assert params["total_vulnerability"] == 0
+    assert params["total_critical_vulnerability"] == 0
+
+
