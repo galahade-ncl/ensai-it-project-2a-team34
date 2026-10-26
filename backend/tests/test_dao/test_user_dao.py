@@ -264,3 +264,61 @@ def test_login_raises_on_db_error(cursor):
 
     with pytest.raises(Exception, match="boom"):
         UserDao().login("alice", "pw")
+
+
+# - TESTS OF FIND_BY_TOKEN ----------------------
+
+
+@pytest.mark.parametrize("token", [None, ""])
+def test_find_by_token_empty_token(cursor, token):
+    """
+    Tests if it finds no user when token is None.
+    """
+    user = UserDao().find_by_token(token)
+
+    assert user is None
+    # No request should be send
+    cursor.execute.assert_not_called()
+
+
+def test_find_by_token_found(cursor):
+    """
+    Tests when the token is found (here token123).
+    """
+    cursor.fetchone.return_value = {
+        "id_user": 1,
+        "username": "alice",
+        "password": "pw",
+        "email": "alice@example.com",
+        "access_token": "token123",
+    }
+
+    user = UserDao().find_by_token("token123")
+
+    assert isinstance(user, User)
+    assert user.id_user == 1
+    assert user.username == "alice"
+    assert user.access_token == "token123"
+    # The second argument of execute() contains the request parameters
+    assert cursor.execute.call_args[0][1] == {"token": "token123"}
+
+
+def test_find_by_token_not_found(cursor):
+    """
+    Tests when the user isn't found because the token doesn't exists.
+    """
+    cursor.fetchone.return_value = None
+
+    user = UserDao().find_by_token("unknown_token")
+
+    assert user is None
+
+
+def test_find_by_token_raises_on_db_error(cursor):
+    """
+    Tests if the error is raised on.
+    """
+    cursor.execute.side_effect = Exception("boom")
+
+    with pytest.raises(Exception, match="boom"):
+        UserDao().find_by_token("token123")
