@@ -22,6 +22,7 @@ def test_create_success():
     assert result is True
     assert user.id_user == 42
 
+
 # - TESTS OF FIND_BY_ID ----------------------
 
 
@@ -68,7 +69,7 @@ def test_find_by_id_not_found(cursor):
 
 def test_find_by_id_raises_on_db_error(cursor):
     """
-    Test if the fictive error boom is raised as an exception
+    Test if the fictive error boom is raised on as an exception
     """
     cursor.execute.side_effect = Exception("boom")
 
@@ -114,12 +115,13 @@ def test_find_all_empty(cursor):
 
 def test_find_all_raises_on_db_error(cursor):
     """
-    Test if the fictive error boom is raised as an exception
+    Test if the fictive error boom is raised on as an exception
     """
     cursor.execute.side_effect = Exception("boom")
 
     with pytest.raises(Exception, match="boom"):
         UserDao().find_all()
+
 
 # - TESTS OF UPDATE ----------------------
 
@@ -170,10 +172,49 @@ def test_update_user_not_found(cursor):
 
 def test_update_raises_on_db_error(cursor):
     """
-    Tests update when it must raise an exception error
+    Tests update when it must raise on an exception error
     """
     cursor.execute.side_effect = Exception("boom")
     user = MagicMock(id_user=1)
 
     with pytest.raises(Exception, match="boom"):
         UserDao().update(user)
+
+
+# - TESTS OF DELETE ----------------------
+
+def test_delete_success(cursor):
+    """
+    Tests if the user is correctly deleted
+    """
+    cursor.rowcount = 1
+    user = MagicMock(id_user=1)
+
+    result = UserDao().delete(user)
+
+    assert result is True
+    # The second argument of execute() contains the request parameters
+    assert cursor.execute.call_args[0][1] == {"id_user": 1}
+
+
+def test_delete_user_not_found(cursor):
+    """
+    Tests if the user isn't deleted because not found
+    """
+    cursor.rowcount = 0
+    user = MagicMock(id_user=999)
+
+    result = UserDao().delete(user)
+
+    assert result is False
+
+
+def test_delete_raises_on_db_error(cursor):
+    """
+    Tests if an error is raised on.
+    """
+    cursor.execute.side_effect = Exception("boom")
+    user = MagicMock(id_user=1)
+
+    with pytest.raises(Exception, match="boom"):
+        UserDao().delete(user)
