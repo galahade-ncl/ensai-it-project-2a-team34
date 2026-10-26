@@ -81,7 +81,7 @@ def test_find_by_id_raises_on_db_error(cursor):
 
 def test_find_all_found(cursor):
     """
-    Test if there is a user for this id and we found the good one
+    Test if there are users and we found the good ones
     """
     cursor.fetchall.return_value = [
         {"id_user": 1, "username": "alice", "password": "pw1", "email": "alice@email.com"},
@@ -99,3 +99,24 @@ def test_find_all_found(cursor):
     assert users[1].id_user == 2
     assert users[1].username == "bob"
     assert users[1].email == "bob@email.com"
+
+
+def test_find_all_empty(cursor):
+    """
+    Test if there is no user
+    """
+    cursor.fetchall.return_value = []
+
+    users = UserDao().find_all()
+
+    assert users == []
+
+
+def test_find_all_raises_on_db_error(cursor):
+    """
+    Test if the fictive error boom is raised as an exception
+    """
+    cursor.execute.side_effect = Exception("boom")
+
+    with pytest.raises(Exception, match="boom"):
+        UserDao().find_all()
