@@ -120,3 +120,60 @@ def test_find_all_raises_on_db_error(cursor):
 
     with pytest.raises(Exception, match="boom"):
         UserDao().find_all()
+
+# - TESTS OF UPDATE ----------------------
+
+
+def test_update_success(cursor):
+    """
+    Tests update when it must succed
+    """
+    cursor.rowcount = 1
+    user = MagicMock(
+        id_user=1,
+        username="alice",
+        password="pw",
+        email="alice@email.com",
+        access_token="token123",
+    )
+
+    result = UserDao().update(user)
+
+    assert result is True
+    # The second argument of execute() contains the request parameters
+    assert cursor.execute.call_args[0][1] == {
+        "username": "alice",
+        "password": "pw",
+        "email": "alice@email.com",
+        "access_token": "token123",
+        "id_user": 1,
+    }
+
+
+def test_update_user_not_found(cursor):
+    """
+    Tests update when it must fail
+    """
+    cursor.rowcount = 0
+    user = MagicMock(
+        id_user=999,
+        username="nobody",
+        password="pw",
+        email="nobody@email.com",
+        access_token=None,
+    )
+
+    result = UserDao().update(user)
+
+    assert result is False
+
+
+def test_update_raises_on_db_error(cursor):
+    """
+    Tests update when it must raise an exception error
+    """
+    cursor.execute.side_effect = Exception("boom")
+    user = MagicMock(id_user=1)
+
+    with pytest.raises(Exception, match="boom"):
+        UserDao().update(user)
