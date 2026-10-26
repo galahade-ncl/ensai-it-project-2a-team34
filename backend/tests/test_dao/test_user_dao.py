@@ -64,3 +64,13 @@ def test_find_by_id_not_found(cursor):
     user = UserDao().find_by_id(999)
 
     assert user is None
+
+
+def test_find_by_id_raises_on_db_error(cursor):
+    """
+    Test if the fictive error boom is raised as an exception
+    """
+    cursor.execute.side_effect = Exception("boom")
+
+    with pytest.raises(Exception, match="boom"):
+        UserDao().find_by_id(1)
