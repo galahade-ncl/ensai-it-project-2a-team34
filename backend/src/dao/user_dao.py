@@ -102,7 +102,7 @@ class UserDao(metaclass=Singleton):
         if res:
             for row in res:
                 user = User(
-                    id_player=row["id_player"],
+                    id_user=row["id_user"],
                     username=row["username"],
                     password=row["password"],
                     email=row["email"],
