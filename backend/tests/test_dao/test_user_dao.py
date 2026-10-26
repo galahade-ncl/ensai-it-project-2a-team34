@@ -5,7 +5,7 @@ import pytest
 from business_object.user import User
 from dao.user_dao import UserDao
 
-# - TESTS DE CREATE ----------------------
+# - TESTS OF CREATE ----------------------
 
 
 def test_create_success():
@@ -22,7 +22,7 @@ def test_create_success():
     assert result is True
     assert user.id_user == 42
 
-# - TESTS DE FIND_BY_ID ----------------------
+# - TESTS OF FIND_BY_ID ----------------------
 
 
 @pytest.fixture
@@ -74,3 +74,28 @@ def test_find_by_id_raises_on_db_error(cursor):
 
     with pytest.raises(Exception, match="boom"):
         UserDao().find_by_id(1)
+
+
+# - TESTS OF FIND_ALL ----------------------
+
+
+def test_find_all_found(cursor):
+    """
+    Test if there is a user for this id and we found the good one
+    """
+    cursor.fetchall.return_value = [
+        {"id_user": 1, "username": "alice", "password": "pw1", "email": "alice@email.com"},
+        {"id_user": 2, "username": "bob", "password": "pw2", "email": "bob@email.com"},
+    ]
+
+    users = UserDao().find_all()
+
+    assert len(users) == 2
+    assert isinstance(users[0], User)
+    assert isinstance(users[1], User)
+    assert users[0].id_user == 1
+    assert users[0].username == "alice"
+    assert users[0].email == "alice@email.com"
+    assert users[1].id_user == 2
+    assert users[1].username == "bob"
+    assert users[1].email == "bob@email.com"
