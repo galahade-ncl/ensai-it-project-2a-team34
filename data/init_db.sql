@@ -19,7 +19,7 @@ CREATE TABLE project_table (
     id_project      SERIAL PRIMARY KEY,
     name_project    VARCHAR,
     id_user         INT,
-    HMAC_key        BYTEA,
+    secretHMACkey   BYTEA,
     FOREIGN KEY (id_user)
     REFERENCES user_table(id_user)
 );

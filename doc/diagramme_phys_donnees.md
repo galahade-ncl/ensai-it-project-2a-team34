@@ -22,44 +22,33 @@ classDiagram
         username VARCHAR50
         password VARCHAR100
         email VARCHAR100
+        access_token VARCHAR255
     }
 
     class Project {
         id_project INT PK
         name_project VARCHAR100
         #id_user INT FK
-        HMACkey VARCHAR100
+        secretHMACkey VARCHAR100
     }
-
-    class File {
-        id_file INT PK
-        name_file VARCHAR100
-        #id_project INT FK
-        type_file VARCHAR50
-        date DATE
-    }
-
 
     class Audit {
         id_audit INT PK
         #id_project INT FK
         date DATE
+        total_vulnerability FLOAT
+        total_critical_vulnerability FLOAT
         complexity FLOAT
-        energy_consumption_kwh FLOAT
+        energy_comsumption FLOAT
         carbon_emission_gco2e FLOAT
+        status_qualitygate VARCHAR
         vulnerabilties TEXT
         sbom TEXT
 
     }
 
-
-
-
     %% Relationships
     User "1" -- "0..*" Project : owns
     Project "1" -- "0..*" Audit : owns
-
-    Project "1" --> "2" File : uses
-
 
 ```
