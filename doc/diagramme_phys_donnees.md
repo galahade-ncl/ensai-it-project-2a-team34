@@ -42,9 +42,6 @@ classDiagram
         energy_comsumption FLOAT
         carbon_emission_gco2e FLOAT
         status_qualitygate VARCHAR
-        vulnerabilties TEXT
-        sbom TEXT
-
     }
 
     %% Relationships
