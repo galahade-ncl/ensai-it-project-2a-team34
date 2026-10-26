@@ -203,7 +203,7 @@ class UserDao(metaclass=Singleton):
                 password=res["password"],
                 email=res["email"],
                 access_token=res["access_token"],
-                id_player=res["id_player"],
+                id_user=res["id_user"],
             )
 
         return user
@@ -237,7 +237,7 @@ class UserDao(metaclass=Singleton):
         user = None
         if res:
             user = User(
-                id_player=res["id_player"],
+                id_user=res["id_user"],
                 username=res["username"],
                 password=res["password"],
                 email=res["email"],
