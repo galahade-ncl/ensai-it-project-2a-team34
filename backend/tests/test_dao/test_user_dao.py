@@ -35,6 +35,9 @@ def cursor():
 
 
 def test_find_by_id_found(cursor):
+    """
+    Test if there is a user for this id and we found the good one
+    """
     cursor.fetchone.return_value = {
         "id_user": 1,
         "username": "alice",
@@ -51,3 +54,13 @@ def test_find_by_id_found(cursor):
     # The second argument of execute() contains the request parameters
     assert cursor.execute.call_args[0][1] == {"id_user": 1}
 
+
+def test_find_by_id_not_found(cursor):
+    """
+    Test if there is no user for this id
+    """
+    cursor.fetchone.return_value = None
+
+    user = UserDao().find_by_id(999)
+
+    assert user is None
