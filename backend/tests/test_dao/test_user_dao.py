@@ -218,3 +218,49 @@ def test_delete_raises_on_db_error(cursor):
 
     with pytest.raises(Exception, match="boom"):
         UserDao().delete(user)
+
+
+# - TESTS OF LOGIN ----------------------
+
+
+def test_login_success(cursor):
+    """
+    The user succeds to login
+    """
+    cursor.fetchone.return_value = {
+        "id_user": 1,
+        "username": "alice",
+        "password": "pw",
+        "email": "alice@example.com",
+        "access_token": "token123",
+    }
+
+    user = UserDao().login("alice", "pw")
+
+    assert isinstance(user, User)
+    assert user.id_user == 1
+    assert user.username == "alice"
+    assert user.access_token == "token123"
+    # The second argument of execute() contains the request parameters
+    assert cursor.execute.call_args[0][1] == {"username": "alice", "password": "pw"}
+
+
+def test_login_wrong_credentials(cursor):
+    """
+    The passeword is wrong so login fails
+    """
+    cursor.fetchone.return_value = None
+
+    user = UserDao().login("alice", "wrong_pw")
+
+    assert user is None
+
+
+def test_login_raises_on_db_error(cursor):
+    """
+    An error is raised on
+    """
+    cursor.execute.side_effect = Exception("boom")
+
+    with pytest.raises(Exception, match="boom"):
+        UserDao().login("alice", "pw")
