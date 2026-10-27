@@ -182,3 +182,63 @@ def test_list_all_project_raises_on_db_error(cursor):
 
     with pytest.raises(Exception, match="boom"):
         ProjectDao().list_all_project(user)
+
+
+# - TESTS OF UPDATE ----------------------
+
+
+def test_update_success(cursor):
+    """
+    Tests when the project is successfully updated.
+    """
+    cursor.rowcount = 1
+    project = MagicMock(
+        id_project=10,
+        name_project="New name",
+        user=MagicMock(id_user=1),
+        secretHMACkey="secret123",
+    )
+
+    result = ProjectDao().update(project)
+
+    assert result is True
+    # The second argument of execute() contains the request parameters
+    assert cursor.execute.call_args[0][1] == {
+        "name_project": "New name",
+        "id_user": 1,
+        "secretHMACkey": "secret123",
+        "id_project": 10,
+    }
+
+
+def test_update_project_not_found(cursor):
+    """
+    Tests when the project to update doesn't exist.
+    """
+    cursor.rowcount = 0
+    project = MagicMock(
+        id_project=999,
+        name_project="None",
+        user=MagicMock(id_user=1),
+        secretHMACkey="secret123",
+    )
+
+    result = ProjectDao().update(project)
+
+    assert result is False
+
+
+def test_update_raises_on_db_error(cursor):
+    """
+    Tests when an error is raised on.
+    """
+    cursor.execute.side_effect = Exception("boom")
+    project = MagicMock(id_project=10, user=MagicMock(id_user=1))
+
+    with pytest.raises(Exception, match="boom"):
+        ProjectDao().update(project)
+
+# - TESTS OF DELETE ----------------------
+
+
+# - TESTS OF LIST_ALL_PROJECT ----------------------
