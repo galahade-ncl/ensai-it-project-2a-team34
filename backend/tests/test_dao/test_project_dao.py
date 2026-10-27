@@ -73,7 +73,7 @@ def test_create_raises_on_db_error(cursor):
         ProjectDao().create(project)
 
 
-# - TESTS OF CREATE ----------------------
+# - TESTS OF FIND_BY_ID ----------------------
 
 
 @pytest.fixture
@@ -132,3 +132,53 @@ def test_find_by_id_raises_on_db_error(cursor, user_dao):
 
     with pytest.raises(Exception, match="boom"):
         ProjectDao().find_by_id(10)
+
+
+# - TESTS OF LIST_ALL_PROJECT ----------------------
+
+
+def test_list_all_project_returns_projects(cursor):
+    """
+    Tests when the methods returns projects.
+    """
+    user = MagicMock(id_user=1)
+    cursor.fetchall.return_value = [
+        {"id_project": 10, "name_project": "Projet A", "secrethmackey": "secretA"},
+        {"id_project": 11, "name_project": "Projet B", "secrethmackey": "secretB"},
+    ]
+
+    projects = ProjectDao().list_all_project(user)
+
+    assert len(projects) == 2
+    assert all(isinstance(p, Project) for p in projects)
+    assert projects[0].id_project == 10
+    assert projects[0].name_project == "Projet A"
+    assert projects[1].id_project == 11
+    assert projects[1].secretHMACkey == "secretB"
+    # All projects are owned by the user gived as an argument (here id_user = 1)
+    assert all(p.user == user for p in projects)
+    # The second argument of execute() contains the request parameters
+    assert cursor.execute.call_args[0][1] == {"id_user": 1}
+
+
+def test_list_all_project_empty(cursor):
+    """
+    Tests when the user does,'t have any project.
+    """
+    user = MagicMock(id_user=1)
+    cursor.fetchall.return_value = []
+
+    projects = ProjectDao().list_all_project(user)
+
+    assert projects == []
+
+
+def test_list_all_project_raises_on_db_error(cursor):
+    """
+    Tests when an error is raised on.
+    """
+    user = MagicMock(id_user=1)
+    cursor.execute.side_effect = Exception("boom")
+
+    with pytest.raises(Exception, match="boom"):
+        ProjectDao().list_all_project(user)
