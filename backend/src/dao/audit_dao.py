@@ -61,24 +61,17 @@ class AuditDao(metaclass=Singleton):
                         {
                             "id_project": audit.id_project,
                             "date": audit.date,
-                            "total_vulnerability": len(
-                                audit.vulnerabilities or []
+                            "total_vulnerability": len(audit.vulnerabilities or []),
+                            "total_critical_vulnerability": VulnerabilityService().get_critical_vulnerability_count(
+                                audit.vulnerabilities
                             ),
-                            "total_critical_vulnerability":
-                                VulnerabilityService().get_critical_vulnerability_count(
-                                    audit.vulnerabilities
-                                ),
                             "complexity": audit.complexity,
-                            "energy_comsumption":
-                                audit.energy_consumption_kwh,
-                            "carbon_emission_gco2e":
-                                audit.carbon_emission_gco2e,
+                            "energy_comsumption": audit.energy_consumption_kwh,
+                            "carbon_emission_gco2e": audit.carbon_emission_gco2e,
                             "status_qualitygate": (
                                 audit.quality_gate
                                 if isinstance(audit.quality_gate, str)
-                                else getattr(
-                                    audit.quality_gate, "status", None
-                                )
+                                else getattr(audit.quality_gate, "status", None)
                             ),
                         },
                     )
@@ -126,13 +119,11 @@ class AuditDao(metaclass=Singleton):
         try:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
-                    cursor.execute(
-                        """
+                    cursor.execute("""
                         SELECT *
                         FROM audit_table
                         ORDER BY id_audit;
-                        """
-                    )
+                        """)
                     rows = cursor.fetchall()
 
             return [self._row_to_audit(row) for row in rows]
@@ -166,24 +157,17 @@ class AuditDao(metaclass=Singleton):
                             "id_audit": audit.id_audit,
                             "id_project": audit.id_project,
                             "date": audit.date,
-                            "total_vulnerability": len(
-                                audit.vulnerabilities or []
+                            "total_vulnerability": len(audit.vulnerabilities or []),
+                            "total_critical_vulnerability": VulnerabilityService().get_critical_vulnerability_count(
+                                audit.vulnerabilities
                             ),
-                           "total_critical_vulnerability":
-                                VulnerabilityService().get_critical_vulnerability_count(
-                                    audit.vulnerabilities
-                                ),
                             "complexity": audit.complexity,
-                            "energy_comsumption":
-                                audit.energy_consumption_kwh,
-                            "carbon_emission_gco2e":
-                                audit.carbon_emission_gco2e,
+                            "energy_comsumption": audit.energy_consumption_kwh,
+                            "carbon_emission_gco2e": audit.carbon_emission_gco2e,
                             "status_qualitygate": (
                                 audit.quality_gate
                                 if isinstance(audit.quality_gate, str)
-                                else getattr(
-                                    audit.quality_gate, "status", None
-                                )
+                                else getattr(audit.quality_gate, "status", None)
                             ),
                         },
                     )
