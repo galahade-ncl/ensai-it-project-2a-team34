@@ -70,6 +70,7 @@ def db_row(**overrides):
 
 # -------------------- _row_to_audit --------------------
 
+
 def test_row_to_audit():
     """Convert a database row into an Audit object."""
     row = db_row()
@@ -92,6 +93,7 @@ def test_row_to_audit():
 
 
 # -------------------- create --------------------
+
 
 def test_create_success(dao, audit, mock_db):
     """Create an audit successfully."""
@@ -161,6 +163,7 @@ def test_create_database_error_is_reraised(dao, audit):
 
 # -------------------- find_by_id --------------------
 
+
 def test_find_by_id_success(dao, mock_db):
     """Return an audit when its ID exists."""
     db, cursor = mock_db
@@ -197,6 +200,7 @@ def test_find_by_id_database_error_is_reraised(dao):
 
 
 # -------------------- find_all --------------------
+
 
 def test_find_all_success(dao, mock_db):
     """Return all audits from the database."""
@@ -236,6 +240,7 @@ def test_find_all_database_error_is_reraised(dao):
 
 
 # -------------------- update --------------------
+
 
 def test_update_success(dao, audit, mock_db):
     """Return True when one audit is updated."""
@@ -278,6 +283,7 @@ def test_update_database_error_is_reraised(dao, audit):
 
 
 # -------------------- delete --------------------
+
 
 def test_delete_success(dao, audit, mock_db):
     """Return True when an audit is deleted."""
@@ -332,5 +338,3 @@ def test_create_with_none_vulnerabilities(dao, audit, mock_db):
 
     assert params["total_vulnerability"] == 0
     assert params["total_critical_vulnerability"] == 0
-
-

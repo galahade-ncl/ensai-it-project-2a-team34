@@ -13,7 +13,9 @@ def cursor():
     """
     with patch("dao.project_dao.DBConnection") as mock_db:
         fake_cursor = MagicMock()
-        mock_db.return_value.connection.__enter__.return_value.cursor.return_value.__enter__.return_value = fake_cursor
+        mock_db.return_value.connection.__enter__.return_value.cursor.return_value.__enter__.return_value = (
+            fake_cursor
+        )
         yield fake_cursor
 
 

@@ -31,7 +31,9 @@ def cursor():
     """Gives a fake cursor (a mock one)"""
     with patch("dao.user_dao.DBConnection") as mock_db:
         fake_cursor = MagicMock()
-        mock_db.return_value.connection.__enter__.return_value.cursor.return_value.__enter__.return_value = fake_cursor
+        mock_db.return_value.connection.__enter__.return_value.cursor.return_value.__enter__.return_value = (
+            fake_cursor
+        )
         yield fake_cursor
 
 
@@ -85,7 +87,12 @@ def test_find_all_found(cursor):
     Test if there are users and we found the good ones
     """
     cursor.fetchall.return_value = [
-        {"id_user": 1, "username": "alice", "password": "pw1", "email": "alice@email.com"},
+        {
+            "id_user": 1,
+            "username": "alice",
+            "password": "pw1",
+            "email": "alice@email.com",
+        },
         {"id_user": 2, "username": "bob", "password": "pw2", "email": "bob@email.com"},
     ]
 
@@ -182,6 +189,7 @@ def test_update_raises_on_db_error(cursor):
 
 
 # - TESTS OF DELETE ----------------------
+
 
 def test_delete_success(cursor):
     """
