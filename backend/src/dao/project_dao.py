@@ -114,7 +114,7 @@ class ProjectDao(metaclass=Singleton):
                 with connection.cursor() as cursor:
                     cursor.execute(
                         "SELECT * "
-                        "  FROM project "
+                        "  FROM project_table "
                         " WHERE id_user = %(id_user)s "
                         " ORDER BY id_project;",
                         {"id_user": user.id_user},
