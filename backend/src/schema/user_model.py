@@ -4,15 +4,14 @@ from pydantic import BaseModel, EmailStr, field_validator
 class UserModel(BaseModel):
     """Acts as the data contract between the frontend and the backend.
 
-    It defines the JSON structure used to exchange player information,
+    It defines the JSON structure used to exchange user information,
     ensuring data consistency and validation during API requests and responses."""
 
-    id_player: int | None = None
+    id_user: int | None = None
     username: str
     password: str
-    elo: int
     email: EmailStr
-    pokemon_fan: bool
+    access_token: str
 
     @field_validator("password")
     @classmethod
@@ -23,14 +22,13 @@ class UserModel(BaseModel):
         return v
 
 
-class PlayerReadModel(BaseModel):
-    id_player: int
+class UserReadModel(BaseModel):
+    id_user: int
     username: str
-    elo: int | None
     email: EmailStr
-    pokemon_fan: bool | None
+    access_token: str | None
 
 
-class PlayerLoginModel(BaseModel):
+class UserLoginModel(BaseModel):
     username: str
     password: str
