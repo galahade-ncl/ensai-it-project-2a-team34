@@ -238,7 +238,42 @@ def test_update_raises_on_db_error(cursor):
     with pytest.raises(Exception, match="boom"):
         ProjectDao().update(project)
 
+
 # - TESTS OF DELETE ----------------------
 
 
-# - TESTS OF LIST_ALL_PROJECT ----------------------
+def test_delete_success(cursor):
+    """
+    Tests when the project is successfully deleted.
+    """
+    cursor.rowcount = 1
+    project = MagicMock(id_project=10)
+
+    result = ProjectDao().delete(project)
+
+    assert result is True
+    # The second argument of execute() contains the request parameters
+    assert cursor.execute.call_args[0][1] == {"id_project": 10}
+
+
+def test_delete_project_not_found(cursor):
+    """
+    Tests when the project to delete doesn't exist.
+    """
+    cursor.rowcount = 0
+    project = MagicMock(id_project=999)
+
+    result = ProjectDao().delete(project)
+
+    assert result is False
+
+
+def test_delete_raises_on_db_error(cursor):
+    """
+    Tests when an error is raised on.
+    """
+    cursor.execute.side_effect = Exception("boom")
+    project = MagicMock(id_project=10)
+
+    with pytest.raises(Exception, match="boom"):
+        ProjectDao().delete(project)
