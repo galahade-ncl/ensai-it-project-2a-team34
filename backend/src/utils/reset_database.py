@@ -6,9 +6,9 @@ import dotenv
 
 # from dao.project_dao import ProjectDao
 from dao.db_connection import DBConnection
-
-# from dao.user_dao import UserDao
+from dao.user_dao import UserDao
 from utils.log_utils import get_logger, log
+from utils.security import hash_password
 from utils.singleton import Singleton
 
 logger = get_logger(__name__)
@@ -62,9 +62,9 @@ class ResetDatabase(metaclass=Singleton):
             raise
 
         # Apply password hashing to all users
-        # for p in UserDao().find_all():
-        #     p.password = hash_password(p.password, p.username)
-        #     UserDao().update(p)
+        for p in UserDao().find_all():
+            p.password = hash_password(p.password, p.username)
+            UserDao().update(p)
 
         return True
 

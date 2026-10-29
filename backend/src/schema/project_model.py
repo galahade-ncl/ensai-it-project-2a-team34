@@ -1,4 +1,4 @@
-from hmac import HMAC
+# from hmac import HMAC -> renvoie un str qu'on converti en bytes
 
 from pydantic import BaseModel
 
@@ -15,7 +15,7 @@ class ProjectResponseModel(BaseModel):
     id_project: int
     name_project: str
 #    user: User -> il faudrait appeler UserModel
-    secretHMACkey: HMAC
+    secretHMACkey: str
 
 
 class ProjectCreateModel(BaseModel):
