@@ -245,7 +245,7 @@ class UserDao(metaclass=Singleton):
             )
 
         return user
-    
+
     def find_by_username(self, username: str) -> User:
         """Find a user by his username.
         Args:
@@ -259,7 +259,7 @@ class UserDao(metaclass=Singleton):
                     cursor.execute(
                         "SELECT *                            "
                         "  FROM user_table                   "
-                        " WHERE username = %(id_user)s;   ",
+                        " WHERE username = %(username)s;     ",
                         {"username": username},
                     )
                     res = cursor.fetchone()
@@ -277,4 +277,3 @@ class UserDao(metaclass=Singleton):
             )
 
         return user
-

@@ -8,7 +8,7 @@ class UserService:
     Service that handles business logic related to a user
     """
     @log
-    def create (self, username: str, password: str, email: str) -> User:
+    def create(self, username: str, password: str, email: str) -> User:
         """
         Create a new user in the system.
         Args:
@@ -18,7 +18,8 @@ class UserService:
         Returns:
             User object created or None if creation failed.
         """
-        new_user = User(username=username, password=password, email=email, acces_token=None)    #Problème: comment créer le id
+        new_user = User(username=username, password=password, email=email, access_token=None)
+        # Problème: comment créer le id -> est créé dans la DAO
         return new_user if UserDao().create(new_user) else None
 
     @log
@@ -59,7 +60,7 @@ class UserService:
         return UserDao().delete(user)
 
     @log
-    def login (self, username: str, password: str) -> User:
+    def login(self, username: str, password: str) -> User:
         """
         Login using password and username
         Args:
