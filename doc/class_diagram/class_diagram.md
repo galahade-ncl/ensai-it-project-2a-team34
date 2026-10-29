@@ -57,14 +57,14 @@ classDiagram
             +name: str
             +content: bytes
             +type_file: str
-            +date: datetime[Dependency]
+            +date: datetime
             +get_duty(self): str
         }
         class SbomFile {
             +name: str
             +content: bytes
             +type_file: str
-            +date: datetime[Dependency]
+            +date: datetime
             +get_duty(self): str
             }
     }

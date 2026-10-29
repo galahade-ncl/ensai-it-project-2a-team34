@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from schema.project_model import ProjectCreateModel, ProjectReadModel, ProjectResponseModel
 from service.project_service import ProjectService
 from utils.log_utils import get_logger
+from utils.security import encode_secret_key
 
 router = APIRouter()
 
@@ -14,7 +15,8 @@ def get_project_service():
     return ProjectService()
 
 
-@router.get("projects/{id_project}", response_model=ProjectReadModel, tags=["Projects"])
+# projects/ -> pas utile, on a déjà le chemin project/
+@router.get("/{id_project}", response_model=ProjectReadModel, tags=["Projects"])
 async def project_by_id(id_project: int, project_service=Depends(get_project_service)):
     """Find a project by its unique ID.
     Args:
@@ -32,18 +34,17 @@ async def project_by_id(id_project: int, project_service=Depends(get_project_ser
     return project
 
 
-
-@router.get("users/{id_user}/projects", response_model=list[ProjectReadModel], tags=["Projects"])
+# chemin à revoir
+@router.get("/user/{id_user}/", response_model=list[ProjectReadModel], tags=["Projects"])
 async def project_by_user(id_user: int, project_service=Depends(get_project_service)):
     """
     Retrieve projects filtered by user ID.
     """
 
-    return project_service.list_all_projects(id_user)
+    return project_service.list_all_project(id_user)
 
 
-
-@router.post("/projects", response_model=ProjectResponseModel, tags=["Projects"])
+@router.post("/", response_model=ProjectResponseModel, tags=["Projects"])
 async def create_project(p: ProjectCreateModel, project_service=Depends(get_project_service)):
     """Create a new project.
     Args:
@@ -56,11 +57,18 @@ async def create_project(p: ProjectCreateModel, project_service=Depends(get_proj
     """
     logger.info("Create a project")
 
-    project = project_service.upload(p.name, p.user)
+    project = project_service.upload(p.name_project, p.user)
     if not project:
         raise HTTPException(status_code=500, detail="Error while creating project.")
 
-    return project
+    # Application du ProjectResponseModel
+    response_project = ProjectResponseModel(
+        id_project=project.id_project,
+        name_project=project.name_project,
+        user=project.user,
+        secretHMACkey=encode_secret_key(project.secretHMACkey),
+    )
+    return response_project
 
 
 @router.delete("/{id_project}", tags=["Projects"])
@@ -84,7 +92,9 @@ async def delete_project(id_project: int, project_service=Depends(get_project_se
 
 
 @router.put("/{id_project}", response_model=ProjectReadModel, tags=["Projects"])
-async def update_project(id_project: int, p: ProjectCreateModel, project_service=Depends(get_project_service)):
+async def update_project(
+    id_project: int, p: ProjectCreateModel, project_service=Depends(get_project_service)
+):
     """Update an existing project's information.
     Args:
         id_project (int)

@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
-from unittest import mock
 
+# from unittest import mock
 import dotenv
 
 # from dao.project_dao import ProjectDao
@@ -27,11 +27,11 @@ class ResetDatabase(metaclass=Singleton):
         """Run the database reset
         If test_dao=True: reset test data
         """
-        if test_dao:
-            mock.patch.dict(os.environ, {"POSTGRES_SCHEMA": "project_test_dao"}).start()
-            pop_data_path = self.base_path / "data" / "pop_db_test.sql"
-        else:
-            pop_data_path = self.base_path / "data" / "pop_db.sql"
+        # if test_dao:
+        #     mock.patch.dict(os.environ, {"POSTGRES_SCHEMA": "project_test_dao"}).start()
+        #     pop_data_path = self.base_path / "data" / "pop_db_test.sql"
+        # else:
+        pop_data_path = self.base_path / "data" / "pop_db.sql"
 
         init_db_path = self.base_path / "data" / "init_db.sql"
 

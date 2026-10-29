@@ -3,6 +3,7 @@ import hmac
 from business_object.project import Project
 from business_object.user import User
 from dao.project_dao import ProjectDao
+from service.user_service import UserService
 from utils.log_utils import log
 from utils.security import generate_secret_HMAC_key, generate_signature
 
@@ -40,7 +41,10 @@ class ProjectService:
             id_user (int) : id of the user
         Returns:
             A list of Project owned by the user"""
-        return ProjectDao().list_all_project(id_user)
+        # Find the user corresponding to the id
+        user = UserService().find_by_id(id_user)
+
+        return ProjectDao().list_all_project(user)
 
     @log
     def update(self, project: Project) -> Project | None:
@@ -65,7 +69,9 @@ class ProjectService:
     # Est-ce qu'on garde la méthode là ?
     @staticmethod
     @log
-    def verify_signature(project: Project, code: bytes, dependency: bytes, signature: bytes) -> bool:
+    def verify_signature(
+        project: Project, code: bytes, dependency: bytes, signature: bytes
+    ) -> bool:
         """
         Verify the signature given
         Args:

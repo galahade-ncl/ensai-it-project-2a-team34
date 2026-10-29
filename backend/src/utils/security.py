@@ -1,3 +1,4 @@
+import base64
 import hashlib
 import hmac
 import secrets
@@ -55,6 +56,18 @@ def generate_secret_HMAC_key() -> bytes:
         New secret key (bytes object)
     """
     return secrets.token_bytes(32)
+
+
+def encode_secret_key(key: bytes | str) -> str:
+    """
+    Encode a binary secret key as a Base64 string.
+    Args:
+        key (bytes | str): key to convert into str
+    Return:
+        A str representation of the key"""
+    if isinstance(key, bytes):
+        return base64.b64encode(key).decode("ascii")
+    return key
 
 
 def generate_signature(secret: bytes, code: bytes, dependency: bytes) -> bytes:
