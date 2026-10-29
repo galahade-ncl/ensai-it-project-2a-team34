@@ -13,8 +13,8 @@ class NestedLoop(AntiPattern):
 
     """
 
-    def __init__(self, line, description, depth, id_pattern: int | None = None):
-        super().__init__(line, description, id_pattern)
+    def __init__(self, line, description, depth, id_antipattern: int | None = None):
+        super().__init__(line, description, id_antipattern)
         self.depth = depth
 
     def __str__(self):

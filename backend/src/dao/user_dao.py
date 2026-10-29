@@ -245,3 +245,36 @@ class UserDao(metaclass=Singleton):
             )
 
         return user
+    
+    def find_by_username(self, username: str) -> User:
+        """Find a user by his username.
+        Args:
+            username (str): The username of the user to find
+        Returns:
+            User matching the given id
+        """
+        try:
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        "SELECT *                            "
+                        "  FROM user_table                   "
+                        " WHERE username = %(id_user)s;   ",
+                        {"username": username},
+                    )
+                    res = cursor.fetchone()
+        except Exception as e:
+            logger.error(e)
+            raise
+
+        user = None
+        if res:
+            user = User(
+                username=res["username"],
+                email=res["email"],
+                id_user=res["id_user"],
+                password=res["password"],
+            )
+
+        return user
+
