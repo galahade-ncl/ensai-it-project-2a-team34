@@ -5,6 +5,7 @@ import uuid
 from datetime import date
 from io import BytesIO
 
+from dotenv import load_dotenv
 from reportlab.graphics import renderPDF
 from reportlab.graphics.barcode import qr
 from reportlab.graphics.shapes import Drawing
@@ -18,6 +19,7 @@ from business_object.project import Project
 from utils.log_utils import log
 
 # La clé doit venir de l'environnement / config, jamais du code
+load_dotenv()
 SECRET_KEY = os.environ["CERTIFICATE_SECRET_KEY"].encode()
 
 # Un modèle par type de quality gate : adapte les clés à tes vraies valeurs

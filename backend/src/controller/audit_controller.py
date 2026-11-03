@@ -14,7 +14,7 @@ def get_audit_service():
     return AuditService()
 
 
-@router.get("audits/{id_audit}", response_model=AuditReadModel, tags=["Audits"])
+@router.get("/{id_audit}", response_model=AuditReadModel, tags=["Audits"])
 async def audit_by_id(id_audit: int, audit_service=Depends(get_audit_service)):
     """Find an audit by its unique ID.
     Args:
@@ -32,7 +32,7 @@ async def audit_by_id(id_audit: int, audit_service=Depends(get_audit_service)):
     return audit
 
 
-@router.get("audits/{id_user}/audits", response_model=list[AuditReadModel], tags=["Audits"])
+@router.get("/{id_user}/audits", response_model=list[AuditReadModel], tags=["Audits"])
 async def audit_by_audit(id_audit: int, audit_service=Depends(get_audit_service)):
     """
     Retrieve audits filtered by audit ID.

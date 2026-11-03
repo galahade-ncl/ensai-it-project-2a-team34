@@ -12,7 +12,7 @@ class Audit:
             carbon_emission_gco2e (float): The carbon emission of the code
             sbom (SBOM): Software Bill of Materials, the inventory of components used for the project
             quality_gate (QualityGate): The quality gate associated to the project
-            certificate (Certificate): The certificate associated to the audit
+            certificate (CertificateFile): The certificate associated to the audit
 
     '''
 
