@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from business_object.file.sbomfile import SbomFile
 from business_object.vulnerability.critical_vulnerability import CriticalVulnerability
 from business_object.vulnerability.high_vulnerability import HighVulnerability
-from business_object.vulnerability.medium_vulnerability_vulnerability import MediumVulnerability
+from business_object.vulnerability.medium_vulnerability import MediumVulnerability
 from business_object.vulnerability.low_vulnerability import LowVulnerability
 class SBOMService:
     """Generate the SBOM of a project

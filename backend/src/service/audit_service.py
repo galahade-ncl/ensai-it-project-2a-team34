@@ -10,7 +10,7 @@ from business_object.qualitygate.qualitygate import QualityGate
 from business_object.vulnerability.vulnerability import Vulnerability
 from dao.audit_dao import AuditDao
 from service.eco_service import EcoService
-from service.qualitygate_service import QualityGateService
+from service.qualitygateservices.qualitygate_service import QualityGateService
 from service.sbom_service import SBOMService
 from service.security_service import SecurityService
 from utils.log_utils import log

@@ -1,6 +1,6 @@
-from qualitygateservices.ecoqualitygateservice import EcoQualityGateService
-from qualitygateservices.globalqualitygateservices import GlobalQualityGateService
-from qualitygateservices.securityqualitygate import SecurityQualityGateService
+from service.qualitygateservices.ecoqualitygate_service import EcoQualityGateService
+from service.qualitygateservices.globalqualitygate_service import GlobalQualityGateService
+from service.qualitygateservices.securityqualitygate_service import SecurityQualityGateService
 
 from business_object.audit import Audit
 
