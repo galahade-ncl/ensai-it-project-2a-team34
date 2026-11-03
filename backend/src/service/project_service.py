@@ -35,7 +35,7 @@ class ProjectService:
         return ProjectDao().find_by_id(id_project)
 
     @log
-    def list_all_project(self, id_user: int) -> list[Project]:
+    def list_all_project(self, id_user: int) -> list[Project] | None:
         """List all projects owned by the user corresponding with the id.
         Args:
             id_user (int) : id of the user
@@ -43,7 +43,8 @@ class ProjectService:
             A list of Project owned by the user"""
         # Find the user corresponding to the id
         user = UserService().find_by_id(id_user)
-
+        if not user:
+            return None
         return ProjectDao().list_all_project(user)
 
     @log

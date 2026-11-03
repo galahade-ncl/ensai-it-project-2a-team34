@@ -10,6 +10,8 @@ class DependencyFile(File):
         Nom du fichier
     content : bytes
         Contenu du fichier en format bytes
+    type_file: str
+        Extension of the file
     date : datetime
         Date de dépot du fichier
     """
@@ -32,5 +34,3 @@ class DependencyFile(File):
 
     def get_duty(self) -> str:
         return "dependency"
-
-    # Méthode à réfléchir : récup la liste des dépendencies

@@ -1,4 +1,6 @@
 import ast
+from dataclasses import dataclass, field
+from typing import Optional
 
 from business_object.antipattern.antipattern import AntiPattern
 from business_object.antipattern.nestedloop import NestedLoop
@@ -7,211 +9,168 @@ from business_object.file.codefile import CodeFile
 from utils.log_utils import log
 
 
+class _AnalysisVisitor(ast.NodeVisitor):
+    """Single pass over the AST: collects metrics AND antipattern info."""
+
+    def __init__(self):
+        self.ast_nodes = 0
+        self.loops = 0
+        self.conditions = 0
+        self.function_calls = 0
+        self.operations = 0
+        self.max_loop_depth = 0
+
+        self._loop_depth = 0
+        self._current_outer = None
+        self.outer_loops = []        # [{"node": ..., "depth": ...}]
+        self._functions = []         # stack of function names
+        self.recursive_calls = []    # [(line, function_name)]
+
+    def visit(self, node):
+        self.ast_nodes += 1
+        super().visit(node)
+
+    def _visit_loop(self, node):
+        self.loops += 1
+        if self._loop_depth == 0:
+            self._current_outer = {"node": node, "depth": 0}
+            self.outer_loops.append(self._current_outer)
+        self._loop_depth += 1
+        self._current_outer["depth"] = max(
+            self._current_outer["depth"], self._loop_depth
+        )
+        self.max_loop_depth = max(self.max_loop_depth, self._loop_depth)
+        self.generic_visit(node)
+        self._loop_depth -= 1
+
+    visit_For = visit_AsyncFor = visit_While = _visit_loop
+
+    def _visit_condition(self, node):
+        self.conditions += 1
+        self.generic_visit(node)
+
+    visit_If = visit_IfExp = _visit_condition
+
+    def _visit_operation(self, node):
+        self.operations += 1
+        self.generic_visit(node)
+
+    visit_BinOp = visit_UnaryOp = visit_Compare = _visit_operation
+    visit_BoolOp = visit_AugAssign = _visit_operation
+
+    def _visit_function(self, node):
+        self._functions.append(node.name)
+        self.generic_visit(node)
+        self._functions.pop()
+
+    visit_FunctionDef = visit_AsyncFunctionDef = _visit_function
+
+    def visit_Call(self, node):
+        self.function_calls += 1
+        if self._functions and self._is_recursive_call(node, self._functions[-1]):
+            self.recursive_calls.append((node.lineno, self._functions[-1]))
+        self.generic_visit(node)
+
+    @staticmethod
+    def _is_recursive_call(call: ast.Call, function_name: str) -> bool:
+        func = call.func
+        if isinstance(func, ast.Name):
+            return func.id == function_name
+        return isinstance(func, ast.Attribute) and func.attr == function_name
+
+
+@dataclass
+class AstAnalysis:
+    """Result of ONE pass over the code."""
+    metrics: dict
+    antipatterns: list[AntiPattern] = field(default_factory=list)
+
+
 class EcoService:
     """
     Service responsible for AST analysis,
     energy estimation and carbon estimation.
     """
 
-    # Garde les valeurs de ton projet si elles existent déjà.
     OPERATIONS_PER_SECOND = 1_000_000_000
     CPU_POWER_W = 65.0
     CARBON_INTENSITY_GCO2E_PER_KWH = 50.0
 
     @staticmethod
-    def analyze_ast(code_file: "CodeFile") -> ast.Module:
-        """
-        Parse Python source code and return its AST.
-        """
-
+    def parse(code_file: CodeFile) -> ast.Module:
+        """Parse Python source code and return its AST."""
         content = code_file.content
-
         if isinstance(content, bytes):
             content = content.decode("utf-8")
-
         if not isinstance(content, str):
-            raise TypeError(
-                "CodeFile content must be str or bytes."
-            )
-
+            raise TypeError("CodeFile content must be str or bytes.")
         return ast.parse(content)
 
-    @staticmethod
-    def _extract_ast_metrics(tree: ast.Module) -> dict:
-        """
-        Extract complexity metrics from an AST.
-        """
+    @log
+    def analyze(self, code_file: CodeFile) -> AstAnalysis:
+        """Parse once, traverse once, return metrics + antipatterns."""
+        visitor = _AnalysisVisitor()
+        visitor.visit(self.parse(code_file))
 
-        class MetricsVisitor(ast.NodeVisitor):
-
-            def __init__(self):
-                self.loops = 0
-                self.conditions = 0
-                self.function_calls = 0
-                self.operations = 0
-                self.max_loop_depth = 0
-                self.loop_depth = 0
-                self.recursive_functions = []
-                self.current_functions = []
-
-            def _visit_loop(self, node):
-                self.loops += 1
-                self.loop_depth += 1
-
-                self.max_loop_depth = max(
-                    self.max_loop_depth,
-                    self.loop_depth
-                )
-
-                self.generic_visit(node)
-                self.loop_depth -= 1
-
-            def visit_For(self, node):
-                self._visit_loop(node)
-
-            def visit_AsyncFor(self, node):
-                self._visit_loop(node)
-
-            def visit_While(self, node):
-                self._visit_loop(node)
-
-            def visit_If(self, node):
-                self.conditions += 1
-                self.generic_visit(node)
-
-            def visit_IfExp(self, node):
-                self.conditions += 1
-                self.generic_visit(node)
-
-            def visit_Call(self, node):
-                self.function_calls += 1
-
-                if (
-                    self.current_functions
-                    and isinstance(node.func, ast.Name)
-                    and node.func.id == self.current_functions[-1]
-                ):
-                    function_name = self.current_functions[-1]
-
-                    if function_name not in self.recursive_functions:
-                        self.recursive_functions.append(function_name)
-
-                self.generic_visit(node)
-
-            def visit_BinOp(self, node):
-                self.operations += 1
-                self.generic_visit(node)
-
-            def visit_UnaryOp(self, node):
-                self.operations += 1
-                self.generic_visit(node)
-
-            def visit_Compare(self, node):
-                self.operations += 1
-                self.generic_visit(node)
-
-            def visit_BoolOp(self, node):
-                self.operations += 1
-                self.generic_visit(node)
-
-            def visit_AugAssign(self, node):
-                self.operations += 1
-                self.generic_visit(node)
-
-            def visit_FunctionDef(self, node):
-                self.current_functions.append(node.name)
-                self.generic_visit(node)
-                self.current_functions.pop()
-
-            def visit_AsyncFunctionDef(self, node):
-                self.current_functions.append(node.name)
-                self.generic_visit(node)
-                self.current_functions.pop()
-
-        visitor = MetricsVisitor()
-        visitor.visit(tree)
-
-        return {
-            "ast_nodes": sum(1 for _ in ast.walk(tree)),
+        metrics = {
+            "ast_nodes": visitor.ast_nodes,
             "loops": visitor.loops,
             "nested_loops_depth": visitor.max_loop_depth,
             "conditions": visitor.conditions,
             "function_calls": visitor.function_calls,
             "operations": visitor.operations,
-            "recursive_functions": visitor.recursive_functions,
+            "recursive_functions": {name for _, name in visitor.recursive_calls},
         }
 
-    def calculate_energy(
-        self,
-        code_file: "CodeFile",
-        input_size: int = 1000
-    ) -> float:
-        """
-        Estimate theoretical energy consumption in kWh.
-        """
+        antipatterns: list[AntiPattern] = [
+            NestedLoop(
+                line=outer["node"].lineno,
+                description="Nested loop",
+                depth=outer["depth"],
+                id_antipattern=None,
+            )
+            for outer in visitor.outer_loops
+            if outer["depth"] >= 2
+        ]
+        antipatterns += [
+            RecursiveCall(
+                line=line,
+                description="Recursive_call",
+                function_name=name,
+                id_antipattern=None,
+            )
+            for line, name in visitor.recursive_calls
+        ]
+        return AstAnalysis(metrics=metrics, antipatterns=antipatterns)
 
+    def calculate_energy(self, metrics: dict, input_size: int = 1000) -> float:
+        """Estimate theoretical energy consumption in kWh from metrics."""
         if input_size < 1:
             raise ValueError("input_size must be positive.")
 
-        # Build the AST
-        tree = self.analyze_ast(code_file)
-
-        # Extract AST metrics
-        metrics = self._extract_ast_metrics(tree)
-
-        # Estimate the number of operations
         operations = (
-            metrics["operations"]
-            + metrics["function_calls"]
-            + metrics["ast_nodes"]
+            metrics["operations"] + metrics["function_calls"] + metrics["ast_nodes"]
         )
-
-        # Estimate nested loop complexity
         if metrics["nested_loops_depth"] > 0:
-            operations *= (
-                input_size ** metrics["nested_loops_depth"]
-            )
-
-        # Estimate recursive complexity
+            operations *= input_size ** metrics["nested_loops_depth"]
         if metrics["recursive_functions"]:
             operations *= input_size
 
-        # Estimate execution time
-        runtime_seconds = (
-            operations / self.OPERATIONS_PER_SECOND
-        )
-
-        # Convert execution time into energy (kWh)
-        energy_kwh = (
-            self.CPU_POWER_W
-            * runtime_seconds
-            / 3_600_000
-        )
-
-        return energy_kwh
+        runtime_seconds = operations / self.OPERATIONS_PER_SECOND
+        return self.CPU_POWER_W * runtime_seconds / 3_600_000
 
     def calculate_carbon(
         self,
         energy_kwh: float,
         carbon_intensity_gco2e_per_kwh: Optional[float] = None,
     ) -> float:
-        """
-        Calculate carbon emissions in gCO2e.
-        """
-
+        """Calculate carbon emissions in gCO2e."""
         if energy_kwh < 0:
             raise ValueError("Energy cannot be negative.")
-
         if carbon_intensity_gco2e_per_kwh is None:
-            carbon_intensity_gco2e_per_kwh = (
-                self.CARBON_INTENSITY_GCO2E_PER_KWH
-            )
-
+            carbon_intensity_gco2e_per_kwh = self.CARBON_INTENSITY_GCO2E_PER_KWH
         if carbon_intensity_gco2e_per_kwh < 0:
-            raise ValueError(
-                "Carbon intensity cannot be negative."
-            )
-
+            raise ValueError("Carbon intensity cannot be negative.")
         return energy_kwh * carbon_intensity_gco2e_per_kwh
         
     # ---------------------

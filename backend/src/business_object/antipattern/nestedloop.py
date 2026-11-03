@@ -1,4 +1,4 @@
-from business_object.antipattern import AntiPattern
+from business_object.antipattern.antipattern import AntiPattern
 
 
 class NestedLoop(AntiPattern):
