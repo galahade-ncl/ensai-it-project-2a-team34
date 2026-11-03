@@ -44,7 +44,7 @@ class UserService:
         """
         user_updated = UserDao().update(user)
         if user_updated:
-            return UserDao().find_by_id(user.id_user)
+            return user
         else:
             return None
 
