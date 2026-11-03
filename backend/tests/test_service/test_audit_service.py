@@ -23,6 +23,7 @@ def test_create_successful():
     date = datetime.datetime(2025, 1, 15)
     vulnerabilities, licenses, anti_patterns, certificate = [], [], [], []
     complexity, energy_consumption_kwh, carbon_emission_gco2e = 4.2, 0.35, 12.5
+    sbom = MagicMock()
     quality_gate = MagicMock()
     AuditDao.create = MagicMock(return_value=True)
 
@@ -37,6 +38,7 @@ def test_create_successful():
         complexity,
         energy_consumption_kwh,
         carbon_emission_gco2e,
+        sbom,
         quality_gate,
         certificate,
     )
@@ -59,6 +61,7 @@ def test_create_failed():
     date = datetime.datetime(2025, 1, 15)
     vulnerabilities, licenses, anti_patterns, certificate = [], [], [], []
     complexity, energy_consumption_kwh, carbon_emission_gco2e = 4.2, 0.35, 12.5
+    sbom = MagicMock()
     quality_gate = MagicMock()
     AuditDao.create = MagicMock(return_value=False)
 
@@ -73,6 +76,7 @@ def test_create_failed():
         complexity,
         energy_consumption_kwh,
         carbon_emission_gco2e,
+        sbom,
         quality_gate,
         certificate,
     )
@@ -95,6 +99,7 @@ def test_find_by_id_successful():
         complexity=4.2,
         energy_consumption_kwh=0.35,
         carbon_emission_gco2e=12.5,
+        sbom=MagicMock(),
         quality_gate=MagicMock(),
         certificate=[],
     )
@@ -135,6 +140,7 @@ def test_list_all_audit_successful():
         complexity=4.2,
         energy_consumption_kwh=0.35,
         carbon_emission_gco2e=12.5,
+        sbom=MagicMock(),
         quality_gate=MagicMock(),
         certificate=[],
     )
@@ -147,6 +153,7 @@ def test_list_all_audit_successful():
         complexity=3.8,
         energy_consumption_kwh=0.30,
         carbon_emission_gco2e=10.0,
+        sbom=MagicMock(),
         quality_gate=MagicMock(),
         certificate=[],
     )

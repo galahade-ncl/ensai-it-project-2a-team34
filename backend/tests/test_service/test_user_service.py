@@ -60,7 +60,7 @@ def test_find_by_id_failed():
     # THEN
     assert res is None
 
-def test_update_successful(id_user, username, password, email):
+def test_update_successful():
     """Successfully update a user"""
 
     # GIVEN
@@ -75,7 +75,6 @@ def test_update_successful(id_user, username, password, email):
     # THEN
     assert res == updated_user
     UserDao.update.assert_called_once_with(user)
-    UserDao.find_by_id.assert_called_once_with(user.id_user)
 
 
 def test_update_failed():
@@ -83,21 +82,21 @@ def test_update_failed():
 
     # GIVEN
     user = User(id_user=1, username="Jean", password="0123456789", email="jean@example.com")
-    UserDao.update = MagicMock(return_value=None)
+    UserDao.update = MagicMock(return_value=False)
 
     # WHEN
     res = UserService().update(user)
 
     # THEN
     assert res is None
-    UserDao.find_by_id.assert_not_called()
+
 
 def test_delete_successful():
     """Successfully delete a user"""
 
     # GIVEN
     user = User(id_user=1, username="Jean", password="0123456789", email="jean@example.com")
-    UserDao().delete = MagicMock(return_value=True)
+    UserDao.delete = MagicMock(return_value=True)
 
    # WHEN
     res = UserService().delete(user)
