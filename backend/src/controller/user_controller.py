@@ -1,7 +1,5 @@
 
-from fastapi import APIRouter, Depends, HTTPException, Request
-from pydantic import ValidationError
-
+from fastapi import APIRouter, Depends, HTTPException
 
 from schema.user_model import UserModel, UserReadModel
 from service.user_service import UserService
