@@ -213,7 +213,7 @@ class EcoService:
             )
 
         return energy_kwh * carbon_intensity_gco2e_per_kwh
-        
+
     # ---------------------
     # Partie Annabelle
     # ---------------------
@@ -312,3 +312,58 @@ class EcoService:
                             )
                         )
         return antipatterns
+
+    @staticmethod
+    def _loop_length(node: ast.Module) -> int:
+        """
+        Calculate the length of a loop
+        Args:
+            node (ast.Module): A for or while loop
+        Returns:
+            int: The length of the loop
+        """
+        if isinstance(node, ast.For):
+            iteration = node.iter
+
+            if isinstance(iteration, (ast.List, ast.Tuple, ast.Set)):
+                return len(iteration.elts)
+
+            if isinstance(iteration, ast.Constant):
+                return len(iteration.value)
+
+            if (isinstance(iteration, ast.Call) and isinstance(iteration.func, ast.Name) and iteration.func.id == "range"):
+                values = [ast.literal_eval(arg) for arg in iteration.args]
+                return len(range(*values))
+
+    @staticmethod
+    def _loop_complexity(node: ast.AST) -> int:
+        """
+        Calculate the complexity of a loop
+        Args:
+            node (ast.Module): A loop
+        Returns:
+            The complexity of the loop
+        """
+        complexity= EcoService._loop_length(node)
+
+        if EcoService._loop_depth(node) >=2:
+            for child in ast.iter_child_nodes(node):
+                complexity = complexity * EcoService._loop_complexity(child)
+
+        return complexity
+
+    @log
+    def estimate_complexity(self, codefile: CodeFile) -> float:
+        """
+        Estimate the complexity of a Python code
+        Args:
+            codefile (CodeFile) : The code to be estimate
+        Returns:
+            float : complexity of the code
+        """
+        tree = ast.parse(codefile)
+        complexity = 0
+        for loop in EcoService._outest_loop(tree):
+            complexity += EcoService._loop_complexity(loop)
+
+        return complexity
