@@ -20,7 +20,7 @@ Pour afficher ce diagramme dans VScode :
   "flowchart": {
     "htmlLabels": true,
     "curve": "basis"},
-  "themeCSS": ".cluster:nth-of-type(1) rect {   fill: #b3ccf8 !important; stroke: #3086e8 !important; width: 800px !important; } .cluster:nth-of-type(2) rect { fill: #ccf0ff !important; stroke: #586cff !important; width: 2900px !important; } .cluster:nth-of-type(3) rect { fill: rgb(142, 214, 230) !important; stroke: #63c6c9 !important;} .cluster:nth-of-type(4) rect {   fill: #b2f4fb !important; stroke: #30e8e2 !important; }"}}%%
+  "themeCSS": ".cluster:nth-of-type(1) rect {   fill: #b3ccf8 !important; stroke: #3086e8 !important; width: 950px !important; } .cluster:nth-of-type(2) rect { fill: #ccf0ff !important; stroke: #586cff !important; width: 2900px !important; } .cluster:nth-of-type(3) rect { fill: rgb(142, 214, 230) !important; stroke: #63c6c9 !important;} .cluster:nth-of-type(4) rect {   fill: #b2f4fb !important; stroke: #30e8e2 !important; }"}}%%
 
 classDiagram
     %% Business objects
@@ -36,32 +36,37 @@ classDiagram
             +id_project: int
             +name_project: string
             +user: User
-            +codefile: CodeFile
-            +dependencyfile: DependencyFile
-            +HMACkey: hmac.HMAC
+            +codefile: CodeFile | None
+            +dependencyfile: DependencyFile | None
+            +secretHMACkey: bytes
         }
 
         class File {
-            +id_file: int
-            +date: datetime
-            +path: str
-            +get_content(): bool
+            +get_duty(): str
         }
 
         class CodeFile {
-            +id_file: int
+            +name: str
+            +content: bytes
+            +type_file: str
             +date: datetime
-            +path: str
-            +get_content(): bool
+            +get_duty(self): str
         }
 
         class DependencyFile {
-            +id_file: int
-            +date: datetime
-            +path: str
-            +dependencies: list[Dependency]
-            +get_content(): bool
+            +name: str
+            +content: bytes
+            +type_file: str
+            +date: datetime[Dependency]
+            +get_duty(self): str
         }
+        class SbomFile {
+            +name: str
+            +content: bytes
+            +type_file: str
+            +date: datetime[Dependency]
+            +get_duty(self): str
+            }
     }
 
     namespace AuditClasses {
@@ -70,7 +75,7 @@ classDiagram
             +id_project: int
             +date: datetime
             +vulnerabilities: list[Vulnerability]
-            +licenses: list[License]
+            +licenses: list[Licence]
             +anti_patterns: list[AntiPattern]
             +complexity: float
             +energy_consumption_kwh: float
@@ -91,6 +96,8 @@ classDiagram
                 +id_vulnerability: int
                 +osv_id: str
                 +cve_id: str | None
+                +package: str
+                +version_package: str
             }
 
             class LowVulnerability {
@@ -106,7 +113,7 @@ classDiagram
             }
         }
 
-        class License {
+        class Licence {
             +id_license: int
             +name: str
             +risk_level: str
@@ -128,24 +135,35 @@ classDiagram
 
         namespace QualityGateClasses{
             class QualityGate {
-                + id_quality_gate: int
+                + evaluate(audit: Audit): bool
+                + get_type(self) -> str
+
+            }
+
+            class SecurityQualityGate {
+                + max_vulnerabilities: int
+                + max_critical_vulnerabilities: int
+                + status: string
+                + evaluate(audit: Audit): bool
+                + get_type(self) -> str
+            }
+
+            class EcoQualityGate {
+                + max_carbon_emission: float
+                + max_energy_consumption: float
+                + status: string
+                + evaluate(audit: Audit): bool
+                + get_type(self) -> str
+            }
+
+            class GlobalQualityGate {
                 + max_vulnerabilities: int
                 + max_critical_vulnerabilities: int
                 + max_carbon_emission: float
                 + max_energy_consumption: float
                 + status: string
-            }
-
-            class SecurityQualityGate {
-                + evaluate(Audit): QualityGate
-            }
-
-            class EcoQualityGate {
-                + evaluate(Audit): QualityGate
-            }
-
-            class GlobalQualityGate {
-                + evaluate(Audit): QualityGate
+                + evaluate(audit: Audit): bool
+                + get_type(self) -> str
             }
             class QualityGateFactory {
                 + get_qualitygate(type: string): QualityGate
@@ -171,9 +189,10 @@ classDiagram
     Project ..> CodeFile : uses
     DependencyFile --|> File
     CodeFile --|> File
+    SbomFile --|> File
 
     Audit ..> Vulnerability : uses
-    Audit ..> License : uses
+    Audit ..> Licence : uses
     Audit ..> AntiPattern : uses
     Audit ..> QualityGate : uses
 
@@ -199,6 +218,7 @@ classDiagram
     style File fill:#E3F0FF,stroke:#4A90E2
     style CodeFile fill:#E3F0FF,stroke:#4A90E2
     style DependencyFile fill:#E3F0FF,stroke:#4A90E2
+    style SbomFile fill:#E3F0FF,stroke:#4A90E2
     style Audit fill:#E3F0FF,stroke:#4A90E2
     style Dependency fill:#E3F0FF,stroke:#4A90E2
     style Vulnerability fill:#E3F0FF,stroke:#4A90E2
@@ -206,7 +226,7 @@ classDiagram
     style MediumVulnerability fill:#E3F0FF,stroke:#4A90E2
     style HighVulnerability fill:#E3F0FF,stroke:#4A90E2
     style CriticalVulnerability fill:#E3F0FF,stroke:#4A90E2
-    style License fill:#E3F0FF,stroke:#4A90E2
+    style Licence fill:#E3F0FF,stroke:#4A90E2
     style AntiPattern fill:#E3F0FF,stroke:#4A90E2
     style NestedLoop fill:#E3F0FF,stroke:#4A90E2
     style RecursiveCall fill:#E3F0FF,stroke:#4A90E2

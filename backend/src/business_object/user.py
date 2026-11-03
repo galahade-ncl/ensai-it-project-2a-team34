@@ -34,7 +34,7 @@ class User:
         renvoie une version hashée de l'id de l'utilisateur.
         (Permet l'usage d'un set ou d'un dict).
     """
-    def __init__(self, id_user, username, password, email, access_token=None) -> None:
+    def __init__(self, username, password, email, id_user=None, access_token=None) -> None:
         self.id_user = id_user
         self.username = username
         self.password = password

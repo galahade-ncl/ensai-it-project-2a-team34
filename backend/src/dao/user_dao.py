@@ -102,7 +102,7 @@ class UserDao(metaclass=Singleton):
         if res:
             for row in res:
                 user = User(
-                    id_player=row["id_player"],
+                    id_user=row["id_user"],
                     username=row["username"],
                     password=row["password"],
                     email=row["email"],
@@ -203,7 +203,7 @@ class UserDao(metaclass=Singleton):
                 password=res["password"],
                 email=res["email"],
                 access_token=res["access_token"],
-                id_player=res["id_player"],
+                id_user=res["id_user"],
             )
 
         return user
@@ -237,7 +237,7 @@ class UserDao(metaclass=Singleton):
         user = None
         if res:
             user = User(
-                id_player=res["id_player"],
+                id_user=res["id_user"],
                 username=res["username"],
                 password=res["password"],
                 email=res["email"],
@@ -245,7 +245,7 @@ class UserDao(metaclass=Singleton):
             )
 
         return user
-    
+
     def find_by_username(self, username: str) -> User:
         """Find a user by his username.
         Args:
@@ -259,7 +259,7 @@ class UserDao(metaclass=Singleton):
                     cursor.execute(
                         "SELECT *                            "
                         "  FROM user_table                   "
-                        " WHERE username = %(id_user)s;   ",
+                        " WHERE username = %(username)s;     ",
                         {"username": username},
                     )
                     res = cursor.fetchone()
@@ -277,4 +277,3 @@ class UserDao(metaclass=Singleton):
             )
 
         return user
-

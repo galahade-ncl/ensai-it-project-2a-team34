@@ -10,7 +10,7 @@ INSERT INTO user_table(username, password, email) VALUES
 ('bonjour',    5438,      'bonjour@test.fr'    ),
 ('arty',      'password', TRUE                 );
 
-INSERT INTO project_table(name_project, id_user, HMAC_key) VALUES
+INSERT INTO project_table(name_project, id_user, secretHMACkey) VALUES
 ('projet_info',       3,      'bGoa+V7g/yqDXvKRqq+JTFn4uQZbPiQJo4pf9RzJ'                              ),
 ('MIGUEL',            5,      'VGVzdEtleUZvckhNQUNBcGlWYWxpZGF0aW9uMjAyNg=='                          ),
 ('tp4',               4,      'secret-key-pour-les-tests-locaux'                                      ),

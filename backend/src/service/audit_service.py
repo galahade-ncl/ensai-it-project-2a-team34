@@ -16,7 +16,20 @@ class AuditService:
     """
 
     @log
-    def create (self,id_audit: int, id_project: int, date: datetime, vulnerabilities: list[Vulnerability], licenses: list[Licence],anti_patterns: list[AntiPattern], complexity: float, energy_consumption_kwh: float, carbon_emission_gco2e: float, quality_gate: QualityGate, certificate: list[Certificate]) -> Audit:
+    def create(
+        self,
+        id_audit: int,
+        id_project: int,
+        date: datetime,
+        vulnerabilities: list[Vulnerability],
+        licenses: list[Licence],
+        anti_patterns: list[AntiPattern],
+        complexity: float,
+        energy_consumption_kwh: float,
+        carbon_emission_gco2e: float,
+        quality_gate: QualityGate,
+        certificate: list[Certificate]
+        ) -> Audit:
         """
         Create a new audit in the system
         Args:
@@ -46,7 +59,6 @@ class AuditService:
             Audit or None if search failed
         """
         return AuditDao().find_by_id(id_audit)
-
 
     @log
     def list_all_audit(self, id_project: int) -> list[Audit]:

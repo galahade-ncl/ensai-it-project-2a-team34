@@ -15,17 +15,6 @@ def get_user_service():
     return UserService()
 
 
-@router.get("/", response_model=list[UserReadModel], tags=["Users"])
-async def find_all_users(user_service=Depends(get_user_service)):
-    """List all users.
-    Returns:
-        list[UserReadModel]: A list of all registered users.
-    """
-    logger.info("List all users")
-    users_list = user_service.find_all()
-    return users_list
-
-
 @router.get("/{id_user}", response_model=UserReadModel, tags=["Users"])
 async def user_by_id(id_user: int, user_service=Depends(get_user_service)):
     """Find a user by their unique ID.
@@ -60,7 +49,8 @@ async def create_user(u: UserModel, user_service=Depends(get_user_service)):
     if user_service.username_already_used(u.username):
         raise HTTPException(status_code=400, detail="Username already used.")
 
-    user = user_service.create(u.username, u.password, u.email,u.access_token)
+    user = user_service.create(u.username, u.password, u.email)
+    # Pas de token donné par l'utilisateur -> générer pendant la création du user u.access_token
     if not user:
         raise HTTPException(status_code=500, detail="Error while creating user.")
 
@@ -88,7 +78,8 @@ async def update_user(id_user: int, u: UserModel, user_service=Depends(get_user_
     user.username = u.username
     user.password = u.password
     user.email = u.email
-    user.access_token=u.access_token
+    # Pas de token donné par l'utilisateur -> générer pendant la création du user
+    # user.access_token = u.access_token
 
     user = user_service.update(user)
     if not user:

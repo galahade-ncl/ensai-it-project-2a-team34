@@ -32,7 +32,6 @@ async def audit_by_id(id_audit: int, audit_service=Depends(get_audit_service)):
     return audit
 
 
-
 @router.get("audits/{id_user}/audits", response_model=list[AuditReadModel], tags=["Audits"])
 async def audit_by_audit(id_audit: int, audit_service=Depends(get_audit_service)):
     """
@@ -40,7 +39,6 @@ async def audit_by_audit(id_audit: int, audit_service=Depends(get_audit_service)
     """
 
     return audit_service.list_all_audit(id_audit)
-
 
 
 @router.post("/audits", response_model=AuditResponseModel, tags=["Audits"])

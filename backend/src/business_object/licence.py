@@ -15,5 +15,14 @@ class Licence:
         self.name = name
         self.risk_level = risk_level
 
-    def __str__(self):
-        return f"Name: {self.name}" + "\n" + f"Risk level: {self.risk_level}"
+    # def __str__(self):
+    #     return f"Name: {self.name}" + "\n" + f"Risk level: {self.risk_level}"
+
+    def __repr__(self):
+        return f"Licence(name={self.name!r}, risk_level={self.risk_level!r})"
+
+    def __eq__(self, other):
+        return isinstance(other, Licence) and self.name == other.name
+
+    def __hash__(self):
+        return hash(self.name)
