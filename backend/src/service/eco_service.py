@@ -9,136 +9,211 @@ from utils.log_utils import log
 
 class EcoService:
     """
-    Service that handles business logic related to the eco analyse of a Python code
+    Service responsible for AST analysis,
+    energy estimation and carbon estimation.
     """
 
-    """Service for estimating the energy consumption and carbon emissions of Python code."""
-
-    # ---------------------
-    # Partie Thomas
-    # ---------------------
-
-    # Hypotheses for a theoretical estimation model
-    CPU_POWER_W = 35.0
-    OPERATIONS_PER_SECOND = 100_000_000
+    # Garde les valeurs de ton projet si elles existent déjà.
+    OPERATIONS_PER_SECOND = 1_000_000_000
+    CPU_POWER_W = 65.0
     CARBON_INTENSITY_GCO2E_PER_KWH = 50.0
 
     @staticmethod
-    def analyze_ast(code_file: CodeFile) -> dict:
-        """Analyze Python source code using its Abstract Syntax Tree (AST)."""
+    def analyze_ast(code_file: "CodeFile") -> ast.Module:
+        """
+        Parse Python source code and return its AST.
+        """
+
         content = code_file.content
 
         if isinstance(content, bytes):
             content = content.decode("utf-8")
 
         if not isinstance(content, str):
-            raise TypeError("CodeFile content must be str or bytes.")
+            raise TypeError(
+                "CodeFile content must be str or bytes."
+            )
 
-        tree = ast.parse(content)
+        return ast.parse(content)
 
-        loops = 0
-        conditions = 0
-        function_calls = 0
-        operations = 0
-        max_loop_depth = 0
-        recursive_functions = []
+    @staticmethod
+    def _extract_ast_metrics(tree: ast.Module) -> dict:
+        """
+        Extract complexity metrics from an AST.
+        """
 
-        def visit(node, loop_depth=0, current_function=None):
-            nonlocal loops, conditions, function_calls
-            nonlocal operations, max_loop_depth
+        class MetricsVisitor(ast.NodeVisitor):
 
-            if isinstance(node, (ast.For, ast.AsyncFor, ast.While)):
-                loops += 1
-                loop_depth += 1
-                max_loop_depth = max(max_loop_depth, loop_depth)
+            def __init__(self):
+                self.loops = 0
+                self.conditions = 0
+                self.function_calls = 0
+                self.operations = 0
+                self.max_loop_depth = 0
+                self.loop_depth = 0
+                self.recursive_functions = []
+                self.current_functions = []
 
-            if isinstance(node, ast.If):
-                conditions += 1
+            def _visit_loop(self, node):
+                self.loops += 1
+                self.loop_depth += 1
 
-            if isinstance(node, ast.Call):
-                function_calls += 1
+                self.max_loop_depth = max(
+                    self.max_loop_depth,
+                    self.loop_depth
+                )
+
+                self.generic_visit(node)
+                self.loop_depth -= 1
+
+            def visit_For(self, node):
+                self._visit_loop(node)
+
+            def visit_AsyncFor(self, node):
+                self._visit_loop(node)
+
+            def visit_While(self, node):
+                self._visit_loop(node)
+
+            def visit_If(self, node):
+                self.conditions += 1
+                self.generic_visit(node)
+
+            def visit_IfExp(self, node):
+                self.conditions += 1
+                self.generic_visit(node)
+
+            def visit_Call(self, node):
+                self.function_calls += 1
 
                 if (
-                    current_function is not None
+                    self.current_functions
                     and isinstance(node.func, ast.Name)
-                    and node.func.id == current_function
-                    and current_function not in recursive_functions
+                    and node.func.id == self.current_functions[-1]
                 ):
-                    recursive_functions.append(current_function)
+                    function_name = self.current_functions[-1]
 
-            if isinstance(
-                node,
-                (
-                    ast.BinOp,
-                    ast.UnaryOp,
-                    ast.Compare,
-                    ast.BoolOp,
-                    ast.AugAssign,
-                ),
-            ):
-                operations += 1
+                    if function_name not in self.recursive_functions:
+                        self.recursive_functions.append(function_name)
 
-            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                for child in node.body:
-                    visit(child, loop_depth, node.name)
-                return
+                self.generic_visit(node)
 
-            for child in ast.iter_child_nodes(node):
-                visit(child, loop_depth, current_function)
+            def visit_BinOp(self, node):
+                self.operations += 1
+                self.generic_visit(node)
 
-        visit(tree)
+            def visit_UnaryOp(self, node):
+                self.operations += 1
+                self.generic_visit(node)
+
+            def visit_Compare(self, node):
+                self.operations += 1
+                self.generic_visit(node)
+
+            def visit_BoolOp(self, node):
+                self.operations += 1
+                self.generic_visit(node)
+
+            def visit_AugAssign(self, node):
+                self.operations += 1
+                self.generic_visit(node)
+
+            def visit_FunctionDef(self, node):
+                self.current_functions.append(node.name)
+                self.generic_visit(node)
+                self.current_functions.pop()
+
+            def visit_AsyncFunctionDef(self, node):
+                self.current_functions.append(node.name)
+                self.generic_visit(node)
+                self.current_functions.pop()
+
+        visitor = MetricsVisitor()
+        visitor.visit(tree)
 
         return {
             "ast_nodes": sum(1 for _ in ast.walk(tree)),
-            "loops": loops,
-            "nested_loops_depth": max_loop_depth,
-            "conditions": conditions,
-            "function_calls": function_calls,
-            "operations": operations,
-            "recursive_functions": recursive_functions,
+            "loops": visitor.loops,
+            "nested_loops_depth": visitor.max_loop_depth,
+            "conditions": visitor.conditions,
+            "function_calls": visitor.function_calls,
+            "operations": visitor.operations,
+            "recursive_functions": visitor.recursive_functions,
         }
 
-    def calculate_energy(self, code_file: CodeFile, input_size: int = 1000) -> float:
-        """Estimate theoretical energy consumption in kWh."""
+    def calculate_energy(
+        self,
+        code_file: "CodeFile",
+        input_size: int = 1000
+    ) -> float:
+        """
+        Estimate theoretical energy consumption in kWh.
+        """
+
         if input_size < 1:
             raise ValueError("input_size must be positive.")
 
-        metrics = self.analyze_ast(code_file)
+        # Build the AST
+        tree = self.analyze_ast(code_file)
+
+        # Extract AST metrics
+        metrics = self._extract_ast_metrics(tree)
 
         # Estimate the number of operations
-        operations = metrics["operations"] + metrics["function_calls"] + metrics["ast_nodes"]
+        operations = (
+            metrics["operations"]
+            + metrics["function_calls"]
+            + metrics["ast_nodes"]
+        )
 
-        # Apply a rough estimate based on nested loop depth
+        # Estimate nested loop complexity
         if metrics["nested_loops_depth"] > 0:
-            operations *= input_size ** metrics["nested_loops_depth"]
+            operations *= (
+                input_size ** metrics["nested_loops_depth"]
+            )
 
-        # Apply an additional estimate when recursive functions are detected
+        # Estimate recursive complexity
         if metrics["recursive_functions"]:
             operations *= input_size
 
-        # Convert estimated execution time into energy in kWh
-        runtime_seconds = operations / self.OPERATIONS_PER_SECOND
-        energy_kwh = self.CPU_POWER_W * runtime_seconds / 3_600_000
+        # Estimate execution time
+        runtime_seconds = (
+            operations / self.OPERATIONS_PER_SECOND
+        )
+
+        # Convert execution time into energy (kWh)
+        energy_kwh = (
+            self.CPU_POWER_W
+            * runtime_seconds
+            / 3_600_000
+        )
 
         return energy_kwh
 
     def calculate_carbon(
         self,
         energy_kwh: float,
-        carbon_intensity_gco2e_per_kwh: float = None,
+        carbon_intensity_gco2e_per_kwh: Optional[float] = None,
     ) -> float:
-        """Calculate carbon emissions in gCO2e."""
+        """
+        Calculate carbon emissions in gCO2e.
+        """
+
         if energy_kwh < 0:
             raise ValueError("Energy cannot be negative.")
 
         if carbon_intensity_gco2e_per_kwh is None:
-            carbon_intensity_gco2e_per_kwh = self.CARBON_INTENSITY_GCO2E_PER_KWH
+            carbon_intensity_gco2e_per_kwh = (
+                self.CARBON_INTENSITY_GCO2E_PER_KWH
+            )
 
         if carbon_intensity_gco2e_per_kwh < 0:
-            raise ValueError("Carbon intensity cannot be negative.")
+            raise ValueError(
+                "Carbon intensity cannot be negative."
+            )
 
         return energy_kwh * carbon_intensity_gco2e_per_kwh
-
+        
     # ---------------------
     # Partie Annabelle
     # ---------------------
