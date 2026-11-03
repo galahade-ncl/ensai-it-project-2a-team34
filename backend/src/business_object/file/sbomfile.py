@@ -1,7 +1,7 @@
 from business_object.file.file import File
 
 
-class SbomFile(File):
+class SBOMFile(File):
     """Software Bill of Materials (SBOM) of an audited project.
 
 

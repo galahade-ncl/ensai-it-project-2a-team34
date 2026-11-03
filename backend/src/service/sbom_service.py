@@ -3,10 +3,10 @@ import re
 import uuid
 from datetime import datetime, timezone
 
-from business_object.file.sbomfile import SbomFile
+from business_object.file.sbomfile import SBOMFile
 from business_object.vulnerability.critical_vulnerability import CriticalVulnerability
 from business_object.vulnerability.high_vulnerability import HighVulnerability
-from business_object.vulnerability.medium_vulnerability_vulnerability import MediumVulnerability
+from business_object.vulnerability.medium_vulnerability import MediumVulnerability
 from business_object.vulnerability.low_vulnerability import LowVulnerability
 class SBOMService:
     """Generate the SBOM of a project
@@ -15,13 +15,13 @@ class SBOMService:
     the dependencies between them. It is exported in the JSON format
     """
 
-    def generate(self, project, dependencies=None, vulnerabilities=None) -> SbomFile:
+    def generate(self, project, dependencies=None, vulnerabilities=None) -> SBOMFile:
         """Generate the SBOM of a project.
 
         Parameters
         ---------
         project: Project
-            Proejct to inventory
+            Project to inventory
         dependencies: list[str], optional
             Dependencies of the project
         vulnerabilities: list[Vulnerability], optional
@@ -33,7 +33,7 @@ class SBOMService:
         
         Returns
         ------
-        SbomFile
+        SBOMFile
             SBOM whose content is the JSON document in bytes
         
         Raises
@@ -86,7 +86,7 @@ class SBOMService:
             component={"type": "library","bom-ref": purl, "name": name, "purl": purl}
             if version:
                 component["version"]=version
-            components.apppend(component)
+            components.append(component)
 
             # 4) CycloneDX document: Dictionary
             project_name=getattr(project,"name_project", None) or "project"
@@ -143,7 +143,7 @@ class SBOMService:
                     if refs:
                         entry["affects"] = [{"ref": refs[0]}]
                     document["vulnerabilities"].append(entry)
-        return SbomFile(
+        return SBOMFile(
             name=f"{project_name}_sbom.json",
             content=json.dumps(document, indent=2).encode("utf-8"),
             type_file="json",
