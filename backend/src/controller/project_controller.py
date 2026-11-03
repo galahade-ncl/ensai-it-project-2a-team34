@@ -35,7 +35,7 @@ async def project_by_id(id_project: int, project_service=Depends(get_project_ser
 
 
 # chemin à revoir
-@router.get("/user/{id_user}/", response_model=list[ProjectReadModel], tags=["Projects"])
+@router.get("/user/{id_user}", response_model=list[ProjectReadModel], tags=["Projects"])
 async def project_by_user(id_user: int, project_service=Depends(get_project_service)):
     """
     Retrieve projects filtered by user ID.
