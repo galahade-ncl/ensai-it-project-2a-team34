@@ -18,7 +18,6 @@ class Audit:
 
     def __init__(
         self,
-        id_audit,
         id_project,
         date,
         vulnerabilities,
@@ -29,7 +28,8 @@ class Audit:
         carbon_emission_gco2e,
         sbom,
         quality_gate,
-        certificate
+        certificate,
+        id_audit=None
     ):
         self.id_audit = id_audit
         self.id_project = id_project

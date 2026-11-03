@@ -3,6 +3,7 @@ import datetime
 from business_object.antipattern.antipattern import AntiPattern
 from business_object.audit import Audit
 from business_object.certificate import Certificate
+from business_object.file.sbomfile import SbomFile
 from business_object.licence import Licence
 from business_object.qualitygate.qualitygate import QualityGate
 from business_object.vulnerability.vulnerability import Vulnerability
@@ -27,12 +28,14 @@ class AuditService:
         complexity: float,
         energy_consumption_kwh: float,
         carbon_emission_gco2e: float,
+        sbom: SbomFile,
         quality_gate: QualityGate,
         certificate: list[Certificate]
         ) -> Audit:
         """
         Create a new audit in the system
         Args:
+            id_audit (int) : The unique identifier of the audit
             id_project (int) : The unique identifier of the project from which this audit is linked
             date (datetime) : The date the audit was created
             vulnerabilities (list[Vulnerability]) : The list of vulnerabilities found in the dependancies of the project
@@ -41,12 +44,13 @@ class AuditService:
             complexity (float) : The complexity of the code
             energy_consumption_kwh (float) : The energy consumption of the code (kwh)
             carbon_emission_gco2e (float) : The carbon emission of the code
+            sbom (SBOM): Software Bill of Materials, the inventory of components used for the project
             quality_gate (QualityGate) : The quality gate associated to the project
             certificate (Certificate) : The certificate associated to the audit
         Returns:
             Audit object created or None if failed
         """
-        new_audit = Audit(id_project=id_project, date=date, vulnerabilities=vulnerabilities, licenses=licenses, anti_patterns=anti_patterns, complexity=complexity, energy_consumption_kwh=energy_consumption_kwh, carbon_emission_gco2e=carbon_emission_gco2e, quality_gate=quality_gate, certificate=certificate)
+        new_audit = Audit(id_project=id_project, date=date, vulnerabilities=vulnerabilities, licenses=licenses, anti_patterns=anti_patterns, complexity=complexity, energy_consumption_kwh=energy_consumption_kwh, carbon_emission_gco2e=carbon_emission_gco2e, sbom=sbom, quality_gate=quality_gate, certificate=certificate)
         return new_audit if AuditDao().create(new_audit) else None
 
     @log
