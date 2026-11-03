@@ -1,13 +1,18 @@
-import datetime
+from datetime import datetime
 
 from business_object.antipattern.antipattern import AntiPattern
 from business_object.audit import Audit
 from business_object.certificate import Certificate
 from business_object.file.sbomfile import SbomFile
 from business_object.licence import Licence
+from business_object.project import Project
 from business_object.qualitygate.qualitygate import QualityGate
 from business_object.vulnerability.vulnerability import Vulnerability
 from dao.audit_dao import AuditDao
+from service.eco_service import EcoService
+from service.qualitygate_service import QualityGateService
+from service.sbom_service import SBOMService
+from service.security_service import SecurityService
 from utils.log_utils import log
 
 
@@ -74,3 +79,50 @@ class AuditService:
             The list of audits
         """
         return AuditDao().find_all(id_project)
+
+
+    @log
+    def run_audit(self, project: Project, quality_gate_type: str):
+        """
+        Runs an audit on a project
+        Args:
+            project
+        Returns:
+            The audit
+        """
+        id_project = project.id_project
+
+        dep_file = project.dependencyfile
+
+        vulnerabilities = SecurityService().find_vulnerabilities(dep_file)
+        licenses = SecurityService().find_licences(dep_file)
+
+        code_file = project.codefile
+
+        anti_patterns = EcoService().detect_antipatterns(code_file)
+
+        complexity = None #EcoService().estimate_complexity(code_file)
+
+        energy_consumption_kwh = EcoService().calculate_energy(code_file)
+
+        carbon_emission_gco2e = EcoService().calculate_carbon(energy_consumption_kwh)
+
+        sbom = SBOMService().generate(project)
+
+        quality_gate = QualityGateService().create(quality_gate_type)
+
+        certificate = None # CertificateService
+
+        date = datetime.now()
+
+        AuditService().create(id_project,
+                              date,
+                              vulnerabilities,
+                              licenses,
+                              anti_patterns,
+                              complexity,
+                              energy_consumption_kwh,
+                              carbon_emission_gco2e,
+                              sbom,
+                              quality_gate,
+                              certificate)
