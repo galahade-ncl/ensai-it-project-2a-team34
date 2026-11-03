@@ -2,14 +2,19 @@ from datetime import datetime
 from unittest.mock import MagicMock
 
 from src.business_object.audit import Audit
+from src.business_object.project import Project
 from src.business_object.qualitygate.ecoqualitygate import EcoQualityGate
 from src.business_object.qualitygate.globalqualitygate import GlobalQualityGate
 from src.business_object.qualitygate.securityqualitygate import SecurityQualityGate
+from src.business_object.user import User
 from src.business_object.vulnerability.critical_vulnerability import CriticalVulnerability
 from src.business_object.vulnerability.high_vulnerability import HighVulnerability
 from src.business_object.vulnerability.low_vulnerability import LowVulnerability
 from src.business_object.vulnerability.medium_vulnerability import MediumVulnerability
-from src.service.qualitygate_service import QualityGateService
+from src.service.qualitygate_services.ecoqualitygate_service import EcoQualityGateService
+from src.service.qualitygate_services.globalqualitygate_service import GlobalQualityGateService
+from src.service.qualitygate_services.qualitygate_service import QualityGateService
+from src.service.qualitygate_services.securityqualitygate_service import SecurityQualityGateService
 
 qualitygatelist = [
     GlobalQualityGate(
@@ -31,6 +36,13 @@ qualitygatelist = [
     EcoQualityGate(max_carbon_emission=2, max_energy_consumption=30, status="Passed"),
     SecurityQualityGate(max_vulnerabilities=8, max_critical_vulnerabilities=1, status="Failed"),
 ]
+
+project = Project(
+    id_project=1,
+    name_project="project_numero_1",
+    user=User(id_user=1, username="Jean-michel", email="jean-michel@mail.fr", password="0000"),
+    secretHMACkey=bytes.fromhex("7f2cd2cada12a1c7f6550f4b9aa3873776d6b0228b2d9c1596dcdf8eda301930"),
+)
 
 audit = Audit(
     id_audit=1,
@@ -121,3 +133,50 @@ def test_evaluate_failed():
 
         # THEN
         assert audit.quality_gate.status == "Failed"
+
+
+def test_create_successful():
+    """Successfully create a QualityGate object"""
+
+    for i in range(1, 6):
+        # GIVEN
+        qualitygate_expected = qualitygatelist[i]
+        qualitygate_type = qualitygate_expected.get_type()
+        if qualitygate_type == "global":
+            GlobalQualityGateService.create = MagicMock(return_value=qualitygate_expected)
+
+            # WHEN
+            response_qualitygate = QualityGateService().create(
+                qualitygate_type,
+                qualitygate_expected.max_vulnerabilities,
+                qualitygate_expected.max_critical_vulnerabilities,
+                qualitygate_expected.max_carbon_emission,
+                qualitygate_expected.max_energy_consumption)
+            response_qualitygate_type = response_qualitygate.get_type()
+
+        elif qualitygate_type == "eco":
+            EcoQualityGateService.create = MagicMock(return_value=qualitygate_expected)
+
+            # WHEN
+            response_qualitygate = QualityGateService().create(
+                qualitygate_type,
+                qualitygate_expected.max_carbon_emission,
+                qualitygate_expected.max_energy_consumption)
+            response_qualitygate_type = response_qualitygate.get_type()
+
+        elif qualitygate_type == "security":
+            SecurityQualityGateService.create = MagicMock(return_value=qualitygate_expected)
+
+            # WHEN
+            response_qualitygate = QualityGateService().create(
+                qualitygate_type,
+                qualitygate_expected.max_vulnerabilities,
+                qualitygate_expected.max_critical_vulnerabilities)
+            response_qualitygate_type = response_qualitygate.get_type()
+
+        # WHEN
+        response_qualitygate = QualityGateService().create(type_qualitygate=qualitygate_type)
+        response_qualitygate_type = response_qualitygate.get_type()
+
+        # THEN
+        assert qualitygate_type == response_qualitygate_type
