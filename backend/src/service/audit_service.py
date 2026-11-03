@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from service.qualitygate_service import QualityGateService
+
 from business_object.antipattern.antipattern import AntiPattern
 from business_object.audit import Audit
 from business_object.certificate import Certificate
@@ -9,8 +11,8 @@ from business_object.project import Project
 from business_object.qualitygate.qualitygate import QualityGate
 from business_object.vulnerability.vulnerability import Vulnerability
 from dao.audit_dao import AuditDao
+from service.certificate_service import CertificateService
 from service.eco_service import EcoService
-from service.qualitygate_service import QualityGateService
 from service.sbom_service import SBOMService
 from service.security_service import SecurityService
 from utils.log_utils import log
@@ -78,7 +80,6 @@ class AuditService:
         """
         return AuditDao().find_all(id_project)
 
-
     @log
     def run_audit(self, project: Project, quality_gate_type: str):
         """
@@ -104,7 +105,7 @@ class AuditService:
 
         anti_patterns = EcoService().detect_antipatterns(code_file)
 
-        complexity = None #EcoService().estimate_complexity(code_file)
+        complexity = None  # EcoService().estimate_complexity(code_file)
 
         energy_consumption_kwh = EcoService().calculate_energy(code_file)
 
@@ -113,12 +114,12 @@ class AuditService:
         sbom = SBOMService().generate(project)
 
         quality_gate = QualityGateService().create(quality_gate_type,
-                                                   max_vulnerabilities = max_vuln,
-                                                   max_critical_vulnerabilities = max_critical_vuln,
-                                                   max_carbon_emission = max_carbon,
-                                                   max_energy_consumption = max_energy)
+                                                   max_vulnerabilities=max_vuln,
+                                                   max_critical_vulnerabilities=max_critical_vuln,
+                                                   max_carbon_emission=max_carbon,
+                                                   max_energy_consumption=max_energy)
 
-        certificate = None # CertificateService
+        certificate = None  # CertificateService
 
         date = datetime.now()
 
@@ -134,7 +135,9 @@ class AuditService:
                                       quality_gate,
                                       certificate)
 
-
         QualityGateService().evaluate(quality_gate, audit)
+
+        certificate = CertificateService().generate_certificate(audit, quality_gate_type)
+        audit.certificate = certificate
 
         return audit
