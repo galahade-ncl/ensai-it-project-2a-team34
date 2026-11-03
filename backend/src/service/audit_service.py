@@ -90,6 +90,11 @@ class AuditService:
         """
         id_project = project.id_project
 
+        max_vuln = 5
+        max_critical_vuln = 0
+        max_carbon = 1
+        max_energy = 0.001
+
         dep_file = project.dependencyfile
 
         vulnerabilities = SecurityService().find_vulnerabilities(dep_file)
@@ -107,20 +112,29 @@ class AuditService:
 
         sbom = SBOMService().generate(project)
 
-        quality_gate = QualityGateService().create(quality_gate_type)
+        quality_gate = QualityGateService().create(quality_gate_type,
+                                                   max_vulnerabilities = max_vuln,
+                                                   max_critical_vulnerabilities = max_critical_vuln,
+                                                   max_carbon_emission = max_carbon,
+                                                   max_energy_consumption = max_energy)
 
         certificate = None # CertificateService
 
         date = datetime.now()
 
-        AuditService().create(id_project,
-                              date,
-                              vulnerabilities,
-                              licenses,
-                              anti_patterns,
-                              complexity,
-                              energy_consumption_kwh,
-                              carbon_emission_gco2e,
-                              sbom,
-                              quality_gate,
-                              certificate)
+        audit = AuditService().create(id_project,
+                                      date,
+                                      vulnerabilities,
+                                      licenses,
+                                      anti_patterns,
+                                      complexity,
+                                      energy_consumption_kwh,
+                                      carbon_emission_gco2e,
+                                      sbom,
+                                      quality_gate,
+                                      certificate)
+
+
+        QualityGateService().evaluate(quality_gate, audit)
+
+        return audit

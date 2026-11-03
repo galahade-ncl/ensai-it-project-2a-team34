@@ -2,6 +2,8 @@ import datetime
 from unittest.mock import MagicMock
 
 from business_object.audit import Audit
+from business_object.project import Project
+from business_object.user import User
 from dao.audit_dao import AuditDao
 from service.audit_service import AuditService
 
@@ -164,3 +166,26 @@ def test_list_all_audit_empty():
     # THEN
     assert res == []
     AuditDao.find_all.assert_called_once_with(10)
+
+def test_run_audit_succesful():
+    """Succesfully runs an audit on a project"""
+
+    # GIVEN
+    project = Project(
+        id_project=1,
+        name_project="project_numero_1",
+        user=User(id_user=1, username="Jean-michel", email="jean-michel@mail.fr", password="0000"),
+        secretHMACkey=bytes.fromhex(
+            "7f2cd2cada12a1c7f6550f4b9aa3873776d6b0228b2d9c1596dcdf8eda301930"
+        ))
+    quality_gate_type = "global"
+
+    # WHEN
+    audit = AuditService().run_audit(project, quality_gate_type)
+
+    # THEN
+    assert audit is not None
+    assert audit.id_project == project.id_project
+    assert audit.date is not None
+    assert audit.vulnerabilities is not None
+    AuditDao.create.assert_called_once()
