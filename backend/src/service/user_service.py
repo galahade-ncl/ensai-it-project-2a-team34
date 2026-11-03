@@ -18,7 +18,7 @@ class UserService:
         Returns:
             User object created or None if creation failed.
         """
-        new_user = User(username=username, password=password, email=email, acces_token=None)    #Problème: comment créer le id
+        new_user = User(username=username, password=password, email=email, access_token=None)    #Problème: comment créer le id
         return new_user if UserDao().create(new_user) else None
 
     @log
