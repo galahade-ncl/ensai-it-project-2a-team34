@@ -1,7 +1,5 @@
 
-from fastapi import APIRouter, Depends, HTTPException, Request
-from pydantic import ValidationError
-
+from fastapi import APIRouter, Depends, HTTPException
 
 from schema.user_model import UserModel, UserReadModel
 from service.user_service import UserService
@@ -76,6 +74,8 @@ async def update_user(id_user: int, u: UserModel, user_service=Depends(get_user_
     user = user_service.find_by_id(id_user)
     if not user:
         raise HTTPException(status_code=404, detail=f"User (id={id_user}) not found.")
+    if user_service.username_already_used(u.username):
+        raise HTTPException(status_code=400, detail="Username already used.")
 
     user.username = u.username
     user.password = u.password

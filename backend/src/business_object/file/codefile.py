@@ -10,6 +10,8 @@ class CodeFile(File):
         Nom du fichier
     content : bytes
         Contenu du fichier en format bytes
+    type_file: str
+        Extension of the file
     date : datetime
         Date de dépot du fichier
     """

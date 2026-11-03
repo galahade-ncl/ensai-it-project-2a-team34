@@ -9,79 +9,9 @@ from business_object.file.codefile import CodeFile
 from utils.log_utils import log
 
 
-class _AnalysisVisitor(ast.NodeVisitor):
-    """Single pass over the AST: collects metrics AND antipattern info."""
-
-    def __init__(self):
-        self.ast_nodes = 0
-        self.loops = 0
-        self.conditions = 0
-        self.function_calls = 0
-        self.operations = 0
-        self.max_loop_depth = 0
-
-        self._loop_depth = 0
-        self._current_outer = None
-        self.outer_loops = []        # [{"node": ..., "depth": ...}]
-        self._functions = []         # stack of function names
-        self.recursive_calls = []    # [(line, function_name)]
-
-    def visit(self, node):
-        self.ast_nodes += 1
-        super().visit(node)
-
-    def _visit_loop(self, node):
-        self.loops += 1
-        if self._loop_depth == 0:
-            self._current_outer = {"node": node, "depth": 0}
-            self.outer_loops.append(self._current_outer)
-        self._loop_depth += 1
-        self._current_outer["depth"] = max(
-            self._current_outer["depth"], self._loop_depth
-        )
-        self.max_loop_depth = max(self.max_loop_depth, self._loop_depth)
-        self.generic_visit(node)
-        self._loop_depth -= 1
-
-    visit_For = visit_AsyncFor = visit_While = _visit_loop
-
-    def _visit_condition(self, node):
-        self.conditions += 1
-        self.generic_visit(node)
-
-    visit_If = visit_IfExp = _visit_condition
-
-    def _visit_operation(self, node):
-        self.operations += 1
-        self.generic_visit(node)
-
-    visit_BinOp = visit_UnaryOp = visit_Compare = _visit_operation
-    visit_BoolOp = visit_AugAssign = _visit_operation
-
-    def _visit_function(self, node):
-        self._functions.append(node.name)
-        self.generic_visit(node)
-        self._functions.pop()
-
-    visit_FunctionDef = visit_AsyncFunctionDef = _visit_function
-
-    def visit_Call(self, node):
-        self.function_calls += 1
-        if self._functions and self._is_recursive_call(node, self._functions[-1]):
-            self.recursive_calls.append((node.lineno, self._functions[-1]))
-        self.generic_visit(node)
-
-    @staticmethod
-    def _is_recursive_call(call: ast.Call, function_name: str) -> bool:
-        func = call.func
-        if isinstance(func, ast.Name):
-            return func.id == function_name
-        return isinstance(func, ast.Attribute) and func.attr == function_name
-
-
 @dataclass
 class AstAnalysis:
-    """Result of ONE pass over the code."""
+    """Result of ONE analysis of the code (parsed once)."""
     metrics: dict
     antipatterns: list[AntiPattern] = field(default_factory=list)
 
@@ -96,6 +26,10 @@ class EcoService:
     CPU_POWER_W = 65.0
     CARBON_INTENSITY_GCO2E_PER_KWH = 50.0
 
+    LOOP_TYPES = (ast.For, ast.While)
+    CONDITION_TYPES = (ast.If, ast.IfExp)
+    OPERATION_TYPES = (ast.BinOp, ast.UnaryOp, ast.Compare, ast.BoolOp, ast.AugAssign)
+
     @staticmethod
     def parse(code_file: CodeFile) -> ast.Module:
         """Parse Python source code and return its AST."""
@@ -108,40 +42,44 @@ class EcoService:
 
     @log
     def analyze(self, code_file: CodeFile) -> AstAnalysis:
-        """Parse once, traverse once, return metrics + antipatterns."""
-        visitor = _AnalysisVisitor()
-        visitor.visit(self.parse(code_file))
-
-        metrics = {
-            "ast_nodes": visitor.ast_nodes,
-            "loops": visitor.loops,
-            "nested_loops_depth": visitor.max_loop_depth,
-            "conditions": visitor.conditions,
-            "function_calls": visitor.function_calls,
-            "operations": visitor.operations,
-            "recursive_functions": {name for _, name in visitor.recursive_calls},
-        }
-
-        antipatterns: list[AntiPattern] = [
-            NestedLoop(
-                line=outer["node"].lineno,
-                description="Nested loop",
-                depth=outer["depth"],
-                id_antipattern=None,
-            )
-            for outer in visitor.outer_loops
-            if outer["depth"] >= 2
-        ]
-        antipatterns += [
-            RecursiveCall(
-                line=line,
-                description="Recursive_call",
-                function_name=name,
-                id_antipattern=None,
-            )
-            for line, name in visitor.recursive_calls
-        ]
+        """
+        Parse once, detect the antipatterns once, and derive the metrics
+        (loop depth, recursion) from them instead of recomputing them.
+        """
+        tree = self.parse(code_file)
+        antipatterns = self.detect_antipatterns(tree)
+        metrics = self._extract_metrics(tree, antipatterns)
         return AstAnalysis(metrics=metrics, antipatterns=antipatterns)
+
+    def _extract_metrics(
+        self, tree: ast.Module, antipatterns: list[AntiPattern]
+    ) -> dict:
+        """
+        Simple counts with ONE ast.walk. Loop depth and recursive functions
+        are reused from the antipatterns (not recomputed).
+        """
+        nodes = list(ast.walk(tree))
+        loops = sum(isinstance(n, self.LOOP_TYPES) for n in nodes)
+
+        # NestedLoop antipatterns cover every outermost loop of depth >= 2,
+        # so the max depth is there; otherwise it is 1 if a loop exists, else 0.
+        nested_depths = [a.depth for a in antipatterns if isinstance(a, NestedLoop)]
+        if nested_depths:
+            max_loop_depth = max(nested_depths)
+        else:
+            max_loop_depth = 1 if loops > 0 else 0
+
+        return {
+            "ast_nodes": len(nodes),
+            "loops": loops,
+            "nested_loops_depth": max_loop_depth,
+            "conditions": sum(isinstance(n, self.CONDITION_TYPES) for n in nodes),
+            "function_calls": sum(isinstance(n, ast.Call) for n in nodes),
+            "operations": sum(isinstance(n, self.OPERATION_TYPES) for n in nodes),
+            "recursive_functions": {
+                a.function_name for a in antipatterns if isinstance(a, RecursiveCall)
+            },
+        }
 
     def calculate_energy(self, metrics: dict, input_size: int = 1000) -> float:
         """Estimate theoretical energy consumption in kWh from metrics."""
@@ -172,7 +110,7 @@ class EcoService:
         if carbon_intensity_gco2e_per_kwh < 0:
             raise ValueError("Carbon intensity cannot be negative.")
         return energy_kwh * carbon_intensity_gco2e_per_kwh
-        
+
     # ---------------------
     # Partie Annabelle
     # ---------------------
@@ -271,3 +209,58 @@ class EcoService:
                             )
                         )
         return antipatterns
+
+    @staticmethod
+    def _loop_length(node: ast.Module) -> int:
+        """
+        Calculate the length of a loop
+        Args:
+            node (ast.Module): A for or while loop
+        Returns:
+            int: The length of the loop
+        """
+        if isinstance(node, ast.For):
+            iteration = node.iter
+
+            if isinstance(iteration, (ast.List, ast.Tuple, ast.Set)):
+                return len(iteration.elts)
+
+            if isinstance(iteration, ast.Constant):
+                return len(iteration.value)
+
+            if (isinstance(iteration, ast.Call) and isinstance(iteration.func, ast.Name) and iteration.func.id == "range"):
+                values = [ast.literal_eval(arg) for arg in iteration.args]
+                return len(range(*values))
+
+    @staticmethod
+    def _loop_complexity(node: ast.AST) -> int:
+        """
+        Calculate the complexity of a loop
+        Args:
+            node (ast.Module): A loop
+        Returns:
+            The complexity of the loop
+        """
+        complexity= EcoService._loop_length(node)
+
+        if EcoService._loop_depth(node) >=2:
+            for child in ast.iter_child_nodes(node):
+                complexity = complexity * EcoService._loop_complexity(child)
+
+        return complexity
+
+    @log
+    def estimate_complexity(self, codefile: CodeFile) -> float:
+        """
+        Estimate the complexity of a Python code
+        Args:
+            codefile (CodeFile) : The code to be estimate
+        Returns:
+            float : complexity of the code
+        """
+        tree = ast.parse(codefile)
+        complexity = 0
+        for loop in EcoService._outest_loop(tree):
+            complexity += EcoService._loop_complexity(loop)
+
+        return complexity
