@@ -1,8 +1,3 @@
-"""
-Sarah
-"""
-
-
 class User:
     """
     Classe qui modélise un utilisateur.
