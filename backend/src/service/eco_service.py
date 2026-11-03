@@ -5,6 +5,7 @@ from business_object.antipattern.nestedloop import NestedLoop
 from business_object.antipattern.recursivecall import RecursiveCall
 from business_object.file.codefile import CodeFile
 from utils.log_utils import log
+from typing import Optional
 
 class EcoService:
     """Service responsible for energy and carbon estimation."""
