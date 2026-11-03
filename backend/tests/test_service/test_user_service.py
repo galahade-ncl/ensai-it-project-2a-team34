@@ -7,14 +7,6 @@ from dao.user_dao import UserDao
 from service.user_service import UserService
 
 
-@pytest.mark.parametrize(
-    "id_user, username, password, email",
-    [
-        (1,"Annabelle","0123456789","annabelle@example.com"),
-        (2, "Madie", "9876543210", "madie@example.com"),
-        (3, "Galahade", "112233445566778899", "galahade@example.com"),
-    ],
-)
 
 
 def test_created_successful():

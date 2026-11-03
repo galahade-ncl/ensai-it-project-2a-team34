@@ -11,7 +11,7 @@ from business_object.vulnerability.low_vulnerability import LowVulnerability
 class SBOMService:
     """Generate the SBOM of a project
 
-    The SBOM lists every component of the audited project and 
+    The SBOM lists every component of the audited project and
     the dependencies between them. It is exported in the JSON format
     """
 
