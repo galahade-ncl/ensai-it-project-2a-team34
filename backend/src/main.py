@@ -6,6 +6,7 @@ for players, login, and games.
 """
 
 from fastapi import FastAPI, Request, status
+from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, RedirectResponse
 
@@ -31,7 +32,7 @@ app.add_middleware(LogMiddleware)
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     """
-    Intercepts Pydantic 422 errors to log them.
+    Intercepts Pydantic validation errors to log them.
     """
     body = await request.body()
     body_str = body.decode() if body else "empty body"
@@ -39,8 +40,11 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     logger.error(f"Validation Error\nErrors: {exc.errors()}\nBody: {body_str}")
 
     return JSONResponse(
-        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-        content={"detail": exc.errors(), "body": body_str},
+        status_code=status.HTTP_400_BAD_REQUEST,
+        content={
+            "detail": jsonable_encoder(exc.errors(), custom_encoder={ValueError: str}),
+            "body": body_str,
+        },
     )
 
 
