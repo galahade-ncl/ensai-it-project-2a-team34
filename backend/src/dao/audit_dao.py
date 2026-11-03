@@ -1,8 +1,9 @@
 from business_object.audit import Audit
+from business_object.project import Project
 from dao.db_connection import DBConnection
+from service.vulnerability_service import VulnerabilityService
 from utils.log_utils import get_logger, log
 from utils.singleton import Singleton
-from service.vulnerability_service import VulnerabilityService
 
 logger = get_logger(__name__)
 
@@ -195,3 +196,37 @@ class AuditDao(metaclass=Singleton):
         except Exception as e:
             logger.error(e)
             raise
+
+    @log
+    def list_all_audit(self, project: Project) -> list[Audit]:
+        """
+        List all audits belonging to a given project.
+
+        Arguments
+        ---------
+        project : Project
+            Project whose audits are to be listed
+
+        Returns
+        -------
+        list[Audit]
+            List of the project's audits, or an empty list if there are none
+        """
+        res = []
+
+        try:
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        "SELECT * "
+                        "  FROM audit_table "
+                        " WHERE id_project = %(id_project)s "
+                        " ORDER BY id_audit;",
+                        {"id_project": project.id_project},
+                    )
+                    res = cursor.fetchall()
+        except Exception as e:
+            logger.error(e)
+            raise
+
+        return [self._row_to_audit(row) for row in res]

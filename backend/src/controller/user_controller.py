@@ -1,8 +1,7 @@
 
-from fastapi import APIRouter, Depends, HTTPException, Request
-from pydantic import ValidationError
+from fastapi import APIRouter, Depends, HTTPException
 
-
+from schema.project_model import ProjectReadModel
 from schema.user_model import UserModel, UserReadModel
 from service.user_service import UserService
 from utils.log_utils import get_logger
@@ -110,3 +109,12 @@ async def delete_user(id_user: int, user_service=Depends(get_user_service)):
 
     user_service.delete(user)
     return f"User {user.username} deleted"
+
+
+@router.get("/{id_user}/project", response_model=list[ProjectReadModel], tags=["Projects"])
+async def project_by_user(id_user: int, user_service=Depends(get_user_service)):
+    """
+    Retrieve projects filtered by user ID.
+    """
+
+    return user_service.list_all_project(id_user)

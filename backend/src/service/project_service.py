@@ -1,9 +1,10 @@
 import hmac
 
+from business_object.audit import Audit
 from business_object.project import Project
 from business_object.user import User
+from dao.audit_dao import AuditDao
 from dao.project_dao import ProjectDao
-from service.user_service import UserService
 from utils.log_utils import log
 from utils.security import generate_secret_HMAC_key, generate_signature
 
@@ -33,19 +34,6 @@ class ProjectService:
             Project object if found, otherwise None.
         """
         return ProjectDao().find_by_id(id_project)
-
-    @log
-    def list_all_project(self, id_user: int) -> list[Project] | None:
-        """List all projects owned by the user corresponding with the id.
-        Args:
-            id_user (int) : id of the user
-        Returns:
-            A list of Project owned by the user"""
-        # Find the user corresponding to the id
-        user = UserService().find_by_id(id_user)
-        if not user:
-            return None
-        return ProjectDao().list_all_project(user)
 
     @log
     def update(self, project: Project) -> Project | None:
@@ -86,3 +74,16 @@ class ProjectService:
         expected_signature = generate_signature(project.secretHMACkey, code, dependency)
 
         return hmac.compare_digest(expected_signature, signature)
+
+    @log
+    def list_all_audit(self, id_project: int) -> list[Audit] | None:
+        """List all audits on the project corresponding with the id.
+        Args:
+            id_project (int) : id of the project
+        Returns:
+            A list of Audit on the project"""
+        # Find the project corresponding to the project id
+        project = ProjectService().find_by_id(id_project)
+        if not project:
+            return None
+        return AuditDao().list_all_audit(project)

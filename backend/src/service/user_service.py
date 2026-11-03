@@ -1,4 +1,6 @@
+from business_object.project import Project
 from business_object.user import User
+from dao.project_dao import ProjectDao
 from dao.user_dao import UserDao
 from utils.log_utils import log
 
@@ -81,3 +83,16 @@ class UserService:
             True if already used, False otherwise
         """
         return (UserDao().find_by_username(username) is not None)
+
+    @log
+    def list_all_project(self, id_user: int) -> list[Project] | None:
+        """List all projects owned by the user corresponding with the id.
+        Args:
+            id_user (int) : id of the user
+        Returns:
+            A list of Project owned by the user"""
+        # Find the user corresponding to the id
+        user = UserService().find_by_id(id_user)
+        if not user:
+            return None
+        return ProjectDao().list_all_project(user)
