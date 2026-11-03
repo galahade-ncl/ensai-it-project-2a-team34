@@ -37,8 +37,8 @@ class AuditService:
         carbon_emission_gco2e: float,
         sbom: SbomFile,
         quality_gate: QualityGate,
-        certificate: list[Certificate]
-        ) -> Audit:
+        certificate: list[Certificate],
+    ) -> Audit:
         """
         Create a new audit in the system
         Args:
@@ -55,7 +55,18 @@ class AuditService:
         Returns:
             Audit object created or None if failed
         """
-        new_audit = Audit(id_project=id_project, date=date, vulnerabilities=vulnerabilities, licenses=licenses, anti_patterns=anti_patterns, complexity=complexity, energy_consumption_kwh=energy_consumption_kwh, carbon_emission_gco2e=carbon_emission_gco2e, quality_gate=quality_gate, certificate=certificate)
+        new_audit = Audit(
+            id_project=id_project,
+            date=date,
+            vulnerabilities=vulnerabilities,
+            licenses=licenses,
+            anti_patterns=anti_patterns,
+            complexity=complexity,
+            energy_consumption_kwh=energy_consumption_kwh,
+            carbon_emission_gco2e=carbon_emission_gco2e,
+            quality_gate=quality_gate,
+            certificate=certificate,
+        )
         return new_audit if AuditDao().create(new_audit) else None
 
     @log
@@ -113,31 +124,35 @@ class AuditService:
 
         sbom = SBOMService().generate(project)
 
-        quality_gate = QualityGateService().create(quality_gate_type,
-                                                   max_vulnerabilities=max_vuln,
-                                                   max_critical_vulnerabilities=max_critical_vuln,
-                                                   max_carbon_emission=max_carbon,
-                                                   max_energy_consumption=max_energy)
+        quality_gate = QualityGateService().create(
+            quality_gate_type,
+            max_vulnerabilities=max_vuln,
+            max_critical_vulnerabilities=max_critical_vuln,
+            max_carbon_emission=max_carbon,
+            max_energy_consumption=max_energy,
+        )
 
-        certificate = None  # CertificateService
+        certificate = None
 
         date = datetime.now()
 
-        audit = AuditService().create(id_project,
-                                      date,
-                                      vulnerabilities,
-                                      licenses,
-                                      anti_patterns,
-                                      complexity,
-                                      energy_consumption_kwh,
-                                      carbon_emission_gco2e,
-                                      sbom,
-                                      quality_gate,
-                                      certificate)
+        audit = AuditService().create(
+            id_project,
+            date,
+            vulnerabilities,
+            licenses,
+            anti_patterns,
+            complexity,
+            energy_consumption_kwh,
+            carbon_emission_gco2e,
+            sbom,
+            quality_gate,
+            certificate,
+        )
 
         QualityGateService().evaluate(quality_gate, audit)
 
-        certificate = CertificateService().generate_certificate(audit, quality_gate_type)
+        certificate = CertificateService().generate_certificate(audit, project, quality_gate_type)
         audit.certificate = certificate
 
         return audit

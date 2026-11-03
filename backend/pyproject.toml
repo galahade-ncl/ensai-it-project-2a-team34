@@ -16,6 +16,8 @@ dependencies = [
     "regex",
     "uvicorn",
     "cvss",
+    "reportlab",
+    "pypdf"
 ]
 
 # Dependencies used only for development, not for runtime
