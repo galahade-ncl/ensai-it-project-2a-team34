@@ -27,6 +27,7 @@ class AuditReadModel(BaseModel):
     certificate: CertificateModel
 
 
+# Model used to create the audit of a project
 class AuditCreateModel(BaseModel):
     id_project: int
     quality_gate_type: str

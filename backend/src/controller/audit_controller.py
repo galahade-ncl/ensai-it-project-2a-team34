@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from schema.audit_model import AuditCreateModel, AuditReadModel, AuditResponseModel
 from service.audit_service import AuditService
+from service.project_service import ProjectService
 from utils.log_utils import get_logger
 
 router = APIRouter()
@@ -42,7 +43,7 @@ async def audit_by_user(id_audit: int, audit_service=Depends(get_audit_service))
 
 
 @router.post("/", response_model=AuditResponseModel, tags=["Audits"])
-async def create_audit(p: AuditCreateModel, audit_service=Depends(get_audit_service)):
+async def create_audit(p: AuditCreateModel, qg_type: str, audit_service=Depends(get_audit_service)):
     """Create a new audit.
     Args:
         p (AuditCreateModel): The audit data to create.
@@ -54,9 +55,9 @@ async def create_audit(p: AuditCreateModel, audit_service=Depends(get_audit_serv
     """
     logger.info("Create an audit")
 
-    audit = AuditService().find_by_id(p.id_audit)
+    projet = ProjectService().find_by_id(p.id_project)
 
-    audit = audit_service.run_audit(audit)
+    audit = audit_service.run_audit(projet, qg_type)
 
     if not audit:
         raise HTTPException(status_code=500, detail="Error while creating audit.")
