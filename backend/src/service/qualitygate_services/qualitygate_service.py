@@ -1,11 +1,10 @@
-from service.qualitygateservices.ecoqualitygate_service import EcoQualityGateService
-from service.qualitygateservices.globalqualitygate_service import GlobalQualityGateService
-from service.qualitygateservices.securityqualitygate_service import SecurityQualityGateService
-
 from business_object.audit import Audit
 
 # from business_object.certificate import Certificate
 from business_object.qualitygate.qualitygate import QualityGate
+from service.qualitygate_services.ecoqualitygate_service import EcoQualityGateService
+from service.qualitygate_services.globalqualitygate_service import GlobalQualityGateService
+from service.qualitygate_services.securityqualitygate_service import SecurityQualityGateService
 from utils.log_utils import log
 
 
@@ -16,12 +15,12 @@ class QualityGateService:
 
     @log
     def create(self, type_qualitygate: str, *args) -> QualityGate | None:
-        """ Create a QualityGate object of the type chosen
+        """Create a QualityGate object of the type chosen
         Args:
             type_qualitygate (str): type of the qualitygate
             *args (tuple): arguments needed for the qualitygate chosen
         Return:
-            Return a QualityGate if the """
+            Return a QualityGate if the"""
         if type_qualitygate == "global":
             GlobalQualityGateService.create(*args)
         if type_qualitygate == "eco":

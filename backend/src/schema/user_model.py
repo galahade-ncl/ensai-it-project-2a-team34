@@ -7,7 +7,6 @@ class UserModel(BaseModel):
     It defines the JSON structure used to exchange user information,
     ensuring data consistency and validation during API requests and responses."""
 
-    id_user: int | None = None
     username: str
     password: str
     email: EmailStr
