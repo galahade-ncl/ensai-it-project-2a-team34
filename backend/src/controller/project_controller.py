@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 
+from schema.audit_model import AuditReadModel
 from schema.project_model import ProjectCreateModel, ProjectReadModel, ProjectResponseModel
 from service.project_service import ProjectService
 from utils.log_utils import get_logger
@@ -32,16 +33,6 @@ async def project_by_id(id_project: int, project_service=Depends(get_project_ser
     if not project:
         raise HTTPException(status_code=404, detail="Project (id={id_project}) not found.")
     return project
-
-
-# chemin à revoir
-@router.get("/user/{id_user}", response_model=list[ProjectReadModel], tags=["Projects"])
-async def project_by_user(id_user: int, project_service=Depends(get_project_service)):
-    """
-    Retrieve projects filtered by user ID.
-    """
-
-    return project_service.list_all_project(id_user)
 
 
 @router.post("/", response_model=ProjectResponseModel, tags=["Projects"])
@@ -119,3 +110,12 @@ async def update_project(
         raise HTTPException(status_code=500, detail="Error while updating project.")
 
     return project
+
+
+@router.get("/{id_project}/audit", response_model=list[AuditReadModel], tags=["Audits"])
+async def audit_by_project(id_project: int, project_service=Depends(get_project_service)):
+    """
+    Retrieve audits filtered by project ID.
+    """
+
+    return project_service.list_all_audit(id_project)
