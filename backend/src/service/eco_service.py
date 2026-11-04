@@ -316,15 +316,18 @@ class EcoService:
                 continue
 
             calls = EcoService._count_recursive_calls(function, function.name)
-            if calls != 0:
-                executions = sum(
+            if calls == 0:
+                continue
+
+            executions = sum(
                 calls**level for level in range(EcoService.DEFAULT_RECURSION_DEPTH + 1)
             )
 
-                one_execution = 1
-                for loop in EcoService._outest_loop(function):
-                    one_execution += EcoService._loop_complexity(loop)
-                    complexity += one_execution * (executions - 1)
+            one_execution = 1
+            for loop in EcoService._outest_loop(function):
+                one_execution += EcoService._loop_complexity(loop)
+
+            complexity += one_execution * (executions - 1)
 
         return float(complexity)
 
