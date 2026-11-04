@@ -23,7 +23,10 @@ def code_file(source):
 @pytest.mark.parametrize(
     "source, expected_lines",
     [
-        pytest.param("x = 1", [], id="no_loop"),
+        pytest.param(
+            """x = 1""",
+            [],
+            id="no_loop"),
         pytest.param("for a in x:\n    pass", [1], id="one_loop"),
         pytest.param(
             "for a in x:\n    for b in y:\n        pass",
@@ -288,7 +291,6 @@ def test_detect_antipatterns(source, expected):
 @pytest.mark.parametrize(
     "source, expected",
     [
-        # Longueur lue dans le code
         pytest.param("for i in range(3):\n    pass", 3, id="range_stop"),
         pytest.param("for i in range(2, 10, 2):\n    pass", 4, id="range_start_stop_step"),
         pytest.param("for i in range(5, 0, -1):\n    pass", 5, id="range_negative_step"),
