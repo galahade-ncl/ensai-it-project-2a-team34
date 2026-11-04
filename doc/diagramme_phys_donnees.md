@@ -41,6 +41,7 @@ classDiagram
         complexity FLOAT
         energy_comsumption FLOAT
         carbon_emission_gco2e FLOAT
+        type_qualitygate VARCHAR
         status_qualitygate VARCHAR
     }
 
