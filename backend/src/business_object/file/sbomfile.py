@@ -1,3 +1,5 @@
+import datetime
+
 from business_object.file.file import File
 
 
@@ -17,7 +19,7 @@ class SBOMFile(File):
         Generation date of the SBOM
     """
 
-    def __init__(self, name, content, type_file, date=None) -> None:
+    def __init__(self, name, content, type_file, date=datetime.now()) -> None:
         self.name = name
         self.content = content
         self.type_file = type_file
@@ -42,4 +44,6 @@ class SBOMFile(File):
         """
         return "sbom"
 
-    # Méthode à réfléchir : récup la liste des dépendencies
+    # Temporaire
+    def create_empty_certificate():
+        return SBOMFile(name="Empty", content=b"0", type_file="json")
