@@ -3,7 +3,7 @@ from datetime import datetime
 from business_object.antipattern.antipattern import AntiPattern
 from business_object.audit import Audit
 from business_object.file.certificatefile import CertificateFile
-from business_object.file.sbomfile import SbomFile
+from business_object.file.sbomfile import SBOMFile
 from business_object.licence import Licence
 from business_object.project import Project
 from business_object.qualitygate.qualitygate import QualityGate
@@ -34,7 +34,7 @@ class AuditService:
         complexity: float,
         energy_consumption_kwh: float,
         carbon_emission_gco2e: float,
-        sbom: SbomFile,
+        sbom: SBOMFile,
         quality_gate: QualityGate,
         certificate: CertificateFile,
     ) -> Audit:
