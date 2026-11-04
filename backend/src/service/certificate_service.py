@@ -108,6 +108,11 @@ class CertificateService:
             date=issued,
         )
 
+    # Temporaire
+    def create_empty_certificate(self):
+        return CertificateFile(
+            name="Empty", content=b"0", type_file="pdf", qualitygate_type="global", date=None
+        )
 
 # from business_object.audit import Audit
 # from business_object.certificate import Certificate

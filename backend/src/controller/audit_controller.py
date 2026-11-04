@@ -43,7 +43,7 @@ async def audit_by_user(id_audit: int, audit_service=Depends(get_audit_service))
 
 
 @router.post("/", response_model=AuditResponseModel, tags=["Audits"])
-async def create_audit(p: AuditCreateModel, qg_type: str, audit_service=Depends(get_audit_service)):
+async def create_audit(p: AuditCreateModel, audit_service=Depends(get_audit_service)):
     """Create a new audit.
     Args:
         p (AuditCreateModel): The audit data to create.
@@ -57,7 +57,7 @@ async def create_audit(p: AuditCreateModel, qg_type: str, audit_service=Depends(
 
     projet = ProjectService().find_by_id(p.id_project)
 
-    audit = audit_service.run_audit(projet, qg_type)
+    audit = audit_service.run_audit(projet, p.qualitygate_type)
 
     if not audit:
         raise HTTPException(status_code=500, detail="Error while creating audit.")

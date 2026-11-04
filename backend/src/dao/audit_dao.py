@@ -1,10 +1,9 @@
-from datetime import datetime
-
 from business_object.audit import Audit
-from business_object.file.certificatefile import CertificateFile
 from business_object.project import Project
 from dao.db_connection import DBConnection
+from service.certificate_service import CertificateService
 from service.qualitygate_services.qualitygate_service import QualityGateService
+from service.sbom_service import SBOMService
 from service.vulnerability_service import VulnerabilityService
 from utils.log_utils import get_logger, log
 from utils.singleton import Singleton
@@ -28,14 +27,14 @@ class AuditDao(metaclass=Singleton):
             complexity=row["complexity"],
             energy_consumption_kwh=row["energy_comsumption"],
             carbon_emission_gco2e=row["carbon_emission_gco2e"],
-            sbom=None,
+            sbom=SBOMService().create_empty_sbom(),
             quality_gate=QualityGateService().create(row["type_qualitygate"],
                                                      5,
                                                      0,
                                                      1,
                                                      0.001,
                                                      row["status_qualitygate"]),
-            certificate=CertificateFile("", bytes(""), "", ""),
+            certificate=CertificateService().create_empty_certificate(),
         )
 
     @log

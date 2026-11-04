@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 from schema.certificate_model import CertificateModel
 from schema.qualitygate_model import QualityGateModel
+from schema.sbom_model import SbomModel
 
 
 class AuditResponseModel(BaseModel):
@@ -22,7 +23,7 @@ class AuditReadModel(BaseModel):
     complexity: float
     energy_consumption_kwh: float
     carbon_emission_gco2e: float
-    # sbom: SBOM
+    sbom: SbomModel
     quality_gate: QualityGateModel
     certificate: CertificateModel
 
@@ -30,5 +31,5 @@ class AuditReadModel(BaseModel):
 # Model used to create the audit of a project
 class AuditCreateModel(BaseModel):
     id_project: int
-    quality_gate_type: str
+    qualitygate_type: str
     hmac_signature: str

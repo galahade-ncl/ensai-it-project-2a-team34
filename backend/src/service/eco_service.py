@@ -1,6 +1,5 @@
 import ast
 from dataclasses import dataclass, field
-from typing import Optional
 
 from business_object.antipattern.antipattern import AntiPattern
 from business_object.antipattern.nestedloop import NestedLoop
@@ -12,6 +11,7 @@ from utils.log_utils import log
 @dataclass
 class AstAnalysis:
     """Result of ONE analysis of the code (parsed once)."""
+
     metrics: dict
     antipatterns: list[AntiPattern] = field(default_factory=list)
 
@@ -51,9 +51,7 @@ class EcoService:
         metrics = self._extract_metrics(tree, antipatterns)
         return AstAnalysis(metrics=metrics, antipatterns=antipatterns)
 
-    def _extract_metrics(
-        self, tree: ast.Module, antipatterns: list[AntiPattern]
-    ) -> dict:
+    def _extract_metrics(self, tree: ast.Module, antipatterns: list[AntiPattern]) -> dict:
         """
         Simple counts with ONE ast.walk. Loop depth and recursive functions
         are reused from the antipatterns (not recomputed).
@@ -86,9 +84,7 @@ class EcoService:
         if input_size < 1:
             raise ValueError("input_size must be positive.")
 
-        operations = (
-            metrics["operations"] + metrics["function_calls"] + metrics["ast_nodes"]
-        )
+        operations = metrics["operations"] + metrics["function_calls"] + metrics["ast_nodes"]
         if metrics["nested_loops_depth"] > 0:
             operations *= input_size ** metrics["nested_loops_depth"]
         if metrics["recursive_functions"]:
@@ -100,7 +96,7 @@ class EcoService:
     def calculate_carbon(
         self,
         energy_kwh: float,
-        carbon_intensity_gco2e_per_kwh: Optional[float] = None,
+        carbon_intensity_gco2e_per_kwh: float | None = None,
     ) -> float:
         """Calculate carbon emissions in gCO2e."""
         if energy_kwh < 0:
@@ -210,11 +206,8 @@ class EcoService:
                         )
         return antipatterns
 
-
-
     DEFAULT_LOOP_LENGTH = 10
     DEFAULT_RECURSION_DEPTH = 10
-
 
     @staticmethod
     def _loop_length(node: ast.stmt) -> int:
@@ -228,21 +221,25 @@ class EcoService:
         if isinstance(node, ast.For):
             iteration = node.iter
 
-            if isinstance(iteration, (ast.List, ast.Tuple, ast.Set)): # for i in [1, 2, 3] / for i in (1, 2, 3) / for i in {1, 2, 3}
+            if isinstance(
+                iteration, (ast.List, ast.Tuple, ast.Set)
+            ):  # for i in [1, 2, 3] / for i in (1, 2, 3) / for i in {1, 2, 3}
                 return len(iteration.elts)
 
-            if isinstance(iteration, ast.Constant) and isinstance(iteration.value, (str, bytes)): # for i in "abc"
+            if isinstance(iteration, ast.Constant) and isinstance(
+                iteration.value, (str, bytes)
+            ):  # for i in "abc"
                 return len(iteration.value)
 
             if (
                 isinstance(iteration, ast.Call)
                 and isinstance(iteration.func, ast.Name)
                 and iteration.func.id == "range"
-            ): # for i in range (3) / for i in range (2, 10, 2)
+            ):  # for i in range (3) / for i in range (2, 10, 2)
                 try:
                     values = [ast.literal_eval(arg) for arg in iteration.args]
                     return len(range(*values))
-                except (ValueError, TypeError): # for i in range (n)
+                except (ValueError, TypeError):  # for i in range (n)
                     pass
 
         # Cannot know the length : for val in values / while
@@ -266,7 +263,6 @@ class EcoService:
             return complexity * inner_complexity
 
         return complexity
-
 
     @staticmethod
     def _count_recursive_calls(node: ast.AST, function_name: str) -> int:
@@ -316,18 +312,14 @@ class EcoService:
                 continue
 
             calls = EcoService._count_recursive_calls(function, function.name)
-            if calls == 0:
-                continue
+            if calls != 0:
+                executions = sum(
+                    calls**level for level in range(EcoService.DEFAULT_RECURSION_DEPTH + 1)
+                )
 
-            executions = sum(
-                calls**level for level in range(EcoService.DEFAULT_RECURSION_DEPTH + 1)
-            )
-
-            one_execution = 1
-            for loop in EcoService._outest_loop(function):
-                one_execution += EcoService._loop_complexity(loop)
-
-            complexity += one_execution * (executions - 1)
+                one_execution = 1
+                for loop in EcoService._outest_loop(function):
+                    one_execution += EcoService._loop_complexity(loop)
+                    complexity += one_execution * (executions - 1)
 
         return float(complexity)
-
