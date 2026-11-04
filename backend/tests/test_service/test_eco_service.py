@@ -15,6 +15,130 @@ def code_file(source):
     return SimpleNamespace(content=content)
 
 
+# ============================================================
+# TESTS ENERGY
+# ============================================================
+
+@pytest.mark.parametrize(
+    "metrics, input_size, expected",
+    [
+        (
+            {
+                "operations": 2,
+                "function_calls": 3,
+                "ast_nodes": 5,
+                "nested_loops_depth": 0,
+                "recursive_functions": set(),
+            },
+            1,
+            65.0 * 10 / 1_000_000_000 / 3_600_000,
+        ),
+        (
+            {
+                "operations": 2,
+                "function_calls": 3,
+                "ast_nodes": 5,
+                "nested_loops_depth": 2,
+                "recursive_functions": set(),
+            },
+            10,
+            65.0 * 1000 / 1_000_000_000 / 3_600_000,
+        ),
+        (
+            {
+                "operations": 2,
+                "function_calls": 3,
+                "ast_nodes": 5,
+                "nested_loops_depth": 0,
+                "recursive_functions": {"factorial"},
+            },
+            10,
+            65.0 * 100 / 1_000_000_000 / 3_600_000,
+        ),
+        (
+            {
+                "operations": 0,
+                "function_calls": 0,
+                "ast_nodes": 0,
+                "nested_loops_depth": 0,
+                "recursive_functions": set(),
+            },
+            100,
+            0.0,
+        ),
+    ],
+)
+def test_calculate_energy(metrics, input_size, expected):
+    service = EcoService()
+
+    result = service.calculate_energy(metrics, input_size)
+
+    assert result == pytest.approx(expected)
+
+
+@pytest.mark.parametrize("input_size", [0, -1, -100])
+def test_calculate_energy_invalid_input_size(input_size):
+    service = EcoService()
+
+    metrics = {
+        "operations": 1,
+        "function_calls": 0,
+        "ast_nodes": 1,
+        "nested_loops_depth": 0,
+        "recursive_functions": set(),
+    }
+
+    with pytest.raises(ValueError):
+        service.calculate_energy(metrics, input_size)
+
+
+# ============================================================
+# TESTS CARBON
+# ============================================================
+
+def test_calculate_carbon_default_intensity():
+    service = EcoService()
+
+    result = service.calculate_carbon(2.5)
+
+    expected = (
+        2.5 * EcoService.CARBON_INTENSITY_GCO2E_PER_KWH
+    )
+
+    assert result == pytest.approx(expected)
+
+
+def test_calculate_carbon_custom_intensity():
+    service = EcoService()
+
+    result = service.calculate_carbon(2.5, 400)
+
+    assert result == pytest.approx(1000.0)
+
+
+def test_calculate_carbon_zero_energy():
+    service = EcoService()
+
+    result = service.calculate_carbon(0, 0)
+
+    assert result == 0
+
+
+@pytest.mark.parametrize(
+    "energy, intensity",
+    [
+        (-0.1, 100),
+        (1, -1),
+    ],
+)
+def test_calculate_carbon_negative_values(energy, intensity):
+    service = EcoService()
+
+    with pytest.raises(ValueError):
+        service.calculate_carbon(energy, intensity)
+
+
+
 # =============================================================================
 # _outest_loop
 # =============================================================================
