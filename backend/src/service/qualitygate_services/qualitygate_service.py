@@ -19,7 +19,8 @@ class QualityGateService:
         max_vulnerabilities: int,
         max_critical_vulnerabilities: int,
         max_carbon_emission: float,
-        max_energy_consumption: float) -> QualityGate | None:
+        max_energy_consumption: float,
+        status: str) -> QualityGate | None:
         """Create a QualityGate object of the type chosen
         Args:
             type_qualitygate (str): type of the qualitygate
@@ -27,11 +28,11 @@ class QualityGateService:
         Return:
             Return a QualityGate if the"""
         if type_qualitygate == "global":
-            GlobalQualityGateService.create(max_vulnerabilities, max_critical_vulnerabilities, max_carbon_emission, max_energy_consumption)
+            return GlobalQualityGateService().create(max_vulnerabilities, max_critical_vulnerabilities, max_carbon_emission, max_energy_consumption, status)
         if type_qualitygate == "eco":
-            EcoQualityGateService.create(max_carbon_emission, max_energy_consumption)
+            return EcoQualityGateService().create(max_carbon_emission, max_energy_consumption, status)
         if type_qualitygate == "security":
-            SecurityQualityGateService.create(max_vulnerabilities, max_critical_vulnerabilities)
+            return SecurityQualityGateService().create(max_vulnerabilities, max_critical_vulnerabilities, status)
         else:
             return None
 

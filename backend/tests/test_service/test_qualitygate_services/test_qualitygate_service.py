@@ -16,25 +16,6 @@ from src.service.qualitygate_services.globalqualitygate_service import GlobalQua
 from src.service.qualitygate_services.qualitygate_service import QualityGateService
 from src.service.qualitygate_services.securityqualitygate_service import SecurityQualityGateService
 
-qualitygatelist_create = [
-    GlobalQualityGate(
-        max_vulnerabilities=10,
-        max_critical_vulnerabilities=5,
-        max_carbon_emission=50,
-        max_energy_consumption=200,
-    ),
-    EcoQualityGate(max_carbon_emission=5000, max_energy_consumption=1000000,),
-    SecurityQualityGate(max_vulnerabilities=60, max_critical_vulnerabilities=20,),
-    GlobalQualityGate(
-        max_vulnerabilities=0,
-        max_critical_vulnerabilities=0,
-        max_carbon_emission=0,
-        max_energy_consumption=0,
-    ),
-    EcoQualityGate(max_carbon_emission=2, max_energy_consumption=30,),
-    SecurityQualityGate(max_vulnerabilities=8, max_critical_vulnerabilities=1,),
-]
-
 qualitygatelist = [
     GlobalQualityGate(
         max_vulnerabilities=10,
@@ -123,7 +104,7 @@ audit = Audit(
 
 
 def test_evaluate_successful():
-    """Successfully evaluate a Project during an Audit with the QualityGate chosen"""
+    """The Project passed the QualityGate successfully"""
 
     # GIVEN
     GlobalQualityGate.evaluate = MagicMock(return_value=True)
@@ -139,7 +120,7 @@ def test_evaluate_successful():
 
 
 def test_evaluate_failed():
-    """Fail to evaluate a Project during an Audit with the QualityGate chosen because QualityGate().evaluate returns False"""
+    """The Project failed to pass the QualityGate"""
 
     # GIVEN
     GlobalQualityGate.evaluate = MagicMock(return_value=False)
@@ -159,7 +140,7 @@ def test_create_successful():
 
     for i in range(1, 6):
         # GIVEN
-        qualitygate_expected = qualitygatelist_create[i]
+        qualitygate_expected = qualitygatelist[i]
         qualitygate_type = qualitygate_expected.get_type()
 
         if qualitygate_type == "global":
@@ -171,7 +152,8 @@ def test_create_successful():
                 qualitygate_expected.max_vulnerabilities,
                 qualitygate_expected.max_critical_vulnerabilities,
                 qualitygate_expected.max_carbon_emission,
-                qualitygate_expected.max_energy_consumption)
+                qualitygate_expected.max_energy_consumption,
+                qualitygate_expected.status)
             response_qualitygate_type = response_qualitygate.get_type()
 
         elif qualitygate_type == "security":
@@ -183,7 +165,8 @@ def test_create_successful():
                 qualitygate_expected.max_vulnerabilities,
                 qualitygate_expected.max_critical_vulnerabilities,
                 0,
-                0)
+                0,
+                qualitygate_expected.status)
             response_qualitygate_type = response_qualitygate.get_type()
 
         elif qualitygate_type == "eco":
@@ -195,14 +178,22 @@ def test_create_successful():
                 0,
                 0,
                 qualitygate_expected.max_carbon_emission,
-                qualitygate_expected.max_energy_consumption)
+                qualitygate_expected.max_energy_consumption,
+                qualitygate_expected.status)
             response_qualitygate_type = response_qualitygate.get_type()
-
-        
-
-        # WHEN
-        # response_qualitygate = QualityGateService().create(type_qualitygate=qualitygate_type)
-        # response_qualitygate_type = response_qualitygate.get_type()
 
         # THEN
         assert qualitygate_type == response_qualitygate_type
+
+
+def test_create_false_type_qualitygate():
+    """The type_qualitygate is not valid"""
+
+    # GIVEN
+    qualitygate_type = "test_de_faux_qualitygate_type"
+
+    # WHEN
+    response_qualitygate = QualityGateService().create(type_qualitygate=qualitygate_type)
+
+    # THEN
+    assert response_qualitygate is None

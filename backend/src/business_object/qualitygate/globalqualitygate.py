@@ -20,7 +20,7 @@ class GlobalQualityGate(QualityGate):
         max_critical_vulnerabilities,
         max_carbon_emission,
         max_energy_consumption,
-        status="Unevaluated",
+        status,
     ):
         """Constructor"""
         self.max_vulnerabilities = max_vulnerabilities

@@ -7,7 +7,7 @@ class EcoQualityGateService:
     Service that handles business logic related to a ecoqualitygate
     """
     @log
-    def create(self, max_carbon_emission: float, max_energy_consumption: float) -> EcoQualityGate:
+    def create(self, max_carbon_emission: float, max_energy_consumption: float, status: str) -> EcoQualityGate:
         """ Create a EcoQualityGate object
         Args:
             max_carbon_emission (float): threehold of carbon emission
@@ -15,4 +15,4 @@ class EcoQualityGateService:
         Return:
             Return an EcoQualityGate object
         """
-        return EcoQualityGate(max_carbon_emission, max_energy_consumption)
+        return EcoQualityGate(max_carbon_emission, max_energy_consumption, status)

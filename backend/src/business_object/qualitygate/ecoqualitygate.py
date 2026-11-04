@@ -10,7 +10,7 @@ class EcoQualityGate:
         status (str): Status of the quality gate
     """
 
-    def __init__(self, max_carbon_emission, max_energy_consumption, status="Unevaluated"):
+    def __init__(self, max_carbon_emission, max_energy_consumption, status):
         self.max_carbon_emission = max_carbon_emission
         self.max_energy_consumption = max_energy_consumption
         self.status = status

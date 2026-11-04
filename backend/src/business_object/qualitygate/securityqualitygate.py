@@ -9,7 +9,7 @@ class SecurityQualityGate:
         max_critical_vulnerabilities (int): Max critical vulnerabilities tolerated for a project
         status (str): Status of the quality gate
     """
-    def __init__(self, max_vulnerabilities, max_critical_vulnerabilities, status="Unevaluated"):
+    def __init__(self, max_vulnerabilities, max_critical_vulnerabilities, status):
         self.max_vulnerabilities = max_vulnerabilities
         self.max_critical_vulnerabilities = max_critical_vulnerabilities
         self.status = status

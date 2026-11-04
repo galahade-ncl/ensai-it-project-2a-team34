@@ -28,7 +28,7 @@ class QualityGateFactory:
             return EcoQualityGate()
         elif type == "security":
             return SecurityQualityGate()
-        elif type == "security":
+        elif type == "global":
             return GlobalQualityGate()
         else:
             raise ValueError(f"'{type}'QualityGate is not supported.")
