@@ -2,9 +2,6 @@ import ast
 
 import pytest
 
-from business_object.antipattern.antipattern import AntiPattern
-from business_object.antipattern.nestedloop import NestedLoop
-from business_object.antipattern.recursivecall import RecursiveCall
 from service.eco_service import EcoService
 
 # =============================================================================

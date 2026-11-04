@@ -263,28 +263,13 @@ class EcoService:
 
         return complexity
 
-    @staticmethod
-    def _loops_complexity(node: ast.AST) -> int:
-        """
-        Calculate the complexity of all the loops (not nested in another loop) under a node
-        Args:
-            node (ast.AST): The node to analyse
-        Returns:
-            The sum of the complexity of these loops
-        """
-        complexity = 0
-        for loop in EcoService._outest_loop(node):
-            complexity += EcoService._loop_complexity(loop)
-
-        return complexity
 
     @staticmethod
     def _count_recursive_calls(node: ast.AST, function_name: str) -> int:
         """
-        Count the recursive calls made by one execution of a function,
-        a call inside a loop being counted once per iteration
+        Count the recursive calls made by one execution of a function, a call inside a loop being counted once per iteration
         Args:
-            node (ast.AST): The function (or a part of it) to analyse
+            node (ast.AST): The function to analyse
             function_name (str): The name of the function
         Returns:
             int: The number of recursive calls
@@ -315,26 +300,24 @@ class EcoService:
         """
         tree = self.analyze_ast(codefile)
 
+        # Nested loop
         complexity = EcoService._loops_complexity(tree)
 
-        # Récursion : on ajoute les exécutions supplémentaires de chaque fonction récursive
+        # Recursive call
         for function in ast.walk(tree):
             if not isinstance(function, ast.FunctionDef):
                 continue
 
             calls = EcoService._count_recursive_calls(function, function.name)
             if calls == 0:
-                continue  # fonction non récursive
+                continue  # Not a recursive call
 
-            # arbre de récursion : 1 exécution au niveau 0, puis `calls` fois plus à chaque niveau
             executions = sum(
                 calls**level for level in range(EcoService.DEFAULT_RECURSION_DEPTH + 1)
             )
 
-            # coût d'une exécution de la fonction : 1 + ses boucles
             one_execution = 1 + EcoService._loops_complexity(function)
 
-            # la première exécution est déjà comptée plus haut
             complexity += one_execution * (executions - 1)
 
         return float(complexity)
