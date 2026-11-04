@@ -56,10 +56,9 @@ format:
   
   C’est dans ce contexte que s’inscrit CleanOps, une API REST destinée à automatiser l’audit d’un projet Python et de ses fichiers de dépendance. L’application a notamment pour objectif de vérifier l’intégrité d’une soumission, d’analyser la sécurité de ses dépendances, d’estimer son impact énergétique et carbone ainsi que de générer un inventaire des composants logiciels. 
   
-  Ainsi, la problématique qui guidera notre étude est la suivante: comment concevoir une application capable d’automatiser l’audit d’un projet Python en prenant en compte à la fois sa sécurité, son impact environnemental et la traçabilité de ses composants?
+  Ainsi, la problématique qui guide notre étude est la suivante: comment concevoir une application capable d’automatiser l’audit d’un projet Python en prenant en compte à la fois sa sécurité, son impact environnemental et la traçabilité de ses composants?
   
-  Afin d’apporter des éléments de réponse à cette question, ce rapport présente dans un premier temps le projet CleanOps dans son contexte, ses objectifs, son cahier de charges ainsi que l’organisation et le planning du groupe. La deuxième partie sera consacrée à la modélisation du projet à travers différents diagrammes. Enfin, une conclusion intermédiaire fera le bilan de cette phase d’analyse et ouvrira sur la phase de développement. 
-
+  Afin d’apporter des éléments de réponse à cette question, ce rapport sectionné en  6 grandes parties présente dans un premier temps le projet et son cahier des charges. Ensuite vient la description de l’organisation interne du groupe, planning prévu et planning réel. La troisième partie présente la conception finale et ses évolutions depuis le dossier d’analyse. La quatrième détaille l’implémentation, fonctionnalité par fonctionnalité. La cinquième est consacrée aux tests et la sixième aux difficultés rencontrées. Une conclusion dresse enfin le bilan du projet et ses pistes d’amélioration. 
 
 {{< pagebreak >}}
 
@@ -292,6 +291,7 @@ Un projet peut posséder 0 à plusieurs audits sachant qu’un audit doit obliga
 
 
 {{< pagebreak >}}
+
 
 ## Conclusion intermédiaire {.unnumbered}
 
