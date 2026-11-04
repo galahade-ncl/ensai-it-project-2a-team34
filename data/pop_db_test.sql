@@ -21,8 +21,8 @@ INSERT INTO project_table(name_project, id_user, secretHMACkey) VALUES
 ('aurevoir',          10,     'cka+GV4v5rhQZ3eyZIrgHiIR_fbGiQUREOJF'                                  ),
 ('tp3',               3,      'petite_cle'                                                            );
 
-INSERT INTO audit_table(id_project, total_vulnerability, total_critical_vulnerability, complexity, energy_comsumption, carbon_emission_gco2e, status_qualitygate) VALUES
-(1,         5,       1,        25,       120,         1584,      'passed'),
-(2,         10,      0,        20,       520,         126,       'passed'),
-(7,         10,      2,        10,       200,         126,       'passed'),
-(3,         8,       8,        5,        870,         240,       'failed');
+INSERT INTO audit_table(id_project, total_vulnerability, total_critical_vulnerability, complexity, energy_comsumption, carbon_emission_gco2e, type_qualitygate, status_qualitygate) VALUES
+(1,         5,       1,        25,       120,         1584,      'global',      'passed'),
+(2,         10,      0,        20,       520,         126,      'security',       'passed'),
+(7,         10,      2,        10,       200,         126,      'eco',       'passed'),
+(3,         8,       8,        5,        870,         240,      'global',       'failed');

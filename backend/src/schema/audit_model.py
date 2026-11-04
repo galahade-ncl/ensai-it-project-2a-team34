@@ -2,8 +2,8 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
-# from business_object.certificate import Certificate
-# from business_object.qualitygate.qualitygate import QualityGate
+from schema.certificate_model import CertificateModel
+from schema.qualitygate_model import QualityGateModel
 
 
 class AuditResponseModel(BaseModel):
@@ -23,10 +23,11 @@ class AuditReadModel(BaseModel):
     energy_consumption_kwh: float
     carbon_emission_gco2e: float
     # sbom: SBOM
-#    quality_gate: QualityGate -> il faudrait définir un QualityGateModel
-#    certificate: Certificate -> il faudrait définir un CertificateModel
+    quality_gate: QualityGateModel
+    certificate: CertificateModel
 
 
 class AuditCreateModel(BaseModel):
     id_project: int
-    date: datetime
+    quality_gate_type: str
+    hmac_signature: str

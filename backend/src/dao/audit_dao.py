@@ -1,8 +1,10 @@
 from business_object.audit import Audit
+from business_object.project import Project
 from dao.db_connection import DBConnection
+from service.qualitygateservices.qualitygate_service import QualityGateService
+from service.vulnerability_service import VulnerabilityService
 from utils.log_utils import get_logger, log
 from utils.singleton import Singleton
-from service.vulnerability_service import VulnerabilityService
 
 logger = get_logger(__name__)
 
@@ -24,7 +26,11 @@ class AuditDao(metaclass=Singleton):
             energy_consumption_kwh=row["energy_comsumption"],
             carbon_emission_gco2e=row["carbon_emission_gco2e"],
             sbom=None,
-            quality_gate=row["status_qualitygate"],
+            quality_gate=QualityGateService().create(row["type_qualitygate"],
+                                                     5,
+                                                     0,
+                                                     1,
+                                                     0.001),
             certificate=None,
         )
 
@@ -191,6 +197,40 @@ class AuditDao(metaclass=Singleton):
                         {"id_audit": audit.id_audit},
                     )
                     return cursor.rowcount > 0
+
+        except Exception as e:
+            logger.error(e)
+            raise
+
+    @log
+    def list_all_audit(self, project: Project) -> list[Audit]:
+        """
+        List all audits on a given project.
+
+        Arguments
+        ---------
+        project : Project
+            Project whose audits are to be listed
+
+        Returns
+        -------
+        list[Audit]
+            List of the project's audits, or an empty list if there are none
+        """
+        res = []
+
+        try:
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        "SELECT * "
+                        "  FROM audit_table "
+                        " WHERE id_project = %(id_project)s "
+                        " ORDER BY id_audit;",
+                        {"id_project": project.id_project},
+                    )
+                    res = cursor.fetchall()
+            return [self._row_to_audit(row) for row in res]
 
         except Exception as e:
             logger.error(e)
