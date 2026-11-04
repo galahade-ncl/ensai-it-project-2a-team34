@@ -122,7 +122,7 @@ class AuditService:
             max_energy_consumption=max_energy,
         )
 
-        certificate = CertificateFile("", bytes(""), "", "")
+        certificate = CertificateService().create_empty_certificate()
 
         date = datetime.now()
 

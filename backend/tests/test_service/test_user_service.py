@@ -1,12 +1,8 @@
 from unittest.mock import MagicMock
 
-import pytest
-
 from business_object.user import User
 from dao.user_dao import UserDao
 from service.user_service import UserService
-
-
 
 
 def test_created_successful():
@@ -22,6 +18,7 @@ def test_created_successful():
     # THEN
     assert user.username == username
 
+
 def test_create_failed():
     """Failed to create a User because UserDao().create returns False"""
 
@@ -34,6 +31,7 @@ def test_create_failed():
 
     # THEN
     assert user is None
+
 
 def test_find_by_id_successful():
     """Successfully find the user"""
@@ -48,6 +46,7 @@ def test_find_by_id_successful():
     # THEN
     assert res == user
 
+
 def test_find_by_id_failed():
     """Fail to find the user"""
 
@@ -59,6 +58,7 @@ def test_find_by_id_failed():
 
     # THEN
     assert res is None
+
 
 def test_update_successful():
     """Successfully update a user"""
@@ -98,7 +98,7 @@ def test_delete_successful():
     user = User(id_user=1, username="Jean", password="0123456789", email="jean@example.com")
     UserDao.delete = MagicMock(return_value=True)
 
-   # WHEN
+    # WHEN
     res = UserService().delete(user)
 
     # THEN
@@ -119,6 +119,7 @@ def test_delete_failed():
     # THEN
     assert res is False
 
+
 def test_login_successful():
     """Successfully login with a valid username and password"""
 
@@ -133,6 +134,7 @@ def test_login_successful():
     assert res == user
     assert UserDao.login.call_count == 1
 
+
 def test_login_failed():
     """Fail to login because credentials are wrong"""
 
@@ -144,6 +146,7 @@ def test_login_failed():
 
     # THEN
     assert res is None
+
 
 def test_username_already_used_true():
     """Return True when a user with this username already exists"""

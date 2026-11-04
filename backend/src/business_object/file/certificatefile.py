@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 
 from business_object.file.file import File
 
@@ -22,12 +22,12 @@ class CertificateFile(File):
         Generation date of the SBOM
     """
 
-    def __init__(self, name, content, type_file, qualitygate_type, date=datetime.now()) -> None:
+    def __init__(self, name, content, type_file, qualitygate_type, date) -> None:
         self.name = name
         self.content = content
         self.type_file = type_file
         self.qualitygate_type = qualitygate_type
-        self.date = date
+        self.date = date if date is not None else datetime.now()
 
     # Méthode a déplacer dans utils, sauf si différente de méthode de codefile
     # def get_content(self) -> bool:
@@ -41,9 +41,3 @@ class CertificateFile(File):
     def get_duty(self) -> str:
         """Return the role of the file within a project"""
         return "certificate"
-
-    # Temporaire
-    def create_empty_certificate():
-        return CertificateFile(
-            name="Empty", content=b"0", type_file="pdf", qualitygate_type="global"
-        )

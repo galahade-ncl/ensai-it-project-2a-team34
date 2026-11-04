@@ -4,7 +4,6 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from business_object.audit import Audit
-from business_object.file.certificatefile import CertificateFile
 from business_object.vulnerability.critical_vulnerability import (
     CriticalVulnerability,
 )

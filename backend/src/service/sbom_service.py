@@ -1,13 +1,15 @@
 import json
 import re
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime
 
 from business_object.file.sbomfile import SBOMFile
 from business_object.vulnerability.critical_vulnerability import CriticalVulnerability
 from business_object.vulnerability.high_vulnerability import HighVulnerability
-from business_object.vulnerability.medium_vulnerability import MediumVulnerability
 from business_object.vulnerability.low_vulnerability import LowVulnerability
+from business_object.vulnerability.medium_vulnerability import MediumVulnerability
+
+
 class SBOMService:
     """Generate the SBOM of a project
 
@@ -25,73 +27,73 @@ class SBOMService:
         dependencies: list[str], optional
             Dependencies of the project
         vulnerabilities: list[Vulnerability], optional
-            Vulnerabilities found by SecurityService (instance of 
+            Vulnerabilities found by SecurityService (instance of
             ``CriticalVulnerability``, ``HighVulnerability``,
             ``MediumVulnerability`` or ``LowVulnerability``). They are
             added to the SBOM and linked to the affected . The severity is
             deduced from the class of each vulnerability.
-        
+
         Returns
         ------
         SBOMFile
             SBOM whose content is the JSON document in bytes
-        
+
         Raises
         ------
 
         ValueError
             If the project is ''None''.
-         """
+        """
         if project is None:
             raise ValueError("Cannot generate a SBOM:project is None.")
-        
-        # 1)Ecosystem (purl type) deduced from the dependency file name
-        dependencyfile=getattr(project, "dependencyfile",None)
-        filename=(getattr(dependencyfile, "name","")or"").split("/")[-1].lower()
-        ecosystems={"package.json":"npm","pom.xml": "maven"}
-        ecosystem=ecosystems.get(filename,"pypi")
 
-        # 2) Dependencies: 
-        if dependencies is None: 
-            content=getattr(dependencyfile,"content",None) or b"" #b pour bytes
-            if isinstance(content,bytes):
-                content=content.decode("utf-8-sig")
-            dependencies=content.splitlines()
-        
+        # 1)Ecosystem (purl type) deduced from the dependency file name
+        dependencyfile = getattr(project, "dependencyfile", None)
+        filename = (getattr(dependencyfile, "name", "") or "").split("/")[-1].lower()
+        ecosystems = {"package.json": "npm", "pom.xml": "maven"}
+        ecosystem = ecosystems.get(filename, "pypi")
+
+        # 2) Dependencies:
+        if dependencies is None:
+            content = getattr(dependencyfile, "content", None) or b""  # b pour bytes
+            if isinstance(content, bytes):
+                content = content.decode("utf-8-sig")
+            dependencies = content.splitlines()
+
         # 3) CycloneDX xcomponent per dependency
-        components=[]
+        components = []
         for dependency in dependencies:
-            #cleaning
-            line=dependency.split("#")[0].split(";")[0].strip()
-            if not line or line.startswith("-"): #empty line, comment or option pip
+            # cleaning
+            line = dependency.split("#")[0].split(";")[0].strip()
+            if not line or line.startswith("-"):  # empty line, comment or option pip
                 continue
-            #Extraction
-            match=re.match(
+            # Extraction
+            match = re.match(
                 r"^(@?[A-Za-z0-9][A-Za-z0-9._:\-/]*)(\[.*\])?\s*(==|@)?\s*([^\s,<>=!~]*)",
                 line,
             )
-            #name extraction 
-            name=match.group(1)
-            #version extraction: only exact version is kept
-            version=match.group(4) if match.group(3) else None
-            if ecosystem=="pypi":
-                name=re.sub(r"[-_.]+", "-", name).lower()  # PEP 503 normalization
-            #purl
-            purl=f"pkg:{ecosystem}/{name.replace(':','/')}" #package URL
+            # name extraction
+            name = match.group(1)
+            # version extraction: only exact version is kept
+            version = match.group(4) if match.group(3) else None
+            if ecosystem == "pypi":
+                name = re.sub(r"[-_.]+", "-", name).lower()  # PEP 503 normalization
+            # purl
+            purl = f"pkg:{ecosystem}/{name.replace(':', '/')}"  # package URL
             if version:
-                purl+=f"@{version}"
+                purl += f"@{version}"
             if purl in [c["bom-ref"] for c in components]:
                 continue
 
-            component={"type": "library","bom-ref": purl, "name": name, "purl": purl}
+            component = {"type": "library", "bom-ref": purl, "name": name, "purl": purl}
             if version:
-                component["version"]=version
+                component["version"] = version
             components.append(component)
 
             # 4) CycloneDX document: Dictionary
-            project_name=getattr(project,"name_project", None) or "project"
-            date=datetime.now(timezone.utc)
-            document={
+            project_name = getattr(project, "name_project", None) or "project"
+            date = datetime.now()
+            document = {
                 "bomFormat": "CycloneDX",
                 "specVersion": "1.5",
                 "serialNumber": f"urn:uuid:{uuid.uuid4()}",
@@ -106,7 +108,7 @@ class SBOMService:
                     },
                 },
                 "components": components,
-                "dependencies":[
+                "dependencies": [
                     {"ref": project_name, "dependsOn": [c["bom-ref"] for c in components]}
                 ]
                 + [{"ref": c["bom-ref"], "dependsOn": []} for c in components],
@@ -114,9 +116,9 @@ class SBOMService:
 
             # 5) Vulnerabilities
             if vulnerabilities:
-                document["vulnerabilities"]=[]
+                document["vulnerabilities"] = []
                 for vulnerability in vulnerabilities:
-                    #severity
+                    # severity
                     if isinstance(vulnerability, CriticalVulnerability):
                         severity = "critical"
                     elif isinstance(vulnerability, HighVulnerability):
@@ -127,7 +129,7 @@ class SBOMService:
                         severity = "low"
                     else:
                         severity = "unknown"
-                    
+
                     entry = {
                         "id": vulnerability.osv_id or vulnerability.cve_id,
                         "source": {"name": "OSV", "url": "https://osv.dev"},
@@ -135,10 +137,10 @@ class SBOMService:
                     }
                     if vulnerability.cve_id and vulnerability.cve_id != entry["id"]:
                         entry["references"] = [
-                        {"id": vulnerability.cve_id, "source": {"name": "NVD"}}
+                            {"id": vulnerability.cve_id, "source": {"name": "NVD"}}
                         ]
-                    #name of the vulnerable package
-                    package=re.sub(r"[-_.]+", "-", vulnerability.package or "").lower()
+                    # name of the vulnerable package
+                    package = re.sub(r"[-_.]+", "-", vulnerability.package or "").lower()
                     refs = [c["bom-ref"] for c in components if c["name"].lower() == package]
                     if refs:
                         entry["affects"] = [{"ref": refs[0]}]
@@ -150,3 +152,6 @@ class SBOMService:
             date=date,
         )
 
+    # Temporaire
+    def create_empty_sbom(self):
+        return SBOMFile(name="Empty", content=b"0", type_file="json", date=None)
