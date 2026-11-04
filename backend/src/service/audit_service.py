@@ -2,6 +2,7 @@ from datetime import datetime
 
 from business_object.antipattern.antipattern import AntiPattern
 from business_object.audit import Audit
+from business_object.certificate import Certificate
 from business_object.file.certificatefile import CertificateFile
 from business_object.file.sbomfile import SBOMFile
 from business_object.licence import Licence
@@ -122,7 +123,7 @@ class AuditService:
             max_energy_consumption=max_energy,
         )
 
-        certificate = None
+        certificate = Certificate(0, datetime.now(), "empty", "Unevaluated", "")
 
         date = datetime.now()
 
