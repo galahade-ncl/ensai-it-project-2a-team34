@@ -105,7 +105,7 @@ class CertificateService:
             content=buffer.getvalue(),
             type_file="pdf",
             qualitygate_type=qualitygate_type,
-            date=issued
+            date=issued,
         )
 
 

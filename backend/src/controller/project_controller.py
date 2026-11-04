@@ -112,7 +112,7 @@ async def update_project(
     return project
 
 
-@router.get("/{id_project}/audit", response_model=list[AuditReadModel], tags=["Audits"])
+@router.get("/{id_project}/audit", response_model=list[AuditReadModel], tags=["Projects"])
 async def audit_by_project(id_project: int, project_service=Depends(get_project_service)):
     """
     Retrieve audits filtered by project ID.

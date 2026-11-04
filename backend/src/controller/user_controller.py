@@ -111,7 +111,7 @@ async def delete_user(id_user: int, user_service=Depends(get_user_service)):
     return f"User {user.username} deleted"
 
 
-@router.get("/{id_user}/project", response_model=list[ProjectReadModel], tags=["Projects"])
+@router.get("/{id_user}/project", response_model=list[ProjectReadModel], tags=["Users"])
 async def project_by_user(id_user: int, user_service=Depends(get_user_service)):
     """
     Retrieve projects filtered by user ID.

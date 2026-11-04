@@ -19,7 +19,7 @@ class SBOMFile(File):
         Generation date of the SBOM
     """
 
-    def __init__(self, name, content, type_file, date=datetime.now()) -> None:
+    def __init__(self, name, content, type_file, date=datetime.datetime.now()) -> None:
         self.name = name
         self.content = content
         self.type_file = type_file

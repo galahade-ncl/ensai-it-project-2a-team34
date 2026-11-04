@@ -1,18 +1,19 @@
 import datetime
 from unittest.mock import MagicMock, patch
 
-from service.qualitygateservice.qualitygate_service import QualityGateService
-
 from business_object.audit import Audit
-from business_object.file.sbomfile import SbomFile
+from business_object.file.sbomfile import SBOMFile
 from business_object.project import Project
-from business_object.qualitygate import QualityGate
+from business_object.qualitygate.qualitygate import QualityGate
 from business_object.user import User
 from dao.audit_dao import AuditDao
 from service.audit_service import AuditService
 from service.eco_service import EcoService
+from service.qualitygate_services.qualitygate_service import QualityGateService
 from service.sbom_service import SBOMService
 from service.security_service import SecurityService
+
+# from business_object.file.certificatefile import CertificateFile
 
 
 def test_create_successful():
@@ -21,7 +22,8 @@ def test_create_successful():
     # GIVEN
     id_audit, id_project = 1, 10
     date = datetime.datetime(2025, 1, 15)
-    vulnerabilities, licenses, anti_patterns, certificate = [], [], [], []
+    vulnerabilities, licenses, anti_patterns = [], [], []
+    certificate = MagicMock()
     complexity, energy_consumption_kwh, carbon_emission_gco2e = 4.2, 0.35, 12.5
     sbom = MagicMock()
     quality_gate = MagicMock()
@@ -59,7 +61,8 @@ def test_create_failed():
     # GIVEN
     id_audit, id_project = 1, 10
     date = datetime.datetime(2025, 1, 15)
-    vulnerabilities, licenses, anti_patterns, certificate = [], [], [], []
+    vulnerabilities, licenses, anti_patterns = [], [], []
+    certificate = MagicMock()
     complexity, energy_consumption_kwh, carbon_emission_gco2e = 4.2, 0.35, 12.5
     sbom = MagicMock()
     quality_gate = MagicMock()
@@ -202,19 +205,26 @@ def test_run_audit_successful():
     mock_antipatterns = [MagicMock(), MagicMock(), MagicMock()]
     mock_energy = 0.35
     mock_carbon = 12.5
-    mock_sbom = MagicMock(spec=SbomFile)
+    mock_sbom = MagicMock(spec=SBOMFile)
     mock_quality_gate = MagicMock(spec=QualityGate)
 
-    with patch.object(SecurityService, "find_vulnerabilities", return_value=mock_vulnerabilities) as mock_find_vuln, \
-         patch.object(SecurityService, "find_licences", return_value=mock_licenses) as mock_find_lic, \
-         patch.object(EcoService, "detect_antipatterns", return_value=mock_antipatterns) as mock_detect_ap, \
-         patch.object(EcoService, "calculate_energy", return_value=mock_energy) as mock_calc_energy, \
-         patch.object(EcoService, "calculate_carbon", return_value=mock_carbon) as mock_calc_carbon, \
-         patch.object(SBOMService, "generate", return_value=mock_sbom) as mock_generate_sbom, \
-         patch.object(QualityGateService, "create", return_value=mock_quality_gate) as mock_create_qg, \
-         patch.object(QualityGateService, "evaluate") as mock_evaluate_qg, \
-         patch.object(AuditDao, "create", return_value=True) as mock_dao_create:
-
+    with (
+        patch.object(
+            SecurityService, "find_vulnerabilities", return_value=mock_vulnerabilities
+        ) as mock_find_vuln,
+        patch.object(SecurityService, "find_licences", return_value=mock_licenses) as mock_find_lic,
+        patch.object(
+            EcoService, "detect_antipatterns", return_value=mock_antipatterns
+        ) as mock_detect_ap,
+        patch.object(EcoService, "calculate_energy", return_value=mock_energy) as mock_calc_energy,
+        patch.object(EcoService, "calculate_carbon", return_value=mock_carbon) as mock_calc_carbon,
+        patch.object(SBOMService, "generate", return_value=mock_sbom) as mock_generate_sbom,
+        patch.object(
+            QualityGateService, "create", return_value=mock_quality_gate
+        ) as mock_create_qg,
+        patch.object(QualityGateService, "evaluate") as mock_evaluate_qg,
+        patch.object(AuditDao, "create", return_value=True) as mock_dao_create,
+    ):
         # WHEN
         audit = AuditService().run_audit(project, "global")
 
@@ -261,16 +271,17 @@ def test_run_audit_dao_create_fails():
     project.dependencyfile = MagicMock()
     project.codefile = MagicMock()
 
-    with patch.object(SecurityService, "find_vulnerabilities", return_value=[]), \
-         patch.object(SecurityService, "find_licences", return_value=[]), \
-         patch.object(EcoService, "detect_antipatterns", return_value=[]), \
-         patch.object(EcoService, "calculate_energy", return_value=0.1), \
-         patch.object(EcoService, "calculate_carbon", return_value=5.0), \
-         patch.object(SBOMService, "generate", return_value=MagicMock()), \
-         patch.object(QualityGateService, "create", return_value=MagicMock()), \
-         patch.object(QualityGateService, "evaluate"), \
-         patch.object(AuditDao, "create", return_value=False) as mock_dao_create:
-
+    with (
+        patch.object(SecurityService, "find_vulnerabilities", return_value=[]),
+        patch.object(SecurityService, "find_licences", return_value=[]),
+        patch.object(EcoService, "detect_antipatterns", return_value=[]),
+        patch.object(EcoService, "calculate_energy", return_value=0.1),
+        patch.object(EcoService, "calculate_carbon", return_value=5.0),
+        patch.object(SBOMService, "generate", return_value=MagicMock()),
+        patch.object(QualityGateService, "create", return_value=MagicMock()),
+        patch.object(QualityGateService, "evaluate"),
+        patch.object(AuditDao, "create", return_value=False) as mock_dao_create,
+    ):
         # WHEN
         audit = AuditService().run_audit(project, "global")
 

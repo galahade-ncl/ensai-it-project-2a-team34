@@ -9,6 +9,7 @@ from business_object.project import Project
 from business_object.user import User
 from dao.project_dao import ProjectDao
 from service.project_service import ProjectService
+from service.user_service import UserService
 
 
 @pytest.fixture(autouse=True)
@@ -214,7 +215,7 @@ def test_list_all_project():
     ProjectDao().list_all_project = MagicMock(return_value=project_list_michel)
 
     # WHEN
-    res = ProjectService().list_all_project(1)
+    res = UserService().list_all_project(1)
 
     # THEN
     assert len(res) == 3
