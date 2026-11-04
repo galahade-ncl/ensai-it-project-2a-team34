@@ -81,8 +81,8 @@ class ProjectService:
         Args:
             id_project (int) : id of the project
         Returns:
-            A list of Audit on the project"""
-        # Find the project corresponding to the project id
+            A list of Audits on the project"""
+        # Find the audits corresponding to the project id
         project = ProjectService().find_by_id(id_project)
         if not project:
             return None
