@@ -33,15 +33,6 @@ async def audit_by_id(id_audit: int, audit_service=Depends(get_audit_service)):
     return audit
 
 
-@router.get("/{id_user}/audits", response_model=list[AuditReadModel], tags=["Audits"])
-async def audit_by_user(id_audit: int, audit_service=Depends(get_audit_service)):
-    """
-    Retrieve audits filtered by audit ID.
-    """
-
-    return audit_service.list_all_audit(id_audit)
-
-
 @router.post("/", response_model=AuditResponseModel, tags=["Audits"])
 async def create_audit(p: AuditCreateModel, audit_service=Depends(get_audit_service)):
     """Create a new audit.
