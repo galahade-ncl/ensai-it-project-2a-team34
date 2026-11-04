@@ -22,7 +22,7 @@ async def audit_by_id(id_audit: int, audit_service=Depends(get_audit_service)):
         id_audit (int)
         audit_service (AuditService): The service used to interact with audit data
     Returns:
-        AuditRead: The audit data if found
+        AuditReadModel: The audit data if found
     Raises:
         HTTPException: 404 error if the audit is not found
     """

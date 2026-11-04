@@ -7,13 +7,19 @@ from schema.qualitygate_model import QualityGateModel
 from schema.sbom_model import SbomModel
 
 
-class AuditResponseModel(BaseModel):
+# When the user wants information on a past audit
+class AuditReadModel(BaseModel):
     id_audit: int
     id_project: int
     date: datetime
+    complexity: float
+    energy_consumption_kwh: float
+    carbon_emission_gco2e: float
+    qualitygate: QualityGateModel
 
 
-class AuditReadModel(BaseModel):
+# When user runs an audit on a project
+class AuditResponseModel(BaseModel):
     id_audit: int
     id_project: int
     date: datetime
