@@ -17,6 +17,6 @@ INSERT INTO project_table(name_project, id_user, secretHMACkey) VALUES
 ('test_de_projet',    6,      'fdslirgHR_rhoP3ZIJF5ruefiUREOIZPhflz568ro*àa_h5eAZEIjf'                );
 
 
-INSERT INTO audit_table(id_project, total_vulnerability, total_critical_vulnerability, complexity, energy_comsumption, carbon_emission_gco2e, type_qualitygate, status_qualitygate) VALUES
-(1,         5,       1,        25,       120,         1584,      'global',      'passed'),
-(3,         10,      2,        10,       200,         126,      'eco',       'passed');
+INSERT INTO audit_table(id_project, complexity, energy_comsumption, carbon_emission_gco2e, type_qualitygate, status_qualitygate) VALUES
+(1,        25,       120,         1584,      'global',      'passed'),
+(3,        10,       200,         126,      'eco',       'passed');

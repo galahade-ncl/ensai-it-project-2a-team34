@@ -33,8 +33,6 @@ CREATE TABLE audit_table (
     id_audit                                  SERIAL PRIMARY KEY,
     id_project                                INT,
     date                                      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    total_vulnerability                       FLOAT,
-    total_critical_vulnerability              FLOAT,
     complexity                                FLOAT,
     energy_comsumption                        FLOAT,
     carbon_emission_gco2e                     FLOAT,

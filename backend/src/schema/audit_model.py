@@ -15,7 +15,7 @@ class AuditReadModel(BaseModel):
     complexity: float
     energy_consumption_kwh: float
     carbon_emission_gco2e: float
-    qualitygate: QualityGateModel
+    quality_gate: QualityGateModel
 
 
 # When user runs an audit on a project

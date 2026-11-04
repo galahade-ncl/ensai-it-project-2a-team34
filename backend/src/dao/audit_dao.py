@@ -4,7 +4,6 @@ from dao.db_connection import DBConnection
 from service.certificate_service import CertificateService
 from service.qualitygate_services.qualitygate_service import QualityGateService
 from service.sbom_service import SBOMService
-from service.vulnerability_service import VulnerabilityService
 from utils.log_utils import get_logger, log
 from utils.singleton import Singleton
 
@@ -48,8 +47,6 @@ class AuditDao(metaclass=Singleton):
                         INSERT INTO audit_table (
                             id_project,
                             date,
-                            total_vulnerability,
-                            total_critical_vulnerability,
                             complexity,
                             energy_comsumption,
                             carbon_emission_gco2e,
@@ -59,8 +56,6 @@ class AuditDao(metaclass=Singleton):
                         VALUES (
                             %(id_project)s,
                             COALESCE(%(date)s, CURRENT_TIMESTAMP),
-                            %(total_vulnerability)s,
-                            %(total_critical_vulnerability)s,
                             %(complexity)s,
                             %(energy_comsumption)s,
                             %(carbon_emission_gco2e)s,
@@ -72,10 +67,6 @@ class AuditDao(metaclass=Singleton):
                         {
                             "id_project": audit.id_project,
                             "date": audit.date,
-                            "total_vulnerability": len(audit.vulnerabilities or []),
-                            "total_critical_vulnerability": VulnerabilityService().get_critical_vulnerability_count(
-                                audit.vulnerabilities
-                            ),
                             "complexity": audit.complexity,
                             "energy_comsumption": audit.energy_consumption_kwh,
                             "carbon_emission_gco2e": audit.carbon_emission_gco2e,
@@ -155,9 +146,6 @@ class AuditDao(metaclass=Singleton):
                         UPDATE audit_table
                         SET id_project = %(id_project)s,
                             date = %(date)s,
-                            total_vulnerability = %(total_vulnerability)s,
-                            total_critical_vulnerability =
-                                %(total_critical_vulnerability)s,
                             complexity = %(complexity)s,
                             energy_comsumption = %(energy_comsumption)s,
                             carbon_emission_gco2e =
@@ -170,10 +158,6 @@ class AuditDao(metaclass=Singleton):
                             "id_audit": audit.id_audit,
                             "id_project": audit.id_project,
                             "date": audit.date,
-                            "total_vulnerability": len(audit.vulnerabilities or []),
-                            "total_critical_vulnerability": VulnerabilityService().get_critical_vulnerability_count(
-                                audit.vulnerabilities
-                            ),
                             "complexity": audit.complexity,
                             "energy_comsumption": audit.energy_consumption_kwh,
                             "carbon_emission_gco2e": audit.carbon_emission_gco2e,
