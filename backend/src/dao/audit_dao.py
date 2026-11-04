@@ -1,7 +1,10 @@
+from datetime import datetime
+
 from business_object.audit import Audit
+from business_object.certificate import Certificate
 from business_object.project import Project
 from dao.db_connection import DBConnection
-from service.qualitygateservices.qualitygate_service import QualityGateService
+from service.qualitygate_services.qualitygate_service import QualityGateService
 from service.vulnerability_service import VulnerabilityService
 from utils.log_utils import get_logger, log
 from utils.singleton import Singleton
@@ -30,8 +33,9 @@ class AuditDao(metaclass=Singleton):
                                                      5,
                                                      0,
                                                      1,
-                                                     0.001),
-            certificate=None,
+                                                     0.001,
+                                                     row["status_qualitygate"]),
+            certificate=Certificate(0, datetime.now(), "empty", "Unevaluated", ""),
         )
 
     @log
@@ -50,6 +54,7 @@ class AuditDao(metaclass=Singleton):
                             complexity,
                             energy_comsumption,
                             carbon_emission_gco2e,
+                            type_qualitygate,
                             status_qualitygate
                         )
                         VALUES (
@@ -60,6 +65,7 @@ class AuditDao(metaclass=Singleton):
                             %(complexity)s,
                             %(energy_comsumption)s,
                             %(carbon_emission_gco2e)s,
+                            %(type_qualitygate)s,
                             %(status_qualitygate)s
                         )
                         RETURNING id_audit, date;
@@ -74,6 +80,7 @@ class AuditDao(metaclass=Singleton):
                             "complexity": audit.complexity,
                             "energy_comsumption": audit.energy_consumption_kwh,
                             "carbon_emission_gco2e": audit.carbon_emission_gco2e,
+                            "type_qualitygate": audit.quality_gate.get_type(),
                             "status_qualitygate": (
                                 audit.quality_gate
                                 if isinstance(audit.quality_gate, str)
@@ -156,6 +163,7 @@ class AuditDao(metaclass=Singleton):
                             energy_comsumption = %(energy_comsumption)s,
                             carbon_emission_gco2e =
                                 %(carbon_emission_gco2e)s,
+                            type_qualitygate = %(type_qualitygate)s,
                             status_qualitygate = %(status_qualitygate)s
                         WHERE id_audit = %(id_audit)s;
                         """,
@@ -170,6 +178,7 @@ class AuditDao(metaclass=Singleton):
                             "complexity": audit.complexity,
                             "energy_comsumption": audit.energy_consumption_kwh,
                             "carbon_emission_gco2e": audit.carbon_emission_gco2e,
+                            "type_qualitygate": audit.quality_gate.get_type(),
                             "status_qualitygate": (
                                 audit.quality_gate
                                 if isinstance(audit.quality_gate, str)
