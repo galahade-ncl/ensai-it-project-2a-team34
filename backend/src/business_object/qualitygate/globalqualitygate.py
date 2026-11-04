@@ -9,8 +9,8 @@ class GlobalQualityGate(QualityGate):
     Attributes:
         max_vulnerabilities (int): Max vulnerabilities tolerated for a project
         max_critical_vulnerabilities (int): Max critical vulnerabilities tolerated for a project
-        max_carbon_emission (int): Max carbon emission tolerated for a project
-        max_energy_consumption (int) : Max energy consumption tolerated for a project
+        max_carbon_emission (float): Max carbon emission tolerated for a project
+        max_energy_consumption (float) : Max energy consumption tolerated for a project
         status (str): Status of the quality gate
     """
 
@@ -20,7 +20,7 @@ class GlobalQualityGate(QualityGate):
         max_critical_vulnerabilities,
         max_carbon_emission,
         max_energy_consumption,
-        status,
+        status="Unevaluated",
     ):
         """Constructor"""
         self.max_vulnerabilities = max_vulnerabilities

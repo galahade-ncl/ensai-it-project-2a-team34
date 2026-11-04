@@ -5,12 +5,12 @@ class EcoQualityGate:
     """
     Class representing the security quality gate (via vulnerabilities) expected for an audit of a project
     Attributes:
-        max_carbon_emission (int): Max carbon emission tolerated for a project
-        max_energy_consumption (int) : Max energy consumption tolerated for a project
+        max_carbon_emission (float): Max carbon emission tolerated for a project
+        max_energy_consumption (float) : Max energy consumption tolerated for a project
         status (str): Status of the quality gate
     """
 
-    def __init__(self, max_carbon_emission, max_energy_consumption, status):
+    def __init__(self, max_carbon_emission, max_energy_consumption, status="Unevaluated"):
         self.max_carbon_emission = max_carbon_emission
         self.max_energy_consumption = max_energy_consumption
         self.status = status

@@ -7,13 +7,13 @@ class GlobalQualityGateService:
     Service that handles business logic related to a globalqualitygateservice
     """
     @log
-    def create(self, max_vulnerabilities: int, max_critical_vulnerabilities: int, max_carbon_emission: int, max_energy_consumption: int, *args) -> GlobalQualityGate:
+    def create(self, max_vulnerabilities: int, max_critical_vulnerabilities: int, max_carbon_emission: float, max_energy_consumption: float) -> GlobalQualityGate:
         """ Create a GlobalQualityGate object
         Args:
             max_vulnerabilities (int): threehold of vulnerabilities
             max_critical_vulnerabilities (int): threehold of critical vulnerabilities
-            max_carbon_emission (int): threehold of carbon emission
-            max_energy_consumption (int): threehold of energy consumption
+            max_carbon_emission (float): threehold of carbon emission
+            max_energy_consumption (float): threehold of energy consumption
         Return:
             Return an GlobalQualityGate object
         """

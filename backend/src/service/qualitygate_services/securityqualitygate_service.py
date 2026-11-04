@@ -7,7 +7,7 @@ class SecurityQualityGateService:
     Service that handles business logic related to a securityqualitygateservice
     """
     @log
-    def create(self, max_vulnerabilities: int, max_critical_vulnerabilities: int, *args) -> SecurityQualityGate:
+    def create(self, max_vulnerabilities: int, max_critical_vulnerabilities: int) -> SecurityQualityGate:
         """ Create a SecurityQualityGate object
         Args:
             max_vulnerabilities (int): threehold of vulnerabilities
