@@ -443,9 +443,7 @@ def test_count_recursive_calls(source, expected):
 @pytest.mark.parametrize(
     "source, expected",
     [
-        # Sans boucle ni récursion : coût constant
         pytest.param("x = 1", 1, id="no_loop"),
-        # Boucles
         pytest.param("for i in range(3):\n    print(i)", 1 + 3, id="one_loop"),
         pytest.param(
             "x = 0\nfor i in range(3):\n    for j in range(4):\n        for k in range(5):\n"
