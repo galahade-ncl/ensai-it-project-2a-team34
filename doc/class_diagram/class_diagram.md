@@ -255,7 +255,7 @@ classDiagram
     class AuditService {
         +create(int, int, datetime, list[Vulnerability], licenses: list[Licence], list[AntiPattern],float, sbom, float, float, QualityGate, list[Certificate]): Audit
         +list_all_audit(id_audit: int) : list[Audit]
-        +find_by_id(id_audit: int): Audit
+        +find_by_id(id_projet: int): Audit
         +run_audit(project: Project): Audit
     }
 
