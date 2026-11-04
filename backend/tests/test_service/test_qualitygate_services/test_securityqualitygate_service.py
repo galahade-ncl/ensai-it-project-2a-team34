@@ -33,13 +33,13 @@ qualitygatelist_service = [
 ]
 
 
-def test_create_successful():
+def test_create_successful(monkeypatch):
     """Successfully create a SecurityQualityGate object"""
 
     for i in range(6):
         # GIVEN
         qualitygate_expected = qualitygatelist_service[i]
-        SecurityQualityGate.create = MagicMock(return_value=qualitygate_expected)
+        monkeypatch.setattr(SecurityQualityGate, "evaluate", MagicMock(return_value=True))
 
         # WHEN
         response_qualitygate = SecurityQualityGateService().create(
@@ -49,6 +49,9 @@ def test_create_successful():
         )
 
         # THEN
+        assert response_qualitygate.max_vulnerabilities == qualitygate_expected.max_vulnerabilities, (
+    f"i={i}, got={response_qualitygate.max_vulnerabilities}, "
+    f"expected={qualitygate_expected.max_vulnerabilities}")
         assert response_qualitygate.get_type() == "security"
         assert response_qualitygate.max_vulnerabilities == qualitygate_expected.max_vulnerabilities
         assert response_qualitygate.max_critical_vulnerabilities == qualitygate_expected.max_critical_vulnerabilities

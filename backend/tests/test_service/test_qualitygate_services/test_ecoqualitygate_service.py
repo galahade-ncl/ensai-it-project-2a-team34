@@ -21,13 +21,13 @@ qualitygatelist = [
 ]
 
 
-def test_create_successful():
+def test_create_successful(monkeypatch):
     """Successfully create a EcoQualityGate object"""
 
     for i in range(6):
         # GIVEN
         qualitygate_expected = qualitygatelist[i]
-        EcoQualityGate.create = MagicMock(return_value=qualitygate_expected)
+        monkeypatch.setattr(EcoQualityGate, "evaluate", MagicMock(return_value=True))
 
         # WHEN
         response_qualitygate = EcoQualityGateService().create(

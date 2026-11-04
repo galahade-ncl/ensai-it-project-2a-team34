@@ -45,14 +45,13 @@ qualitygatelist = [
 ]
 
 
-def test_create_successful():
+def test_create_successful(monkeypatch):
     """Successfully create a GlobalQualityGate object"""
 
     for i in range(6):
         # GIVEN
         qualitygate_expected = qualitygatelist[i]
-        GlobalQualityGate.create = MagicMock(return_value=qualitygate_expected)
-
+        monkeypatch.setattr(GlobalQualityGate, "evaluate", MagicMock(return_value=True))
         # WHEN
         response_qualitygate = GlobalQualityGateService().create(
             qualitygate_expected.max_vulnerabilities,

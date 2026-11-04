@@ -135,7 +135,7 @@ def test_evaluate_failed():
         assert audit.quality_gate.status == "Failed"
 
 
-def test_create_successful():
+def test_create_successful(monkeypatch):
     """Successfully create a QualityGate object"""
 
     for i in range(6):
@@ -144,7 +144,7 @@ def test_create_successful():
         qualitygate_type = qualitygate_expected.get_type()
 
         if qualitygate_type == "global":
-            GlobalQualityGateService.create = MagicMock(return_value=qualitygate_expected)
+            monkeypatch.setattr(GlobalQualityGateService, "create", MagicMock(return_value=qualitygate_expected))
 
             # WHEN
             response_qualitygate = QualityGateService().create(
@@ -157,7 +157,7 @@ def test_create_successful():
             response_qualitygate_type = response_qualitygate.get_type()
 
         elif qualitygate_type == "security":
-            SecurityQualityGateService.create = MagicMock(return_value=qualitygate_expected)
+            monkeypatch.setattr(SecurityQualityGateService, "create", MagicMock(return_value=qualitygate_expected))
 
             # WHEN
             response_qualitygate = QualityGateService().create(
@@ -170,7 +170,7 @@ def test_create_successful():
             response_qualitygate_type = response_qualitygate.get_type()
 
         elif qualitygate_type == "eco":
-            EcoQualityGateService.create = MagicMock(return_value=qualitygate_expected)
+            monkeypatch.setattr(EcoQualityGateService, "create", MagicMock(return_value=qualitygate_expected))
 
             # WHEN
             response_qualitygate = QualityGateService().create(
