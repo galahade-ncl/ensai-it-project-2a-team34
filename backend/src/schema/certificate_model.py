@@ -4,8 +4,8 @@ from pydantic import BaseModel
 
 
 class CertificateModel(BaseModel):
-    id_certificate: int
+    name: str
     date: datetime
-    type: str
+    type_file: str
     status: str
-    path: str
+    content: bytes

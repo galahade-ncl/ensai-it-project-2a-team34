@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from business_object.audit import Audit
-from business_object.certificate import Certificate
+from business_object.file.certificatefile import CertificateFile
 from business_object.project import Project
 from dao.db_connection import DBConnection
 from service.qualitygate_services.qualitygate_service import QualityGateService
@@ -35,7 +35,7 @@ class AuditDao(metaclass=Singleton):
                                                      1,
                                                      0.001,
                                                      row["status_qualitygate"]),
-            certificate=Certificate(0, datetime.now(), "empty", "Unevaluated", ""),
+            certificate=CertificateFile("", bytes(""), "", ""),
         )
 
     @log
