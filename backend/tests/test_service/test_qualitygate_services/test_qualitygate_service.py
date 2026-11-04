@@ -138,7 +138,7 @@ def test_evaluate_failed():
 def test_create_successful():
     """Successfully create a QualityGate object"""
 
-    for i in range(1, 6):
+    for i in range(6):
         # GIVEN
         qualitygate_expected = qualitygatelist[i]
         qualitygate_type = qualitygate_expected.get_type()
@@ -193,7 +193,13 @@ def test_create_false_type_qualitygate():
     qualitygate_type = "test_de_faux_qualitygate_type"
 
     # WHEN
-    response_qualitygate = QualityGateService().create(type_qualitygate=qualitygate_type)
+    response_qualitygate = QualityGateService().create(
+        type_qualitygate=qualitygate_type,
+        max_vulnerabilities=0,
+        max_critical_vulnerabilities=0,
+        max_carbon_emission=0,
+        max_energy_consumption=0,
+        status="Unevaluated")
 
     # THEN
     assert response_qualitygate is None

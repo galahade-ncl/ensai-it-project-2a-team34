@@ -38,7 +38,7 @@ CREATE TABLE audit_table (
     complexity                                FLOAT,
     energy_comsumption                        FLOAT,
     carbon_emission_gco2e                     FLOAT,
-    type_qualitygate                          VARCHAR
+    type_qualitygate                          VARCHAR,
     status_qualitygate                        VARCHAR,
     FOREIGN KEY (id_project)
     REFERENCES project_table(id_project)
