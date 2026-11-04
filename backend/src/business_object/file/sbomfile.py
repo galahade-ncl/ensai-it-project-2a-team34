@@ -45,5 +45,5 @@ class SBOMFile(File):
         return "sbom"
 
     # Temporaire
-    def create_empty_certificate():
+    def create_empty_sbom():
         return SBOMFile(name="Empty", content=b"0", type_file="json")
