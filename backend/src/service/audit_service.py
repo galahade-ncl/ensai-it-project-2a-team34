@@ -81,6 +81,15 @@ class AuditService:
         return AuditDao().find_all(id_project)
 
     @log
+    def update(self, audit: Audit):
+        """
+        Update an Audit
+        Args:
+            audit
+        """
+        return AuditDao().update(audit)
+
+    @log
     def run_audit(self, project: Project, quality_gate_type: str):
         """
         Runs an audit on a project
@@ -149,5 +158,9 @@ class AuditService:
 
         certificate = CertificateService().generate_certificate(audit, project, quality_gate_type)
         audit.certificate = certificate
+
+        # Update qualitygate status in database
+
+        AuditService().update(audit)
 
         return audit
