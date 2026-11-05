@@ -1,7 +1,4 @@
-import ast
-
 from business_object.dependency import Dependency
-from business_object.file.codefile import CodeFile
 from business_object.file.dependencyfile import DependencyFile
 from business_object.file.file import File
 from service.file_services.json_service import JsonService
@@ -61,14 +58,3 @@ class FileService:
             return TomlService().parse_dependencies(dependencyfile.content)
 
         raise ValueError(f"Type de fichier non supporté : {extension}")
-
-    @log
-    def parse_ast(self, codefile: CodeFile) -> ast.Module:
-        """
-        Gives the ast.Module of a codefile
-        Args:
-            codefile (CodeFile): file containing the code
-        Returns:
-            ast.Module type
-        """
-        pass
