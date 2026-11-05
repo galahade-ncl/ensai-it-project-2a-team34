@@ -16,7 +16,7 @@ ensai-it-2a-team34/
 │   │   │   ├── __init__.py
 │   │   │   ├── api_osv.py
 │   │   │   └── test_provisoire_api.py
-│   │   ├── business_object/                          # Code source principal
+│   │   ├── business_object/                          
 │   │   │   ├── antipattern/
 │   │   │   │   ├── anttipatern.py
 │   │   │   │   ├── nestedloop.py
