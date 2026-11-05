@@ -14,14 +14,18 @@ from service.sbom_service import SBOMService
 
 # A tester SBOMService.generate() et SBOMfile.get_duty()
 
-#helpers
+#---------------------------------------------------
+# HELPERS
+#---------------------------------------------------
 def make_dependency(name, version=None):  
     """Fake Dependency: generate() only reads .name and .version
         expects Dependency objects
     """
     return SimpleNamespace(name=name, version=version)
 
-# fixture
+#------------------------------------------------
+# FIXTURE
+#------------------------------------------------
 @pytest.fixture
 def user():
     """fictive user because project needs a user"""
@@ -95,14 +99,16 @@ def clean_version(monkeypatch):
         "service.sbom_service.API_DEPSDEV", SimpleNamespace(clean_version=fake_clean_version)
     )
 
-
-#SBOMFile.get_duty()
+#-----------------------------------
+# TEST OF SBOMFile.get_duty()
+#-----------------------------------
 def test_sbomfile_get_duty():
     sbom=SBOMFile(name="demo_sbom.json",content=b"{}",type_file="json",date=None)
     assert sbom.get_duty()=="sbom"
 
-
-# SBOMService.generate()
+#-------------------------------
+# TEST OF SBOMService.generate()
+#-------------------------------
 def test_generate_successful(project,file_service):
     sbom = SBOMService().generate(project)
     document = json.loads(sbom.content)
@@ -146,7 +152,9 @@ def test_generate_without_dependencies(project, file_service):
     assert document["components"] == []
     assert document["dependencies"] == [{"ref": "demo", "dependsOn": []}]
 
-#test of generate for every kind of depency file(txt, toml, json,xml)
+#----------------------------------------------------------------------
+#TEST OF GENERATE for every kind of depency file(txt, toml, json,xml)
+#---------------------------------------------------------------------
 @pytest.mark.parametrize(
     "filename, dependencies, expected_purls",
     [
