@@ -21,6 +21,16 @@ class UserModel(BaseModel):
         return v
 
 
+# Autre que la création du user
+class UserResponseModel(BaseModel):
+    """ DOC A FAIRE"""
+    id_user: int
+    username: str
+    password: str
+    email: EmailStr
+    # access_token: str
+
+
 class UserReadModel(BaseModel):
     id_user: int
     username: str

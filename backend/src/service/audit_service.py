@@ -25,7 +25,6 @@ class AuditService:
     @log
     def create(
         self,
-        id_audit: int,
         id_project: int,
         date: datetime,
         vulnerabilities: list[Vulnerability],
@@ -99,18 +98,23 @@ class AuditService:
 
         dep_file = project.dependencyfile
 
+        # -----------------
+        #  SecurityService
+        # -----------------
         vulnerabilities = SecurityService().find_vulnerabilities(dep_file)
         licenses = SecurityService().find_licences(dep_file)
 
         code_file = project.codefile
 
-        anti_patterns = EcoService().detect_antipatterns(code_file)
+        # ------------
+        #  EcoService
+        # ------------
+        analysis = EcoService().analyze(code_file)
 
-        complexity = EcoService().estimate_complexity(code_file)
-
-        energy_consumption_kwh = EcoService().calculate_energy(code_file)
-
-        carbon_emission_gco2e = EcoService().calculate_carbon(energy_consumption_kwh)
+        anti_patterns = analysis.antipatterns
+        complexity = analysis.complexity
+        energy_consumption_kwh = analysis.energy_kwh
+        carbon_emission_gco2e = analysis.carbon_gco2e
 
         sbom = SBOMService().generate(project)
 
@@ -120,6 +124,7 @@ class AuditService:
             max_critical_vulnerabilities=max_critical_vuln,
             max_carbon_emission=max_carbon,
             max_energy_consumption=max_energy,
+            status="Unevaluated"
         )
 
         certificate = CertificateService().create_empty_certificate()

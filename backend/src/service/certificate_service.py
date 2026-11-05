@@ -25,19 +25,19 @@ SECRET_KEY = os.environ["CERTIFICATE_SECRET_KEY"].encode()
 # Un modèle par type de quality gate : adapte les clés à tes vraies valeurs
 TEMPLATES = {
     "eco": {
-        "title": "Certificat Éco",
+        "title": "Energy Efficiency Certificate",
         "color": colors.HexColor("#8c5a2b"),
-        "text": "a satisfait les exigences ",
+        "text": "is hereby certified as meeting the applicable energy efficiency standards.",
     },
     "security": {
-        "title": "Certificat Sécurité",
+        "title": "Security Certification",
         "color": colors.HexColor("#7a7a7a"),
-        "text": "a satisfait aux exigences avancées du quality gate",
+        "text": "is hereby certified as meeting the applicable security standards.",
     },
     "global": {
-        "title": "Certificat Global",
+        "title": "General Quality Certification",
         "color": colors.HexColor("#b8860b"),
-        "text": "has met all the requirements ",
+        "text": "is hereby certified as meeting the applicable overall quality standards.",
     },
 }
 
@@ -52,8 +52,9 @@ class CertificateService:
     def generate_certificate(
         self, audit: Audit, project: Project, qualitygate_type: str
     ) -> CertificateFile:
+        """DOC A REMPLIR"""
         if qualitygate_type not in TEMPLATES:
-            raise ValueError(f"Type de certificat inconnu : {qualitygate_type}")
+            raise ValueError(f"Unknown Certification : {qualitygate_type}")
 
         tpl = TEMPLATES[qualitygate_type]
         cert_id = str(uuid.uuid4())
@@ -76,7 +77,7 @@ class CertificateService:
         # Corps
         c.setFillColor(colors.black)
         c.setFont("Helvetica", 16)
-        c.drawCentredString(w / 2, h - 190, "Il est certifié que le projet")
+        c.drawCentredString(w / 2, h - 190, "The project known as")
         c.setFont("Helvetica-Bold", 28)
         c.drawCentredString(w / 2, h - 240, project_name)
         c.setFont("Helvetica", 16)

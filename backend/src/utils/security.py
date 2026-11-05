@@ -70,7 +70,7 @@ def encode_secret_key(key: bytes | str) -> str:
     return key
 
 
-def generate_signature(secret: bytes, code: bytes, dependency: bytes) -> bytes:
+def generate_signature(secret: bytes, project_id_bytes: bytes, code: bytes, dependency: bytes) -> bytes:
     """
     Generate a new signature
     Args:
@@ -81,6 +81,9 @@ def generate_signature(secret: bytes, code: bytes, dependency: bytes) -> bytes:
         Signature associated with the secret and the files (bytes object)
     """
     hmac_key = hmac.new(secret, digestmod=hashlib.sha256)
+
+    hmac_key.update(len(project_id_bytes).to_bytes(8, "big"))
+    hmac_key.update(project_id_bytes)
 
     hmac_key.update(len(code).to_bytes(8, "big"))
     hmac_key.update(code)

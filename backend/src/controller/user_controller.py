@@ -1,8 +1,8 @@
-
 from fastapi import APIRouter, Depends, HTTPException
 
 from schema.project_model import ProjectReadModel
-from schema.user_model import UserModel, UserReadModel
+from schema.user_model import UserModel, UserReadModel, UserResponseModel
+from service.project_service import ProjectService
 from service.user_service import UserService
 from utils.log_utils import get_logger
 
@@ -14,6 +14,11 @@ logger = get_logger(__name__)
 def get_user_service():
     """Dependency Injection provider for UserService."""
     return UserService()
+
+
+def get_project_service():
+    """Dependency Injection provider for ProjectService."""
+    return ProjectService()
 
 
 @router.get("/{id_user}", response_model=UserReadModel, tags=["Users"])
@@ -59,7 +64,7 @@ async def create_user(u: UserModel, user_service=Depends(get_user_service)):
 
 
 @router.put("/{id_user}", response_model=UserReadModel, tags=["Users"])
-async def update_user(id_user: int, u: UserModel, user_service=Depends(get_user_service)):
+async def update_user(id_user: int, u: UserResponseModel, user_service=Depends(get_user_service)):
     """Update an existing user's information.
     Args:
         id_user (int)
@@ -92,7 +97,11 @@ async def update_user(id_user: int, u: UserModel, user_service=Depends(get_user_
 
 
 @router.delete("/{id_user}", tags=["Users"])
-async def delete_user(id_user: int, user_service=Depends(get_user_service)):
+async def delete_user(
+    id_user: int,
+    user_service=Depends(get_user_service),
+    project_service=Depends(get_project_service),
+):
     """Delete a user from the system.
     Args:
         id_user (int)
@@ -104,9 +113,16 @@ async def delete_user(id_user: int, user_service=Depends(get_user_service)):
     """
     logger.info("Delete a user")
     user = user_service.find_by_id(id_user)
+
     if not user:
         raise HTTPException(status_code=404, detail=f"User (id={id_user}) not found.")
 
+    # Delete all project own by the user
+    list_project = user_service.list_all_project(id_user)
+    for project in list_project:
+        project_service.delete(project)
+
+    # Delete the user
     user_service.delete(user)
     return f"User {user.username} deleted"
 

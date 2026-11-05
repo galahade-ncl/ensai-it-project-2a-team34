@@ -5,6 +5,6 @@ from pydantic import BaseModel
 
 class CertificateModel(BaseModel):
     name: str
-    content: bytes
+    content: bytes | str
     type_file: str
     date: datetime

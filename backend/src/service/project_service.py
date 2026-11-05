@@ -55,25 +55,36 @@ class ProjectService:
         """
         return ProjectDao().delete(project)
 
-    # Est-ce qu'on garde la méthode là ?
+    # @log
+    # def get_secretHMACkey(id_project: int) -> bytes:
+    #     """DOC A FAIRE"""
+    #     return ProjectDao().get_secretHMACkey(id_project=id_project)
+
     @staticmethod
     @log
-    def verify_signature(
-        project: Project, code: bytes, dependency: bytes, signature: bytes
-    ) -> bool:
+    def verify_signature(project: Project, signature: bytes) -> bool:
         """
         Verify the signature given
         Args:
             project (Project): Project related to the signature
-            code (bytes): The binary version of a codefile
-            dependency (bytes): The binary version of a dependencyfile,
             signature (bytes): the signature given
         Returns:
             Boolean object indicating whether the signature is valid or not
         """
-        expected_signature = generate_signature(project.secretHMACkey, code, dependency)
+        code = project.codefile.content
+        dependency = project.dependencyfile.content
+        project_id = str(project.id_project).encode("utf-8")
 
-        return hmac.compare_digest(expected_signature, signature)
+        expected_signature = generate_signature(project.secretHMACkey, project_id, code, dependency)
+
+        ok = hmac.compare_digest(expected_signature, signature)
+        if not ok:
+            raise ValueError(
+                f"DEBUG keylen={len(bytes(project.secretHMACkey))} id={project_id!r} "
+                f"code={len(code)} dep={len(dependency)} "
+                f"expected={expected_signature.hex()} received={signature.hex()}"
+            )
+        return ok
 
     @log
     def list_all_audit(self, id_project: int) -> list[Audit] | None:

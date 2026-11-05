@@ -2,9 +2,13 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
+from schema.antipattern_model import AntiPatternModel
 from schema.certificate_model import CertificateModel
+from schema.licence_model import LicenceModel
+from schema.project_model import ProjectCompletedModel
 from schema.qualitygate_model import QualityGateModel
 from schema.sbom_model import SbomModel
+from schema.vulnerability_model import VulnerabilityModel
 
 
 # When the user wants information on a past audit
@@ -23,9 +27,9 @@ class AuditResponseModel(BaseModel):
     id_audit: int
     id_project: int
     date: datetime
-    vulnerabilities: list
-    licenses: list
-    anti_patterns: list
+    vulnerabilities: list[VulnerabilityModel]
+    licenses: list[LicenceModel] | str
+    anti_patterns: list[AntiPatternModel]
     complexity: float
     energy_consumption_kwh: float
     carbon_emission_gco2e: float
@@ -36,6 +40,6 @@ class AuditResponseModel(BaseModel):
 
 # Model used to create the audit of a project
 class AuditCreateModel(BaseModel):
-    id_project: int
+    project: ProjectCompletedModel
     qualitygate_type: str
     hmac_signature: str

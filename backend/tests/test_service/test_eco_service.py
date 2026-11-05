@@ -9,6 +9,7 @@ from service.eco_service import EcoService
 DEFAULT_LENGTH = 10
 DEFAULT_DEPTH = 10
 
+
 def code_file(source):
     """Utilitaire : faux CodeFile (seul l'attribut content est lu par EcoService)"""
     content = dedent(source).strip() if isinstance(source, str) else source
@@ -18,6 +19,7 @@ def code_file(source):
 # ============================================================
 # TESTS ENERGY
 # ============================================================
+
 
 @pytest.mark.parametrize(
     "metrics, input_size, expected",
@@ -96,14 +98,13 @@ def test_calculate_energy_invalid_input_size(input_size):
 # TESTS CARBON
 # ============================================================
 
+
 def test_calculate_carbon_default_intensity():
     service = EcoService()
 
     result = service.calculate_carbon(2.5)
 
-    expected = (
-        2.5 * EcoService.CARBON_INTENSITY_GCO2E_PER_KWH
-    )
+    expected = 2.5 * EcoService.CARBON_INTENSITY_GCO2E_PER_KWH
 
     assert result == pytest.approx(expected)
 
@@ -136,7 +137,6 @@ def test_calculate_carbon_negative_values(energy, intensity):
 
     with pytest.raises(ValueError):
         service.calculate_carbon(energy, intensity)
-
 
 
 # =============================================================================
@@ -432,9 +432,7 @@ def test_detect_antipatterns(source, expected):
         pytest.param("for i in range(1.5):\n    pass", DEFAULT_LENGTH, id="range_with_float"),
         pytest.param("for a in 5:\n    pass", DEFAULT_LENGTH, id="constant_not_iterable"),
         pytest.param("for a in {1: 2}:\n    pass", DEFAULT_LENGTH, id="literal_dict"),
-        pytest.param(
-            "for a in enumerate(range(3)):\n    pass", DEFAULT_LENGTH, id="enumerate"
-        ),
+        pytest.param("for a in enumerate(range(3)):\n    pass", DEFAULT_LENGTH, id="enumerate"),
         pytest.param("while x:\n    pass", DEFAULT_LENGTH, id="while_loop"),
     ],
 )
@@ -520,17 +518,14 @@ def test_loop_complexity(source, expected):
         pytest.param(
             "def fib(n):\n    return fib(n - 1) + fib(n - 2)", 2, id="two_recursive_calls"
         ),
-        pytest.param(
-            "def f(n):\n    if n:\n        f(n - 1)", 1, id="recursive_call_in_an_if"
-        ),
+        pytest.param("def f(n):\n    if n:\n        f(n - 1)", 1, id="recursive_call_in_an_if"),
         pytest.param(
             "def f(n):\n    for i in range(2):\n        f(n - 1)",
             2,
             id="recursive_call_in_a_loop_counts_once_per_iteration",
         ),
         pytest.param(
-            "def f(n):\n    for i in range(2):\n        for j in range(3):\n"
-            "            f(n - 1)",
+            "def f(n):\n    for i in range(2):\n        for j in range(3):\n            f(n - 1)",
             6,
             id="recursive_call_in_nested_loops",
         ),
@@ -588,9 +583,7 @@ def test_count_recursive_calls(source, expected):
         ),
         pytest.param("for a in x:\n    pass", 1 + DEFAULT_LENGTH, id="loop_of_unknown_length"),
         pytest.param("while x:\n    pass", 1 + DEFAULT_LENGTH, id="while_loop"),
-        pytest.param(
-            "for a in range(0):\n    pass", 1, id="loop_that_never_runs"
-        ),
+        pytest.param("for a in range(0):\n    pass", 1, id="loop_that_never_runs"),
         pytest.param(
             "def f(x):\n    for a in range(5):\n        pass",
             1 + 5,

@@ -75,4 +75,4 @@ class SecurityService:
             for licence in API_DEPSDEV.find_licences(dependency=dep, ecosystem=ecosystem):
                 if licence not in list_licence:
                     list_licence.append(licence)
-            return list_licence
+        return list_licence

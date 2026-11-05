@@ -87,7 +87,7 @@ class ProjectDao(metaclass=Singleton):
                 id_project=res_project["id_project"],
                 name_project=res_project["name_project"],
                 user=user,
-                secretHMACkey=res_project["secrethmackey"],
+                secretHMACkey=bytes(res_project["secrethmackey"]),
             )
 
         return project
@@ -131,7 +131,7 @@ class ProjectDao(metaclass=Singleton):
                     id_project=row["id_project"],
                     name_project=row["name_project"],
                     user=user,
-                    secretHMACkey=row["secrethmackey"],
+                    secretHMACkey=bytes(row["secrethmackey"]),
                 )
             )
 
@@ -176,6 +176,38 @@ class ProjectDao(metaclass=Singleton):
             raise
 
         return nb_affected_rows == 1
+
+    # @log
+    # def get_secretHMACkey(self, id_project: int) -> str | None:
+    #     """
+    #     Retrieve the secret HMAC key for a specific project.
+
+    #     Arguments
+    #     ---------
+    #     id_project : int
+    #         The ID of the project
+
+    #     Returns
+    #     -------
+    #     str | None
+    #         The secret HMAC key if found, None otherwise
+    #     """
+    #     try:
+    #         with DBConnection().connection as connection:
+    #             with connection.cursor() as cursor:
+    #                 cursor.execute(
+    #                     "SELECT secretHMACkey FROM project_table WHERE id_project = %(id_project)s;",
+    #                     {"id_project": id_project},
+    #                 )
+    #                 res = cursor.fetchone()
+    #     except Exception as e:
+    #         logger.error(e)
+    #         raise
+
+    #     if res:
+    #         return res["secretHMACkey"]
+
+    #     return None
 
     @log
     def delete(self, project: Project) -> bool:

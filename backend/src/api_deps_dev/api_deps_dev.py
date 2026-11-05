@@ -73,7 +73,7 @@ class API_DEPSDEV:
         if response.status_code == 404:  # package or version unknown
             return []
         response.raise_for_status()
-        return response.json().get("licenses", [])
+        return API_DEPSDEV._to_licences(response.json().get("licenses", []))
 
     @staticmethod
     def _default_version(base: str) -> str | None:
