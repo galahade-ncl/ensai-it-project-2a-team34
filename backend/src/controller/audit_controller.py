@@ -10,6 +10,7 @@ from schema.audit_model import AuditCreateModel, AuditReadModel, AuditResponseMo
 from service.audit_service import AuditService
 from service.project_service import ProjectService
 from utils.log_utils import get_logger
+from utils.security import verify_token
 
 router = APIRouter()
 
@@ -27,7 +28,7 @@ def get_project_service():
 
 
 @router.get("/{id_audit}", response_model=AuditReadModel, tags=["Audits"])
-async def audit_by_id(id_audit: int, audit_service=Depends(get_audit_service)):
+async def audit_by_id(id_audit: int, user=Depends(verify_token), audit_service=Depends(get_audit_service), project_service=Depends(get_project_service)):
     """Find an audit by its unique ID.
     Args:
         id_audit (int)
@@ -38,7 +39,13 @@ async def audit_by_id(id_audit: int, audit_service=Depends(get_audit_service)):
         HTTPException: 404 error if the audit is not found
     """
     logger.info("Find an audit by id")
+
     audit = audit_service.find_by_id(id_audit)
+
+    project = project_service.find_by_id_and_user(audit.id_project, user.id_user)
+    if not project:
+        raise HTTPException(status_code=404, detail="Audit not found or you do not have access to it.")
+
     if not audit:
         raise HTTPException(status_code=404, detail="Audit (id={id_audit}) not found.")
     return audit
@@ -47,6 +54,7 @@ async def audit_by_id(id_audit: int, audit_service=Depends(get_audit_service)):
 @router.post("/", response_model=AuditResponseModel, tags=["Audits"])
 async def create_audit(
     p: AuditCreateModel,
+    user=Depends(verify_token),
     audit_service=Depends(get_audit_service),
     project_service=Depends(get_project_service),
 ):
@@ -62,7 +70,10 @@ async def create_audit(
     logger.info("Create an audit")
 
     # Get the project
-    project = project_service.find_by_id(id_project=p.project.id_project)
+    project = project_service.find_by_id_and_user(id_project=p.project.id_project, id_user=user.id_user)
+
+    if not project:
+        raise HTTPException(status_code=404, detail="Audit not found or you do not have access to it.")
 
     # Decode the base64 received
     try:
@@ -76,7 +87,6 @@ async def create_audit(
     project = Project(
         id_project=project.id_project,
         name_project=project.name_project,
-        user=project.user,
         secretHMACkey=project.secretHMACkey,
         codefile=CodeFile(
             name=p.project.codefile.name,

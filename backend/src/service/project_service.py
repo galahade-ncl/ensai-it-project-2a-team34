@@ -22,8 +22,8 @@ class ProjectService:
             Project object created or None if creation failed.
         """
         secret_HMAC_key = generate_secret_HMAC_key()
-        new_project = Project(name_project=project_name, user=user, secretHMACkey=secret_HMAC_key)
-        return new_project if ProjectDao().create(new_project) else None
+        new_project = Project(name_project=project_name, secretHMACkey=secret_HMAC_key)
+        return new_project if ProjectDao().create(new_project, user.id_user) else None
 
     @log
     def find_by_id(self, id_project: int) -> Project | None:
@@ -34,6 +34,17 @@ class ProjectService:
             Project object if found, otherwise None.
         """
         return ProjectDao().find_by_id(id_project)
+
+    @log
+    def find_by_id_and_user(self, id_project: int, id_user: int) -> Project | None:
+        """Finds a project by its id only if it belongs to the given user.
+        Args:
+            id_project (int) : id of the project
+            id_user (int) : id of the user
+        Returns:
+            Project object if found and owned by the user, otherwise None.
+        """
+        return ProjectDao().find_by_id_and_user(id_project, id_user)
 
     @log
     def update(self, project: Project) -> Project | None:

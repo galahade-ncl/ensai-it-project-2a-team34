@@ -5,6 +5,7 @@ from schema.user_model import UserModel, UserReadModel, UserResponseModel
 from service.project_service import ProjectService
 from service.user_service import UserService
 from utils.log_utils import get_logger
+from utils.security import verify_token
 
 router = APIRouter()
 
@@ -20,23 +21,23 @@ def get_project_service():
     """Dependency Injection provider for ProjectService."""
     return ProjectService()
 
-
-@router.get("/{id_user}", response_model=UserReadModel, tags=["Users"])
-async def user_by_id(id_user: int, user_service=Depends(get_user_service)):
-    """Find a user by their unique ID.
-    Args:
-        id_user (int)
-        user_service (UserService): The service used to interact with user data
-    Returns:
-        UserReadModel: The user data if found
-    Raises:
-        HTTPException: 404 error if the user is not found
-    """
-    logger.info("Find a user by id")
-    user = user_service.find_by_id(id_user)
-    if not user:
-        raise HTTPException(status_code=404, detail=f"User (id={id_user}) not found.")
-    return user
+# Est-ce qu'on garde ? Sachant que tel quel ca renvoie le token ...
+# @router.get("/{id_user}", response_model=UserReadModel, tags=["Users"])
+# async def user_by_id(id_user: int, user_service=Depends(get_user_service)):
+#    """Find a user by their unique ID.
+#    Args:
+#        id_user (int)
+#        user_service (UserService): The service used to interact with user data
+#    Returns:
+#        UserReadModel: The user data if found
+#    Raises:
+#        HTTPException: 404 error if the user is not found
+#    """
+#    logger.info("Find a user by id")
+#    user = user_service.find_by_id(id_user)
+#    if not user:
+#        raise HTTPException(status_code=404, detail=f"User (id={id_user}) not found.")
+#    return user
 
 
 @router.post("/", response_model=UserReadModel, tags=["Users"])
@@ -64,7 +65,7 @@ async def create_user(u: UserModel, user_service=Depends(get_user_service)):
 
 
 @router.put("/{id_user}", response_model=UserReadModel, tags=["Users"])
-async def update_user(id_user: int, u: UserResponseModel, user_service=Depends(get_user_service)):
+async def update_user(u: UserResponseModel, user=Depends(verify_token), user_service=Depends(get_user_service)):
     """Update an existing user's information.
     Args:
         id_user (int)
@@ -77,17 +78,14 @@ async def update_user(id_user: int, u: UserResponseModel, user_service=Depends(g
         HTTPException: 500 error if the update process fails.
     """
     logger.info("Update a user")
-    user = user_service.find_by_id(id_user)
     if not user:
-        raise HTTPException(status_code=404, detail=f"User (id={id_user}) not found.")
+        raise HTTPException(status_code=404, detail=f"User (id={user.id_user}) not found.")
     if user_service.username_already_used(u.username):
         raise HTTPException(status_code=400, detail="Username already used.")
 
     user.username = u.username
     user.password = u.password
     user.email = u.email
-    # Pas de token donné par l'utilisateur -> générer pendant la création du user
-    # user.access_token = u.access_token
 
     user = user_service.update(user)
     if not user:
@@ -98,7 +96,7 @@ async def update_user(id_user: int, u: UserResponseModel, user_service=Depends(g
 
 @router.delete("/{id_user}", tags=["Users"])
 async def delete_user(
-    id_user: int,
+    user=Depends(verify_token),
     user_service=Depends(get_user_service),
     project_service=Depends(get_project_service),
 ):
@@ -112,13 +110,12 @@ async def delete_user(
         HTTPException: 404 error if the user is not found.
     """
     logger.info("Delete a user")
-    user = user_service.find_by_id(id_user)
 
     if not user:
-        raise HTTPException(status_code=404, detail=f"User (id={id_user}) not found.")
+        raise HTTPException(status_code=404, detail=f"User (id={user.id_user}) not found.")
 
     # Delete all project own by the user
-    list_project = user_service.list_all_project(id_user)
+    list_project = user_service.list_all_project(user.id_user)
     for project in list_project:
         project_service.delete(project)
 
@@ -128,9 +125,9 @@ async def delete_user(
 
 
 @router.get("/{id_user}/project", response_model=list[ProjectReadModel], tags=["Users"])
-async def project_by_user(id_user: int, user_service=Depends(get_user_service)):
+async def project_by_user(user=Depends(verify_token), user_service=Depends(get_user_service)):
     """
     Retrieve projects filtered by user ID.
     """
-
+    id_user = user.id_user
     return user_service.list_all_project(id_user)

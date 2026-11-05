@@ -1,3 +1,5 @@
+import secrets
+
 from business_object.project import Project
 from business_object.user import User
 from dao.project_dao import ProjectDao
@@ -71,7 +73,13 @@ class UserService:
         Returns:
             User to login or None if failed
         """
-        return UserDao().login(username, password)
+        user = UserDao().login(username, password)
+        if user:
+            # Generate a token and update the User
+            user.access_token = secrets.token_urlsafe(32)
+            self.update(user)
+            return user
+        return None
 
     @log
     def username_already_used(self, username: str) -> bool:
@@ -95,4 +103,4 @@ class UserService:
         user = UserService().find_by_id(id_user)
         if not user:
             return None
-        return ProjectDao().list_all_project(user)
+        return ProjectDao().list_all_project(id_user)

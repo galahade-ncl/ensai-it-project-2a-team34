@@ -1,7 +1,5 @@
 from business_object.project import Project
-from business_object.user import User
 from dao.db_connection import DBConnection
-from dao.user_dao import UserDao
 from utils.log_utils import get_logger, log
 from utils.singleton import Singleton
 
@@ -12,7 +10,7 @@ class ProjectDao(metaclass=Singleton):
     """Class containing methods to access Projects in the database."""
 
     @log
-    def create(self, project: Project) -> bool:
+    def create(self, project: Project, id_user: int) -> bool:
         """
         Create a project in the database.
 
@@ -20,6 +18,8 @@ class ProjectDao(metaclass=Singleton):
         ---------
         project : Project
             Project to create
+        id_user : int
+            The ID of the user who owns the project
 
         Returns
         -------
@@ -37,7 +37,7 @@ class ProjectDao(metaclass=Singleton):
                         "RETURNING id_project;",
                         {
                             "name_project": project.name_project,
-                            "id_user": project.user.id_user,
+                            "id_user": id_user,
                             "secretHMACkey": project.secretHMACkey,
                         },
                     )
@@ -82,25 +82,62 @@ class ProjectDao(metaclass=Singleton):
 
         project = None
         if res_project:
-            user = UserDao().find_by_id(res_project["id_user"])
             project = Project(
                 id_project=res_project["id_project"],
                 name_project=res_project["name_project"],
-                user=user,
                 secretHMACkey=bytes(res_project["secrethmackey"]),
             )
 
         return project
 
     @log
-    def list_all_project(self, user: User) -> list[Project]:
+    def find_by_id_and_user(self, id_project: int, id_user: int) -> Project | None:
+        """
+        Find a project by its id, only if it belongs to the given user.
+
+        Arguments
+        ---------
+        id_project : int
+            The ID of the project to find
+        id_user : int
+            The ID of the user who must own the project
+
+        Returns
+        -------
+        Project
+            Project matching the given id owned by the given user, or None if not found
+        """
+        try:
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        "SELECT * FROM project_table WHERE id_project = %(id_project)s AND id_user = %(id_user)s;",
+                        {"id_project": id_project, "id_user": id_user},
+                    )
+                    res_project = cursor.fetchone()
+        except Exception as e:
+            logger.error(e)
+            raise
+
+        project = None
+        if res_project:
+            project = Project(
+                id_project=res_project["id_project"],
+                name_project=res_project["name_project"],
+                secretHMACkey=bytes(res_project["secrethmackey"]),
+            )
+
+        return project
+
+    @log
+    def list_all_project(self, id_user: int) -> list[Project]:
         """
         List all projects belonging to a given user.
 
         Arguments
         ---------
-        user : User
-            User whose projects are to be listed
+        id_user : int
+            The ID of the user whose projects are to be listed
 
         Returns
         -------
@@ -113,11 +150,8 @@ class ProjectDao(metaclass=Singleton):
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
-                        "SELECT * "
-                        "  FROM project_table "
-                        " WHERE id_user = %(id_user)s "
-                        " ORDER BY id_project;",
-                        {"id_user": user.id_user},
+                        "SELECT * FROM project_table WHERE id_user = %(id_user)s ORDER BY id_project;",
+                        {"id_user": id_user},
                     )
                     res = cursor.fetchall()
         except Exception as e:
@@ -130,7 +164,6 @@ class ProjectDao(metaclass=Singleton):
                 Project(
                     id_project=row["id_project"],
                     name_project=row["name_project"],
-                    user=user,
                     secretHMACkey=bytes(row["secrethmackey"]),
                 )
             )
@@ -160,12 +193,10 @@ class ProjectDao(metaclass=Singleton):
                     cursor.execute(
                         "UPDATE project_table "
                         "   SET name_project = %(name_project)s, "
-                        "       id_user = %(id_user)s, "
                         "       secretHMACkey = COALESCE(%(secretHMACkey)s, secretHMACkey) "
                         " WHERE id_project = %(id_project)s;",
                         {
                             "name_project": project.name_project,
-                            "id_user": project.user.id_user,
                             "secretHMACkey": project.secretHMACkey,
                             "id_project": project.id_project,
                         },
