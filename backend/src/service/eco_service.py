@@ -216,107 +216,68 @@ class EcoService:
     DEFAULT_LOOP_LENGTH = 10
     DEFAULT_RECURSION_DEPTH = 10
 
-    _BINARY_OPERATORS = {
-        ast.Add: operator.add,
-        ast.Sub: operator.sub,
-        ast.Mult: operator.mul,
-        ast.FloorDiv: operator.floordiv,
-        ast.Mod: operator.mod,
-        ast.Pow: operator.pow,
-    }
+    @staticmethod
+    def _collect_variables(codefile: CodeFile) -> dict:
+        """
+        Collect all the variables of a code
+        Args:
+            codefile (CodeFile): The code
+        Returns:
+            A dict with the values
+        """
+        variables = {}
+        tree = ast.parse(codefile)
 
-    _UNARY_OPERATORS = {
-        ast.UAdd: operator.pos,
-        ast.USub: operator.neg,
-    }
+        for line in ast.walk(tree):
+            if isinstance(line, ast.Assign):
+                variables[line.targets[0].id] = line.value.value
+
+        return variables
 
     @staticmethod
-    def _evaluate_expression(node: ast.expr, variables: Optional[dict] = None) -> Optional[int]:
+    def _expression_length (expr: ast.expr, variables: dict) -> int:
+        """
+        Evaluate the result of an expression
+        Args:
+            expr (ast.expr): The expression to evaluate to get the result
+            variables (dict): The dict with the variables of the code
+        Return:
+            The integer of the code
+        """
+        if isinstance(expr, ast.For):
+            iteration = expr.iter
 
-        variables = variables or {}
+            if isinstance(iteration, (ast.List, ast.Tuple, ast.Set)): # for i in [1, 2, 3] / for i in (1, 2, 3) / for i in {1, 2, 3}
+                return len(iteration.elts)
 
-        # Constantes : 3, 10, etc.
-        if isinstance(node, ast.Constant):
-            if isinstance(node.value, int) and not isinstance(node.value, bool):
-                return node.value
+            if isinstance(iteration, ast.Constant) and isinstance(iteration.value, (str, bytes)): # for i in "abc"
+                return len(iteration.value)
 
-            if isinstance(node.value, (str, bytes)):
-                return len(node.value)
+            if isinstance(iteration, ast.Name):
+                try:
+                    return(variables[iteration])
 
-        # Variables : n
-        if isinstance(node, ast.Name):
-            return variables.get(node.id)
-
-        # Opérations unaires : -n, +n
-        if isinstance(node, ast.UnaryOp):
-            value = EcoService._evaluate_expression(node.operand, variables)
-
-            if value is None:
-                return None
-
-            if isinstance(node.op, ast.USub):
-                return -value
-
-            if isinstance(node.op, ast.UAdd):
-                return value
-
-        # Opérations binaires : n + 2, n * 2, etc.
-        if isinstance(node, ast.BinOp):
-            left = EcoService._evaluate_expression(node.left, variables)
-            right = EcoService._evaluate_expression(node.right, variables)
-
-            if left is None or right is None:
-                return None
-
-            try:
-                if isinstance(node.op, ast.Add):
-                    return left + right
-
-                if isinstance(node.op, ast.Sub):
-                    return left - right
-
-                if isinstance(node.op, ast.Mult):
-                    return left * right
-
-                if isinstance(node.op, ast.FloorDiv):
-                    return left // right if right != 0 else None
-
-                if isinstance(node.op, ast.Mod):
-                    return left % right if right != 0 else None
-
-            except (ArithmeticError, OverflowError):
-                return None
-
-        # len([1, 2, 3]), len("abc"), len(my_list)
-        if isinstance(node, ast.Call):
             if (
-                isinstance(node.func, ast.Name)
-                and node.func.id == "len"
-                and len(node.args) == 1
-                and not node.keywords
-            ):
-                arg = node.args[0]
+                isinstance(iteration, ast.Call)
+                and isinstance(iteration.func, ast.Name)
+                and iteration.func.id == "range"
+            ): # for i in range (3) / for i in range (2, 10, 2)
+                if not 1 <= len(iteration.args) <=3 or iteration.keywords: # for i in range (1, 2, 3, 4)
+                    return 0
 
-                if isinstance(arg, (ast.List, ast.Tuple, ast.Set)):
-                    return len(arg.elts)
+                values = [EcoService._expression_length(arg, variables) for arg in iteration.args]
 
-                if isinstance(arg, ast.Constant) and isinstance(
-                    arg.value, (str, bytes)
-                ):
-                    return len(arg.value)
+                if any (value is None for value in values):
+                    return EcoService.DEFAULT_LOOP_LENGTH
+                try:
+                    return len(range(*values))
 
-                if isinstance(arg, ast.Name):
-                    value = variables.get(arg.id)
+                except (ValueError, TypeError): # for i in range (n)
+                    return 0
 
-                    if isinstance(value, (list, tuple, set, str, bytes)):
-                        return len(value)
+        # Cannot know the length : for val in values / while
+        return EcoService.DEFAULT_LOOP_LENGTH
 
-                    if isinstance(value, int):
-                        # L'environnement peut aussi stocker directement
-                        # la longueur d'une collection.
-                        return value
-
-        return None
 
 
     @staticmethod
@@ -348,12 +309,12 @@ class EcoService:
                     return 0
 
                 values = [EcoService._evaluate_expression(arg, variables) for arg in iteration.args]
-                
+
                 if any (value is None for value in values):
                     return EcoService.DEFAULT_LOOP_LENGTH
                 try:
                     return len(range(*values))
-                
+
                 except (ValueError, TypeError): # for i in range (n)
                     return 0
 
