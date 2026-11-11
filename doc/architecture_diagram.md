@@ -1,25 +1,59 @@
 ```mermaid
 flowchart LR
-    User["👤 Utilisateur"]
+    Client["👤 Développeur / Pipeline CI/CD"]
 
     subgraph Front["Frontend"]
-        Web["Web App"]
+        Web["Interface web"]
     end
 
-    subgraph Backend["Backend"]
-        API["API"]
-        Auth["Service Auth"]
+    subgraph Backend["Backend CleanOps"]
+        API["API REST"]
+        OIDC["Auth OIDC"]
+        HMAC["Vérification HMAC"]
+
+        subgraph Sandbox["Sandbox"]
+            Deps["Audit des dépendances"]
+            Eco["Analyse éco-énergétique"]
+        end
+
+        SBOM["Génération SBOM"]
+        Gate["Quality Gate"]
+        Webhook["Webhook MR "]
+        Refactor["Assistant refactorisation"]
     end
 
     subgraph Data["Données"]
         DB[("PostgreSQL")]
     end
 
-    User --> Web
+    subgraph External["Systèmes externes"]
+        OSV["API OSV"]
+        LLM["LLM"]
+        Git["GitLab / GitHub"]
+    end
 
-    Web --> API
+    Client --> API
+    Client -.-> Web
+    Web -.-> API
+    Client -.-> OIDC
+    OIDC -.-> API
 
-    API --> Auth
+    API --> HMAC
+    HMAC --> Deps
+    HMAC --> Eco
 
-    Auth --> DB
+    Deps --> OSV
+    Deps --> SBOM
+    SBOM --> Gate
+    Eco --> Gate
+
+    Eco -.-> Refactor
+    Refactor -.-> LLM
+
+    Gate --> DB
+    Gate -.-> Webhook
+    Webhook -.-> Git
+
+    classDef optional stroke-dasharray: 5 5
+    class Web,OIDC,Webhook,Refactor,LLM,Git optional
 ```
