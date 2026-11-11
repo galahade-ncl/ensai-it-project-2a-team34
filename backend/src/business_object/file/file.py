@@ -1,28 +1,33 @@
-"""
-Sarah
-"""
-
 from abc import ABC, abstractmethod
 
 
 class File(ABC):
     """
-    Classe modélisant un fichier fournit par l'utilisateur.
+    Abstract class modelling a file provided by the user.
+
+    Attributes
+    ----------
+    name : str
+        Name of the file.
+    content : bytes
+        Content of the file in bytes.
+    type_file : str
+        Extension of the file.
+    date : datetime or None
+        Submission date of the file.
 
     Methods
     -------
-    __str__() : str
-        Renvoie la représentation informelle d'un fichier.
-    __eq__ : bool
-        Renvoie True si les fichiers comparés sont identiques
-    __hash__ : int
-        renvoie une version hashée de l'id du fichier.
-        (Permet l'usage d'un set ou d'un dict).
-    get_content() : bool
-        Méthode qui permet de récupérer le contenu du fichier
-        et renvoie un booléen de confirmation si le fichier a bien été récupéré
-    get_type() : str
-        Méthode qui permet d'obtenir le type de fichier (fichier de dépendance ou fichier code)
+    __str__()
+        Return a string representation of the file.
+    __eq__(other)
+        Return True if the compared files are identical.
+    __hash__()
+        Return a hash of the file ID, allowing files to be used in a set or as dict keys.
+    get_content()
+        Retrieve the content of the file and return whether it succeeded.
+    get_type()
+        Return the type of the file (dependency file or code file).
     """
 
     def __str__(self) -> str:
@@ -38,20 +43,25 @@ class File(ABC):
 
     # def get_path(self) -> str:
     #     """
-    #     Méthode pour récupérer le path (en attendant de savoir comment on enregistre les fichiers)
+    #     Method for retrieving the path (until we figure out how to save the files)
     #     """
-    #     return "à compléter"
+    #     return "to be completed"
 
     # @abstractmethod
     # def get_content(self) -> bool:
     #     """
-    #     Récupère le contenu du fichier.
+    #     Retrieves the contents of the file.
     #     """
     #     pass
 
     @abstractmethod
     def get_duty(self) -> str:
         """
-        Récupère le type de fichier (fichier de dépendance ou fichier code).
+        Return the type of the file.
+
+        Returns
+        -------
+        str
+            Type of the file (dependency file or code file).
         """
         pass

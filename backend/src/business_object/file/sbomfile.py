@@ -25,7 +25,7 @@ class SBOMFile(File):
         self.type_file = type_file
         self.date = date if date is not None else datetime.now()
 
-    # Méthode a déplacer dans utils, sauf si différente de méthode de codefile
+    # Method to move to utils, unless it differs from the CodeFile method
     # def get_content(self) -> bool:
     #     try:
     #         with open(self.path, encoding="utf-8") as file:
@@ -35,11 +35,12 @@ class SBOMFile(File):
     #         return False
 
     def get_duty(self) -> str:
-        """Return the role of the file within a project
+        """
+        Return the role of the file within a project
 
         Returns
         -------
         str
-             Always sbom
+            Always sbom
         """
         return "sbom"
