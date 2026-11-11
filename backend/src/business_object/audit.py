@@ -1,20 +1,40 @@
 class Audit:
-    ''' Class representing the audit of a project
-        Attributes:
-            id_audit (int): The unique identifier of the audit
-            id_project (int): The unique identifier of the project from which this audit is linked
-            date (datetime): The date the audit was created
-            vulnerabilities (list[Vulnerability]): The list of vulnerabilities found in the dependancies of the project
-            licenses (list[License]): The list of licence used by the code of the project
-            anti_patterns (list[AntiPattern]): The list of antipatterns found in the project
-            complexity (float): The complexity of the code
-            energy_consumption_kwh (float): The energy consumption of the code (kwh)
-            carbon_emission_gco2e (float): The carbon emission of the code
-            sbom (SBOM): Software Bill of Materials, the inventory of components used for the project
-            quality_gate (QualityGate): The quality gate associated to the project
-            certificate (CertificateFile): The certificate associated to the audit
+    """
+    Class representing the audit of a project.
 
-    '''
+    Attributes
+    ----------
+    id_audit : int or None
+        Unique identifier of the audit.
+    id_project : int
+        Unique identifier of the project linked to this audit.
+    date : datetime
+        Date the audit was created.
+    vulnerabilities : list of Vulnerability
+        Vulnerabilities found in the dependencies of the project.
+    licenses : list of Licence
+        Licences used by the project.
+    anti_patterns : list of AntiPattern
+        Antipatterns found in the project.
+    complexity : float
+        Complexity of the code.
+    energy_consumption_kwh : float
+        Energy consumption of the code (kWh).
+    carbon_emission_gco2e : float
+        Carbon emission of the code (gCO2e).
+    sbom : SBOM
+        Software Bill of Materials, the inventory of components used
+        by the project.
+    quality_gate : QualityGate
+        Quality gate associated with the project.
+    certificate : CertificateFile
+        Certificate associated with the audit.
+
+    Methods
+    -------
+    __str__()
+        Return a string representation of the audit.
+    """
 
     def __init__(
         self,
@@ -30,7 +50,7 @@ class Audit:
         quality_gate,
         certificate,
         id_audit=None
-    ):
+    ) -> None:
         self.id_audit = id_audit
         self.id_project = id_project
         self.date = date
@@ -45,6 +65,13 @@ class Audit:
         self.certificate = certificate
 
     def __str__(self):
-        """Returns a string representation of the audit
+        """
+        Return a string representation of the audit.
+
+        Returns
+        -------
+        str
+            String showing the project identifier and the energy
+            consumption of the audit.
         """
         return f"Audit: Audit of the project {self.id_project}. It consume {self.energy_consumption_kwh} kwh."
