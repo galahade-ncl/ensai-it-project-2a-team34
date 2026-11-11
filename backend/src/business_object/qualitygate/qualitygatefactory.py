@@ -7,20 +7,35 @@ from business_object.qualitygate.qualitygate import QualityGate
 
 class QualityGateFactory:
     """
-    Factory class to create appropriate QualityGate instances
+    Factory class to create the appropriate QualityGate instances
     based on a string identifier.
+
+    Methods
+    -------
+    get_qualitygate(type)
+        Return an instance of the QualityGate matching the requested type.
     """
 
     @classmethod
     def get_qualitygate(self, type: str) -> QualityGate:
         """
-        Returns the type of QualityGate asked.
-        Args:
-            type (str): The type of the QualityGate expected (e.g., 'eco', 'service', 'global').
-        Returns:
-            QualityGate: An instance of a class implementing QualityGate.
-        Raises:
-            ValueError: If the requested type is not supported.
+        Return an instance of the requested type of quality gate.
+
+        Parameters
+        ----------
+        type : str
+            Type of the quality gate expected (``'eco'``, ``'security'``
+            or ``'global'``). The value is case-insensitive.
+
+        Returns
+        -------
+        QualityGate
+            Instance of a class implementing QualityGate.
+
+        Raises
+        ------
+        ValueError
+            If the requested type is not supported.
         """
         type = type.lower()
 
