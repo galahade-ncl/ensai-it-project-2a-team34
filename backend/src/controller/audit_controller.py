@@ -139,6 +139,23 @@ async def create_audit(
     return audit
 
 
+# @router.get("/{id_audit}/certificate", tags=["Audits"])
+# async def audit_certificate(
+#     id_audit: int,
+#     user=Depends(verify_token),
+#     audit_service=Depends(get_audit_service),
+#     project_service=Depends(get_project_service),
+# ):
+#     audit = audit_service.find_by_id(id_audit)
+#     if not audit or not project_service.find_by_id_and_user(audit.id_project, user.id_user):
+#         raise HTTPException(
+#             status_code=404, detail="Audit not found or you do not have access to it."
+#         )
+#     if not audit.certificate:
+#         raise HTTPException(status_code=404, detail="No certificate for this audit.")
+#     return Response(content=audit.certificate.content, media_type="application/pdf")
+
+
 @router.get("/{id_audit}/certificate", tags=["Audits"])
 async def audit_certificate(
     id_audit: int,
@@ -147,10 +164,27 @@ async def audit_certificate(
     project_service=Depends(get_project_service),
 ):
     audit = audit_service.find_by_id(id_audit)
+
     if not audit or not project_service.find_by_id_and_user(audit.id_project, user.id_user):
         raise HTTPException(
             status_code=404, detail="Audit not found or you do not have access to it."
         )
+
     if not audit.certificate:
         raise HTTPException(status_code=404, detail="No certificate for this audit.")
-    return Response(content=audit.certificate.content, media_type="application/pdf")
+
+    try:
+        content = audit.certificate.content
+
+        # Decode Base64 if content is stored as a string
+        if isinstance(content, str):
+            content = base64.b64decode(content, validate=True)
+
+        return Response(
+            content=content,
+            media_type="application/pdf",
+            headers={"Content-Disposition": (f'attachment; filename="{audit.certificate.name}"')},
+        )
+
+    except (binascii.Error, ValueError):
+        raise HTTPException(status_code=500, detail="Invalid certificate content.")

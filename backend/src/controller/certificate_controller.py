@@ -1,4 +1,3 @@
-# certificate_controller.py
 from fastapi import APIRouter
 
 from schema.certificate_model import CertificateVerifyResponseModel, SignedCertificateModel
