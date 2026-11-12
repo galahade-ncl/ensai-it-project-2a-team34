@@ -10,7 +10,13 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, RedirectResponse
 
-from controller import audit_controller, login_controller, project_controller, user_controller
+from controller import (
+    audit_controller,
+    hmac_controller,
+    login_controller,
+    project_controller,
+    user_controller,
+)
 from utils.env_variables import display_values, load_environment_variables
 from utils.log_utils import LogMiddleware, get_logger, initialize_logs
 from utils.reset_database import ResetDatabase
@@ -53,6 +59,7 @@ app.include_router(login_controller.router, prefix="/login", tags=["Login"])
 app.include_router(project_controller.router, prefix="/project", tags=["Projects"])
 # app.include_router(file_controller.router, prefix="/file", tags=["Files"])
 app.include_router(audit_controller.router, prefix="/audit", tags=["Audits"])
+app.include_router(hmac_controller.router, prefix="/hmac", tags=["Hmac"])
 
 
 @app.get("/", include_in_schema=False)
