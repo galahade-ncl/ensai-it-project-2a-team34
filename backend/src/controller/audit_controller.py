@@ -183,7 +183,7 @@ async def audit_certificate(
         return Response(
             content=content,
             media_type="application/pdf",
-            headers={"Content-Disposition": (f'attachment; filename="{audit.certificate.name}"')},
+            headers={"Content-Disposition": f'attachment; filename="certificate_{id_audit}.pdf"'},
         )
 
     except (binascii.Error, ValueError):
