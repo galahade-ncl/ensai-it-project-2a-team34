@@ -21,7 +21,8 @@ The backend follows a **Layered Architecture** (N-Tier) to ensure separation of 
 - **Controller** (`controller/`) : Handles HTTP requests and routing via FastAPI
 - **Service** (`service/`) : Contains the core business logic
 - **DAO** (`dao/`) : Manages database interactions
-- **API_OSV** (`api_osv/`) : Manages external api interactions
+- **API_OSV** (`api_osv/`) : Manages external api OSV interactions
+- **API_DEPS_DEV** (`api_deps_dev/`) : : Manages external api Deps_dev interactions
 - **Schema** (`schema/`) : Data contract via [Pydantic](https://pydantic.dev/docs/validation/latest/get-started/) to ensure API requests and responses follow a strict structure
 
 ### Layers
@@ -163,3 +164,6 @@ To do it manually:
 ### Pylint
 
 Static analysis with **pylint**: `uv run --project backend --extra dev pylint --output-format=colorized --disable=C0114,C0411,C0415,W0718 $(git ls-files 'backend/**/*.py') --fail-under=7.5`
+
+
+## à ajouter : clé publique

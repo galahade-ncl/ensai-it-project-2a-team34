@@ -100,9 +100,7 @@ class SBOMService:
                 },
             },
             "components": components,
-            "dependencies": [
-                {"ref": project_name, "dependsOn": [c["bom-ref"] for c in components]}
-            ]
+            "dependencies": [{"ref": project_name, "dependsOn": [c["bom-ref"] for c in components]}]
             + [{"ref": c["bom-ref"], "dependsOn": []} for c in components],
         }
 
@@ -127,9 +125,7 @@ class SBOMService:
                     "ratings": [{"severity": severity}],
                 }
                 if vulnerability.cve_id and vulnerability.cve_id != entry["id"]:
-                    entry["references"] = [
-                        {"id": vulnerability.cve_id, "source": {"name": "NVD"}}
-                    ]
+                    entry["references"] = [{"id": vulnerability.cve_id, "source": {"name": "NVD"}}]
                 package = self._normalize(vulnerability.package or "", ecosystem)
                 refs = [c["bom-ref"] for c in components if c["name"] == package]
                 if refs:

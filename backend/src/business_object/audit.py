@@ -12,7 +12,7 @@ class Audit:
             carbon_emission_gco2e (float): The carbon emission of the code
             sbom (SBOM): Software Bill of Materials, the inventory of components used for the project
             quality_gate (QualityGate): The quality gate associated to the project
-            certificate (CertificateFile): The certificate associated to the audit
+            certificate (CertificateFile | None): The signed certificate, or None if the quality gate failed
 
     '''
 
@@ -28,7 +28,7 @@ class Audit:
         carbon_emission_gco2e,
         sbom,
         quality_gate,
-        certificate,
+        certificate=None,
         id_audit=None
     ):
         self.id_audit = id_audit

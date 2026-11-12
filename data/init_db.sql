@@ -38,6 +38,10 @@ CREATE TABLE audit_table (
     carbon_emission_gco2e                     FLOAT,
     type_qualitygate                          VARCHAR,
     status_qualitygate                        VARCHAR,
+    certificate_pdf    = COALESCE(certificate_pdf, %(certificate_pdf)s),
+    certificate_signed = COALESCE(certificate_signed, %(certificate_signed)s),
+    certificate_id     = COALESCE(certificate_id, %(certificate_id)s)
+    FOREIGN KEY (id_project) REFERENCES project_table(id_project)
     FOREIGN KEY (id_project)
     REFERENCES project_table(id_project)
 );

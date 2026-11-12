@@ -1,7 +1,7 @@
 import base64
 import binascii
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
 
 from business_object.file.codefile import CodeFile
 from business_object.file.dependencyfile import DependencyFile
@@ -28,7 +28,12 @@ def get_project_service():
 
 
 @router.get("/{id_audit}", response_model=AuditReadModel, tags=["Audits"])
-async def audit_by_id(id_audit: int, user=Depends(verify_token), audit_service=Depends(get_audit_service), project_service=Depends(get_project_service)):
+async def audit_by_id(
+    id_audit: int,
+    user=Depends(verify_token),
+    audit_service=Depends(get_audit_service),
+    project_service=Depends(get_project_service),
+):
     """Find an audit by its unique ID.
     Args:
         id_audit (int)
@@ -42,12 +47,17 @@ async def audit_by_id(id_audit: int, user=Depends(verify_token), audit_service=D
 
     audit = audit_service.find_by_id(id_audit)
 
+    # We check the audit exist before working on it
+    if not audit:
+        raise HTTPException(status_code=404, detail=f"Audit (id={id_audit}) not found.")
+
+    # Check if the user owns the project linked to the audit or not
     project = project_service.find_by_id_and_user(audit.id_project, user.id_user)
     if not project:
-        raise HTTPException(status_code=404, detail="Audit not found or you do not have access to it.")
+        raise HTTPException(
+            status_code=404, detail="Audit not found or you do not have access to it."
+        )
 
-    if not audit:
-        raise HTTPException(status_code=404, detail="Audit (id={id_audit}) not found.")
     return audit
 
 
@@ -69,11 +79,15 @@ async def create_audit(
     """
     logger.info("Create an audit")
 
-    # Get the project
-    project = project_service.find_by_id_and_user(id_project=p.project.id_project, id_user=user.id_user)
+    # Get the project and check if the user owns it or not
+    project = project_service.find_by_id_and_user(
+        id_project=p.project.id_project, id_user=user.id_user
+    )
 
     if not project:
-        raise HTTPException(status_code=404, detail="Audit not found or you do not have access to it.")
+        raise HTTPException(
+            status_code=404, detail="Project not found or you do not have access to it."
+        )
 
     # Decode the base64 received
     try:
@@ -123,3 +137,20 @@ async def create_audit(
         audit.sbom.content = base64.b64encode(audit.sbom.content).decode("utf-8")
 
     return audit
+
+
+@router.get("/{id_audit}/certificate", tags=["Audits"])
+async def audit_certificate(
+    id_audit: int,
+    user=Depends(verify_token),
+    audit_service=Depends(get_audit_service),
+    project_service=Depends(get_project_service),
+):
+    audit = audit_service.find_by_id(id_audit)
+    if not audit or not project_service.find_by_id_and_user(audit.id_project, user.id_user):
+        raise HTTPException(
+            status_code=404, detail="Audit not found or you do not have access to it."
+        )
+    if not audit.certificate:
+        raise HTTPException(status_code=404, detail="No certificate for this audit.")
+    return Response(content=audit.certificate.content, media_type="application/pdf")
