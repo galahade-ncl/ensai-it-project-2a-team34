@@ -2,12 +2,19 @@ from abc import ABC, abstractmethod
 
 
 class AntiPattern(ABC):
-    """Abstract Class representing all detected antipatterns found in a project
-    Attributes:
-        id_antipattern (int): The unique identifier of the antipattern
-        type(str): The type of the antipattern
-        line(int): The line number where the antipattern was detected
-        description(str): The description of the antipattern
+    """
+    Abstract class representing an antipattern detected in a project.
+
+    Attributes
+    ----------
+    id_antipattern : int
+        Unique identifier of the antipattern.
+    type : str
+        Type of the antipattern.
+    line : int
+        Line number where the antipattern was detected.
+    description : str
+        Description of the antipattern.
     """
 
     def __init__(self, line, description, id_antipattern: int | None = None):
@@ -17,5 +24,12 @@ class AntiPattern(ABC):
 
     @abstractmethod
     def __str__(self):
-        """Returns a string representation of the audit"""
+        """
+        Return a string representation of the audit.
+
+        Returns
+        -------
+        str
+            String representation of the audit.
+        """
         pass

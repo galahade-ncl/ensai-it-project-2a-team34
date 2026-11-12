@@ -29,7 +29,7 @@ LICENCE_RISK = {
     "GPL-3.0": "high",
     "AGPL-3.0": "high",
 }
-DEFAULT_RISK = "unknown"  # licence absente, non standard ou non reconnue
+DEFAULT_RISK = "unknown"  # Missing, non-standard, or unrecognized license
 
 
 class API_DEPSDEV:
@@ -38,8 +38,28 @@ class API_DEPSDEV:
     @staticmethod
     def clean_version(version: str | None) -> str | None:
         """
-        Keep only an exact version ('^1.2.0' -> '1.2.0', '>=1.0,<2' -> '1.0')
-        Returns None if no version can be extracted
+        Extract an exact version number from a version specifier.
+
+        Strips range operators and constraints (e.g. ``^``, ``>=``, ``<``)
+        and keeps only the first version number found.
+
+        Parameters
+        ----------
+         version : str or None
+            Version specifier to clean (e.g. ``'^1.2.0'`` or ``'>=1.0,<2'``).
+
+        Returns
+        -------
+        str or None
+            The extracted exact version (e.g. ``'1.2.0'`` or ``'1.0'``),
+            or None if no version can be extracted.
+
+        Examples
+        --------
+        >>> clean_version('^1.2.0')
+        '1.2.0'
+        >>> clean_version('>=1.0,<2')
+        '1.0'
         """
         if not version:
             return None
@@ -49,12 +69,23 @@ class API_DEPSDEV:
     @staticmethod
     def find_licences(dependency: Dependency, ecosystem: str) -> list[str]:
         """
-        Find the licences (SPDX identifiers) of a dependency
-        Args:
-            dependency (Dependency): dependency to look for
-            ecosystem (str): OSV ecosystem name (ex: 'PyPI')
-        Returns:
-            List of licence names, empty if the dependency is unknown to deps.dev
+        Find the licences of a dependency.
+
+        Queries the deps.dev API for the given dependency and returns
+        the SPDX identifiers of its licences.
+
+        Parameters
+        ----------
+        dependency : Dependency
+            Dependency to look up.
+        ecosystem : str
+            OSV ecosystem name (e.g. ``'PyPI'``).
+
+        Returns
+        -------
+        list of str
+            Licence names (SPDX identifiers). The list is empty if the
+            dependency is unknown to deps.dev.
         """
         system = DEPSDEV_SYSTEMS.get(ecosystem)
         if system is None:
@@ -77,7 +108,23 @@ class API_DEPSDEV:
 
     @staticmethod
     def _default_version(base: str) -> str | None:
-        """Get the default version of a package when the file gives none"""
+        """
+        Get the default version of a package.
+
+        Used as a fallback when the dependency file does not specify
+        any version for the package.
+
+        Parameters
+        ----------
+        base : str
+            Base URL used to query the package information.
+
+        Returns
+        -------
+        str or None
+            The default version of the package, or None if it cannot
+            be determined.
+        """
         response = requests.get(base, timeout=10)
         if response.status_code == 404:
             return None
@@ -90,11 +137,21 @@ class API_DEPSDEV:
     @staticmethod
     def _to_licences(names: list[str]) -> list[Licence]:
         """
-        Convert licence names (SPDX identifiers) into Licence objects
-        Args:
-            names (list[str]): licence names returned by deps.dev
-        Returns:
-            List of Licence object with their risk level ('unknown' if the licence is not in LICENCE_RISK)
+        Convert licence names into Licence objects.
+
+        Maps each SPDX identifier returned by deps.dev to a Licence object
+        and assigns it a risk level based on LICENCE_RISK.
+
+        Parameters
+        ----------
+        names : list of str
+            Licence names (SPDX identifiers) returned by deps.dev.
+
+        Returns
+        -------
+        list of Licence
+            Licence objects with their risk level. The risk level is
+            ``'unknown'`` if the licence is not in LICENCE_RISK.
         """
         return [
             Licence(name=name, risk_level=LICENCE_RISK.get(name, DEFAULT_RISK)) for name in names

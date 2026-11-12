@@ -21,12 +21,23 @@ class API_OSV:
     @log
     def find_vulnerabilities(dependency: Dependency, ecosystem: str) -> list[Vulnerability]:
         """
-        Methode that find all the vulnerabilities linked to a dependency
-        Args:
-            dependency (Dependency) : the dependency to analyse in the external api
-            ecosystem (str) : the ecosystem associated with the dependencyfile
-        Returns:
-            list[Vulnerability]
+        Find all the vulnerabilities linked to a dependency.
+
+        Queries the OSV API for the given dependency and returns
+        the vulnerabilities (CVE) that affect it.
+
+        Parameters
+        ----------
+        dependency : Dependency
+            Dependency to analyse through the external API.
+        ecosystem : str
+            Ecosystem associated with the dependency file (e.g. ``'PyPI'``).
+
+        Returns
+        -------
+        list of Vulnerability
+            Vulnerabilities linked to the dependency. The list is empty
+            if none are found.
         """
         payload = {
             "package": {
@@ -68,11 +79,21 @@ class API_OSV:
     @log
     def _get_severity(osv_vuln: dict) -> str | None:
         """
-        Determine severity from a CVSS vector
-        Args:
-            osv_vuln (dict) : the dependency to analyse in the external api
-        Returns:
-            A string object corresponding to the severity or None if there isn't a risk from the vulnerability
+        Determine the severity of a vulnerability from its CVSS vector.
+
+        Reads the CVSS data of an OSV vulnerability entry and converts it
+        into a severity level.
+
+        Parameters
+        ----------
+        osv_vuln : dict
+            Vulnerability entry returned by the OSV API.
+
+        Returns
+        -------
+        str or None
+            Severity level of the vulnerability, or None if the
+            vulnerability does not represent a risk.
         """
 
         for item in osv_vuln.get("severity", []):
@@ -108,13 +129,24 @@ class API_OSV:
     @log
     def _to_vulnerability(osv_vuln: dict, dependency: Dependency, severity: str) -> Vulnerability:
         """
-        Transform the response of the API to a Vulnerability object
-        Args:
-            osv_vuln (dict) : the vulnerability returned by the API
-            dependency (Dependency) : the dependency to analyse
-            severity (str) : the severity of the vulnerability
-        Returns:
-            A Vulnerability object corresponding to the vulnerability of the API
+        Transform an OSV API response into a Vulnerability object.
+
+        Builds a Vulnerability from the raw entry returned by the OSV API,
+        and links it to the analysed dependency with its severity level.
+
+        Parameters
+        ----------
+        osv_vuln : dict
+            Vulnerability entry returned by the OSV API.
+        dependency : Dependency
+            Dependency affected by the vulnerability.
+        severity : str
+            Severity level of the vulnerability.
+
+        Returns
+        -------
+        Vulnerability
+            Vulnerability object corresponding to the API entry.
         """
         aliases = osv_vuln.get("aliases", [])
         cve_id = next(

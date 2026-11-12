@@ -1,22 +1,22 @@
 class Certificate:
     """
-    Classe représentant un certificat.
+    Class representing a certificate.
 
     Attributes
     ----------
     id_certificate : int
-        Identifiant du certificat
+        Unique identifier of the certificate.
     date : datetime
-        Date du certificat
+        Date of the certificate.
     type : str
-        Type du certificat
+        Type of the certificate.
     status : str
-        Statut du certificat
+        Status of the certificate.
     path : str
-        Chemin d'accès au certificat
+        Path to the certificate.
     """
 
-    def __init__(self, id_certificate, date, type, status, path):
+    def __init__(self, id_certificate, date, type, status, path) -> None:
         self.id_certificate = id_certificate
         self.date = date
         self.type = type

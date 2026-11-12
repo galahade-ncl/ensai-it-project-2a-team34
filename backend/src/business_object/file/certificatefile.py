@@ -3,21 +3,21 @@ from datetime import datetime
 from business_object.file.file import File
 
 
-# PAS FINI
+# UNDONE
 class CertificateFile(File):
-    """Certificate of a file
-
+    """
+    Certificate of a file.
 
     Attributes
     ----------
     name : str
-        Name of the file
+        Name of the file.
     content : bytes
-        Content of the SBOM in bytes
-    type_file: str
-        Extension of the file
+        Content of the SBOM in bytes.
+    type_file : str
+        Extension of the file.
     qualitygate_type : str
-        type of the qualitygate
+        Type of the quality gate.
     date : datetime
         Generation date of the SBOM
     signed_data : A COMPLETER
@@ -31,7 +31,7 @@ class CertificateFile(File):
         self.date = date if date is not None else datetime.now()
         self.signed_data = signed_data
 
-    # Méthode a déplacer dans utils, sauf si différente de méthode de codefile
+    # Move this method to “utils,” unless it differs from the method in the code file
     # def get_content(self) -> bool:
     #     try:
     #         with open(self.path, encoding="utf-8") as file:
@@ -41,5 +41,12 @@ class CertificateFile(File):
     #         return False
 
     def get_duty(self) -> str:
-        """Return the role of the file within a project"""
+        """
+        Return the role of the file within a project.
+
+        Returns
+        -------
+        str
+            Role of the file, always ``'certificate'`` for this class.
+        """
         return "certificate"

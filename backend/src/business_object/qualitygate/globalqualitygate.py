@@ -5,13 +5,20 @@ from business_object.vulnerability.critical_vulnerability import CriticalVulnera
 
 class GlobalQualityGate(QualityGate):
     """
-    Class representing the global quality gate expected for an audit of a project
-    Attributes:
-        max_vulnerabilities (int): Max vulnerabilities tolerated for a project
-        max_critical_vulnerabilities (int): Max critical vulnerabilities tolerated for a project
-        max_carbon_emission (float): Max carbon emission tolerated for a project
-        max_energy_consumption (float) : Max energy consumption tolerated for a project
-        status (str): Status of the quality gate
+    Class representing the global quality gate expected for the audit of a project.
+
+    Attributes
+    ----------
+    max_vulnerabilities : int
+        Maximum number of vulnerabilities tolerated for a project.
+    max_critical_vulnerabilities : int
+        Maximum number of critical vulnerabilities tolerated for a project.
+    max_carbon_emission : float
+        Maximum carbon emission tolerated for a project.
+    max_energy_consumption : float
+        Maximum energy consumption tolerated for a project.
+    status : str
+        Status of the quality gate.
     """
 
     def __init__(
@@ -21,7 +28,7 @@ class GlobalQualityGate(QualityGate):
         max_carbon_emission,
         max_energy_consumption,
         status,
-    ):
+    ) -> None:
         """Constructor"""
         self.max_vulnerabilities = max_vulnerabilities
         self.max_critical_vulnerabilities = max_critical_vulnerabilities
@@ -30,9 +37,13 @@ class GlobalQualityGate(QualityGate):
         self.status = status
 
     def __str__(self) -> str:
-        """Returns a string representation of the quality gate.
-        Returns:
-            str: A string containing the status and the details of the quality gate.
+        """
+        Return a string representation of the quality gate.
+
+        Returns
+        -------
+        str
+            String containing the status and the details of the quality gate.
         """
         return (
             f"Status : {self.status}"
@@ -41,12 +52,21 @@ class GlobalQualityGate(QualityGate):
         )
 
     def evaluate(self, audit: Audit) -> bool:
-        """Evaluate the Audit
-        Args:
-            audit: The audit to evaluate
+        """
+        Evaluate the audit against the quality gate.
+
+        Checks the results of the audit against the thresholds defined
+        by the quality gate.
+
+        Parameters
+        ----------
+        audit : Audit
+            Audit to evaluate.
 
         Returns
-            boolean object: True if the qualitygate is respected, False otherwise
+        -------
+        bool
+            True if the quality gate is respected, False otherwise.
         """
 
         # Count of vulnerabilities of audit
@@ -69,6 +89,11 @@ class GlobalQualityGate(QualityGate):
 
     def get_type(self) -> str:
         """
-        Récupère le type du qualitygate (ici global)
+        Return the type of the quality gate.
+
+        Returns
+        -------
+        str
+            Type of the quality gate, always ``'global'`` for this class.
         """
         return "global"
