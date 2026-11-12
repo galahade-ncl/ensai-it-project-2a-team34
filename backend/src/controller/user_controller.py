@@ -21,24 +21,6 @@ def get_project_service():
     """Dependency Injection provider for ProjectService."""
     return ProjectService()
 
-# Est-ce qu'on garde ? Sachant que tel quel ca renvoie le token ...
-# @router.get("/{id_user}", response_model=UserReadModel, tags=["Users"])
-# async def user_by_id(id_user: int, user_service=Depends(get_user_service)):
-#    """Find a user by their unique ID.
-#    Args:
-#        id_user (int)
-#        user_service (UserService): The service used to interact with user data
-#    Returns:
-#        UserReadModel: The user data if found
-#    Raises:
-#        HTTPException: 404 error if the user is not found
-#    """
-#    logger.info("Find a user by id")
-#    user = user_service.find_by_id(id_user)
-#    if not user:
-#        raise HTTPException(status_code=404, detail=f"User (id={id_user}) not found.")
-#    return user
-
 
 @router.post("/", response_model=UserReadModel, tags=["Users"])
 async def create_user(u: UserModel, user_service=Depends(get_user_service)):
