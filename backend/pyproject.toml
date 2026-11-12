@@ -17,7 +17,8 @@ dependencies = [
     "uvicorn",
     "cvss",
     "reportlab",
-    "pypdf"
+    "pypdf",
+    "cryptography"
 ]
 
 # Dependencies used only for development, not for runtime

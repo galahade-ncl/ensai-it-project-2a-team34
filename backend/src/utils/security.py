@@ -1,11 +1,20 @@
 import base64
 import hashlib
 import hmac
+import json
+import os
 import secrets
+from functools import lru_cache
 
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from fastapi import Header, HTTPException
 
 from dao.user_dao import UserDao
+
+# --------------
+# User Part
+# --------------
 
 
 def hash_password(password: str, salt: str = "") -> str:
@@ -49,6 +58,11 @@ def verify_token(x_auth_token=Header(None)) -> UserDao:
     return user
 
 
+# ------------------
+# Project Part
+# ------------------
+
+
 def generate_secret_HMAC_key() -> bytes:
     """
     Generate a new secret key
@@ -70,7 +84,9 @@ def encode_secret_key(key: bytes | str) -> str:
     return key
 
 
-def generate_signature(secret: bytes, project_id_bytes: bytes, code: bytes, dependency: bytes) -> bytes:
+def generate_signature(
+    secret: bytes, project_id_bytes: bytes, code: bytes, dependency: bytes
+) -> bytes:
     """
     Generate a new signature
     Args:
@@ -92,3 +108,50 @@ def generate_signature(secret: bytes, project_id_bytes: bytes, code: bytes, depe
     hmac_key.update(dependency)
 
     return hmac_key.digest()
+
+
+# --------------------
+# Certificate Part
+# --------------------
+
+
+@lru_cache(maxsize=1)
+def load_signing_key() -> Ed25519PrivateKey:
+    """Loads the application's private signing key from the environment."""
+    pem = os.environ.get("CERT_SIGNING_PRIVATE_KEY")
+    if not pem:
+        raise RuntimeError(
+            "CERT_SIGNING_PRIVATE_KEY is missing: generate a key pair and "
+            "set it in the environment."
+        )
+    return serialization.load_pem_private_key(pem.replace("\\n", "\n").encode(), password=None)
+
+
+def get_public_key_pem() -> str:
+    """Returns the public key (PEM), safe to expose."""
+    return (
+        load_signing_key()
+        .public_key()
+        .public_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PublicFormat.SubjectPublicKeyInfo,
+        )
+        .decode()
+    )
+
+
+def get_key_id() -> str:
+    """Fingerprint of the public key, used as 'kid' in certificates."""
+    raw = (
+        load_signing_key()
+        .public_key()
+        .public_bytes(serialization.Encoding.Raw, serialization.PublicFormat.Raw)
+    )
+    return hashlib.sha256(raw).hexdigest()[:16]
+
+
+def canonical_json(payload: dict) -> bytes:
+    """Deterministic serialization, required for stable signatures."""
+    return json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode(
+        "utf-8"
+    )

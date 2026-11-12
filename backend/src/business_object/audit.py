@@ -27,7 +27,7 @@ class Audit:
         by the project.
     quality_gate : QualityGate
         Quality gate associated with the project.
-    certificate : CertificateFile
+    certificate : CertificateFile | None
         Certificate associated with the audit.
 
     Methods
@@ -48,7 +48,7 @@ class Audit:
         carbon_emission_gco2e,
         sbom,
         quality_gate,
-        certificate,
+        certificate=None,
         id_audit=None
     ) -> None:
         self.id_audit = id_audit

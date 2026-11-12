@@ -35,7 +35,7 @@ class AuditResponseModel(BaseModel):
     carbon_emission_gco2e: float
     sbom: SbomModel
     quality_gate: QualityGateModel
-    certificate: CertificateModel
+    certificate: CertificateModel | None = None
 
 
 # Model used to create the audit of a project

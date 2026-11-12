@@ -1,11 +1,11 @@
+import base64
 import hashlib
-import hmac
-import os
+import json
 import uuid
-from datetime import date
+from datetime import UTC, datetime
 from io import BytesIO
 
-from dotenv import load_dotenv
+from cryptography.exceptions import InvalidSignature
 from reportlab.graphics import renderPDF
 from reportlab.graphics.barcode import qr
 from reportlab.graphics.shapes import Drawing
@@ -17,12 +17,9 @@ from business_object.audit import Audit
 from business_object.file.certificatefile import CertificateFile
 from business_object.project import Project
 from utils.log_utils import log
+from utils.security import canonical_json, get_key_id, load_signing_key
 
-# La clé doit venir de l'environnement / config, jamais du code
-load_dotenv()
-SECRET_KEY = os.environ["CERTIFICATE_SECRET_KEY"].encode()
-
-# Un modèle par type de quality gate : adapte les clés à tes vraies valeurs
+# A template for each qualitygate
 TEMPLATES = {
     "eco": {
         "title": "Energy Efficiency Certificate",
@@ -42,25 +39,44 @@ TEMPLATES = {
 }
 
 
-def sign(cert_id: str, project: str, qualitygate_type: str, issued: str) -> str:
-    data = f"{cert_id}|{project}|{qualitygate_type}|{issued}"
-    return hmac.new(SECRET_KEY, data.encode(), hashlib.sha256).hexdigest()[:24]
-
-
 class CertificateService:
     @log
     def generate_certificate(
         self, audit: Audit, project: Project, qualitygate_type: str
     ) -> CertificateFile:
-        """DOC A REMPLIR"""
+        """Generates a signed PDF certificate for an audited project.
+
+        The PDF embeds a QR code containing the signed certificate
+        (payload, kid, signature), so it can be verified without database access.
+        """
         if qualitygate_type not in TEMPLATES:
             raise ValueError(f"Unknown Certification : {qualitygate_type}")
 
         tpl = TEMPLATES[qualitygate_type]
-        cert_id = str(uuid.uuid4())
-        issued = date.today().isoformat()
+        issued_at = datetime.now(UTC)
+        issued = issued_at.date().isoformat()
         project_name = project.name_project
-        signature = sign(cert_id, project_name, qualitygate_type, issued)
+
+        payload = {
+            "cert_id": str(uuid.uuid4()),
+            "audit_id": audit.id_audit,
+            "project_id": project.id_project,
+            "project_name": project_name,
+            "qualitygate_type": qualitygate_type,
+            "qualitygate_status": audit.quality_gate.status,
+            "issued_at": issued_at.isoformat(timespec="seconds"),
+            "files": {
+                "code_sha256": hashlib.sha256(project.codefile.content).hexdigest(),
+                "dependencies_sha256": hashlib.sha256(project.dependencyfile.content).hexdigest(),
+            },
+            "summary": {
+                "vulnerabilities": len(audit.vulnerabilities),
+                "carbon_emission_gco2e": f"{audit.carbon_emission_gco2e:.6f}",
+                "energy_consumption_kwh": f"{audit.energy_consumption_kwh:.6f}",
+            },
+            "app_version": "1.0.0",
+        }
+        signed = self.sign_certificate(payload)
 
         buffer = BytesIO()
         w, h = landscape(A4)
@@ -82,18 +98,19 @@ class CertificateService:
         c.drawCentredString(w / 2, h - 240, project_name)
         c.setFont("Helvetica", 16)
         c.drawCentredString(w / 2, h - 290, tpl["text"])
-        c.drawCentredString(w / 2, h - 320, f"Délivré le {issued}")
+        c.drawCentredString(w / 2, h - 320, f"Issued on {issued}")
 
-        # Identifiant + signature
+        # Identifiants
         c.setFont("Courier", 9)
-        c.drawString(50, 60, f"ID : {cert_id}")
-        c.drawString(50, 48, f"Signature : {signature}")
+        c.drawString(50, 72, f"ID : {payload['cert_id']}")
+        c.drawString(50, 60, f"Key ID : {signed['kid']}")
+        c.drawString(50, 48, f"Signature : {signed['signature'][:32]}...")
 
-        # QR code (contient de quoi vérifier le certificat)
-        payload = f"{cert_id}|{signature}"
-        widget = qr.QrCodeWidget(payload)
+        # QR code : certificat signé complet
+        qr_content = json.dumps(signed, separators=(",", ":"), ensure_ascii=False)
+        widget = qr.QrCodeWidget(qr_content)
         x0, y0, x1, y1 = widget.getBounds()
-        size = 90
+        size = 130
         d = Drawing(size, size, transform=[size / (x1 - x0), 0, 0, size / (y1 - y0), 0, 0])
         d.add(widget)
         renderPDF.draw(d, c, w - size - 50, 50)
@@ -107,32 +124,36 @@ class CertificateService:
             type_file="pdf",
             qualitygate_type=qualitygate_type,
             date=issued,
+            signed_data=signed,
         )
+
+    @staticmethod
+    def sign_certificate(payload: dict) -> dict:
+        """Signs a certificate payload with the application's private key."""
+        signature = load_signing_key().sign(canonical_json(payload))
+        return {
+            "payload": payload,
+            "kid": get_key_id(),
+            "alg": "Ed25519",
+            "signature": base64.b64encode(signature).decode("ascii"),
+        }
+
+    @staticmethod
+    def verify_certificate(certificate: dict) -> bool:
+        """Checks a signed certificate against the application's public key."""
+        try:
+            if certificate["kid"] != get_key_id():
+                return False
+            load_signing_key().public_key().verify(
+                base64.b64decode(certificate["signature"]),
+                canonical_json(certificate["payload"]),
+            )
+            return True
+        except (InvalidSignature, KeyError, TypeError, ValueError):
+            return False
 
     # Temporaire
-    def create_empty_certificate(self):
-        return CertificateFile(
-            name="Empty", content=b"0", type_file="pdf", qualitygate_type="global", date=None
-        )
-
-# from business_object.audit import Audit
-# from business_object.certificate import Certificate
-# from utils.log_utils import log
-
-
-# class CertificateService:
-#     # PAS FINI
-#     @log
-#     def generate_certificate(self, audit: Audit, qualitygate_type: str) -> Certificate:
-#         """Generate a certificate for a project during its audit
-#         Args:
-#             audit (Audit) : the audit of the project
-#         Returns:
-#             Certificate object linked to the project
-#         """
-#         return Certificate(
-#             name="Certificate: " + qualitygate_type,
-#             content=None,
-#             type_file="pdf",
-#             qualitygate_type=qualitygate_type,
-#         )
+    # def create_empty_certificate(self):
+    #     return CertificateFile(
+    #         name="Empty", content=b"0", type_file="pdf", qualitygate_type="global", date=None
+    #     )

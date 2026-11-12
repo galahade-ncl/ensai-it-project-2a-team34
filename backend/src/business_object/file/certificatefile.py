@@ -19,15 +19,17 @@ class CertificateFile(File):
     qualitygate_type : str
         Type of the quality gate.
     date : datetime
-        Generation date of the SBOM.
+        Generation date of the SBOM
+    signed_data : A COMPLETER
     """
 
-    def __init__(self, name, content, type_file, qualitygate_type, date) -> None:
+    def __init__(self, name, content, type_file, qualitygate_type, date, signed_data) -> None:
         self.name = name
         self.content = content
         self.type_file = type_file
         self.qualitygate_type = qualitygate_type
         self.date = date if date is not None else datetime.now()
+        self.signed_data = signed_data
 
     # Move this method to “utils,” unless it differs from the method in the code file
     # def get_content(self) -> bool:

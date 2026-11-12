@@ -1,7 +1,9 @@
+import json
+
 from business_object.audit import Audit
+from business_object.file.certificatefile import CertificateFile
 from business_object.project import Project
 from dao.db_connection import DBConnection
-from service.certificate_service import CertificateService
 from service.qualitygate_services.qualitygate_service import QualityGateService
 from service.sbom_service import SBOMService
 from utils.log_utils import get_logger, log
@@ -16,6 +18,21 @@ class AuditDao(metaclass=Singleton):
     @staticmethod
     def _row_to_audit(row: dict) -> Audit:
         """Convert a database row into an Audit object."""
+        signed = row.get("certificate_signed")
+        if isinstance(signed, str):  # selon le driver, JSONB peut arriver en str
+            signed = json.loads(signed)
+
+        if signed and row.get("certificate_pdf"):
+            certificate = CertificateFile(
+                name="Certificate: " + row["type_qualitygate"],
+                content=bytes(row["certificate_pdf"]),  # bytes() gère memoryview
+                type_file="pdf",
+                qualitygate_type=row["type_qualitygate"],
+                date=signed["payload"]["issued_at"][:10],
+                signed_data=signed,
+            )
+        else:
+            certificate = None
         return Audit(
             id_audit=row["id_audit"],
             id_project=row["id_project"],
@@ -27,13 +44,10 @@ class AuditDao(metaclass=Singleton):
             energy_consumption_kwh=row["energy_comsumption"],
             carbon_emission_gco2e=row["carbon_emission_gco2e"],
             sbom=SBOMService().create_empty_sbom(),
-            quality_gate=QualityGateService().create(row["type_qualitygate"],
-                                                     5,
-                                                     0,
-                                                     1,
-                                                     0.001,
-                                                     row["status_qualitygate"]),
-            certificate=CertificateService().create_empty_certificate(),
+            quality_gate=QualityGateService().create(
+                row["type_qualitygate"], 5, 0, 1, 0.001, row["status_qualitygate"]
+            ),
+            certificate=certificate,
         )
 
     @log
@@ -139,21 +153,25 @@ class AuditDao(metaclass=Singleton):
     def update(self, audit: Audit) -> bool:
         """Update an existing audit."""
         try:
+            signed = getattr(audit.certificate, "signed_data", None)
+
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
                     cursor.execute(
                         """
                         UPDATE audit_table
                         SET id_project = %(id_project)s,
-                            date = %(date)s,
-                            complexity = %(complexity)s,
-                            energy_comsumption = %(energy_comsumption)s,
-                            carbon_emission_gco2e =
-                                %(carbon_emission_gco2e)s,
-                            type_qualitygate = %(type_qualitygate)s,
-                            status_qualitygate = %(status_qualitygate)s
-                        WHERE id_audit = %(id_audit)s;
-                        """,
+                        date = %(date)s,
+                        complexity = %(complexity)s,
+                        energy_comsumption = %(energy_comsumption)s,
+                        carbon_emission_gco2e = %(carbon_emission_gco2e)s,
+                        type_qualitygate = %(type_qualitygate)s,
+                        status_qualitygate = %(status_qualitygate)s,
+                        certificate_pdf = %(certificate_pdf)s,
+                        certificate_signed = %(certificate_signed)s,
+                        certificate_id = %(certificate_id)s
+                    WHERE id_audit = %(id_audit)s;
+                    """,
                         {
                             "id_audit": audit.id_audit,
                             "id_project": audit.id_project,
@@ -167,10 +185,12 @@ class AuditDao(metaclass=Singleton):
                                 if isinstance(audit.quality_gate, str)
                                 else getattr(audit.quality_gate, "status", None)
                             ),
+                            "certificate_pdf": audit.certificate.content if signed else None,
+                            "certificate_signed": json.dumps(signed) if signed else None,
+                            "certificate_id": signed["payload"]["cert_id"] if signed else None,
                         },
                     )
                     return cursor.rowcount == 1
-
         except Exception as e:
             logger.error(e)
             raise

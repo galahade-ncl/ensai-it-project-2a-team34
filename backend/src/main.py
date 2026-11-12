@@ -2,7 +2,7 @@
 Main entry point for the FastAPI web service.
 
 Initializes logging, loads environment variables, and sets up API routers
-for players, login, and games.
+for users, projects, audits and certificates.
 """
 
 from fastapi import FastAPI, Request, status
@@ -12,6 +12,7 @@ from fastapi.responses import JSONResponse, RedirectResponse
 
 from controller import (
     audit_controller,
+    certificate_controller,
     hmac_controller,
     login_controller,
     project_controller,
@@ -20,6 +21,11 @@ from controller import (
 from utils.env_variables import display_values, load_environment_variables
 from utils.log_utils import LogMiddleware, get_logger, initialize_logs
 from utils.reset_database import ResetDatabase
+from utils.security import load_signing_key
+
+load_environment_variables()
+display_values()
+load_signing_key()  # Check if there is the public key of the application
 
 logger = get_logger(__name__)
 
@@ -54,12 +60,14 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     )
 
 
+# Include all routers from controller
 app.include_router(user_controller.router, prefix="/user", tags=["Users"])
 app.include_router(login_controller.router, prefix="/login", tags=["Login"])
 app.include_router(project_controller.router, prefix="/project", tags=["Projects"])
 # app.include_router(file_controller.router, prefix="/file", tags=["Files"])
 app.include_router(audit_controller.router, prefix="/audit", tags=["Audits"])
 app.include_router(hmac_controller.router, prefix="/hmac", tags=["Hmac"])
+app.include_router(certificate_controller.router, tags=["Certificates"])
 
 
 @app.get("/", include_in_schema=False)

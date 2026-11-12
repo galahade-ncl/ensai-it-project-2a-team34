@@ -88,14 +88,7 @@ class ProjectService:
 
         expected_signature = generate_signature(project.secretHMACkey, project_id, code, dependency)
 
-        ok = hmac.compare_digest(expected_signature, signature)
-        if not ok:
-            raise ValueError(
-                f"DEBUG keylen={len(bytes(project.secretHMACkey))} id={project_id!r} "
-                f"code={len(code)} dep={len(dependency)} "
-                f"expected={expected_signature.hex()} received={signature.hex()}"
-            )
-        return ok
+        return hmac.compare_digest(expected_signature, signature)
 
     @log
     def list_all_audit(self, id_project: int) -> list[Audit] | None:

@@ -136,8 +136,6 @@ class AuditService:
             status="Unevaluated"
         )
 
-        certificate = CertificateService().create_empty_certificate()
-
         date = datetime.now()
 
         audit = AuditService().create(
@@ -151,15 +149,17 @@ class AuditService:
             carbon_emission_gco2e,
             sbom,
             quality_gate,
-            certificate,
+            None,
         )
 
+        # Evaluate the audit
         QualityGateService().evaluate(quality_gate, audit)
 
-        certificate = CertificateService().generate_certificate(audit, project, quality_gate_type)
-        audit.certificate = certificate
-
-        # Update qualitygate status in database
+        # Generate a Certificate if needed
+        if audit.quality_gate.status == "Passed":
+            audit.certificate = CertificateService().generate_certificate(
+                audit, project, quality_gate_type
+            )
 
         AuditService().update(audit)
 
