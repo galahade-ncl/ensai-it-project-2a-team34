@@ -110,7 +110,7 @@ class CertificateService:
         qr_content = json.dumps(signed, separators=(",", ":"), ensure_ascii=False)
         widget = qr.QrCodeWidget(qr_content)
         x0, y0, x1, y1 = widget.getBounds()
-        size = 130
+        size = 140
         d = Drawing(size, size, transform=[size / (x1 - x0), 0, 0, size / (y1 - y0), 0, 0])
         d.add(widget)
         renderPDF.draw(d, c, w - size - 50, 50)
