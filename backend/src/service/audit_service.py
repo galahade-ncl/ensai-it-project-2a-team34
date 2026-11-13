@@ -55,7 +55,19 @@ class AuditService:
         Returns:
             Audit object created or None if failed
         """
-        new_audit = Audit(id_project=id_project, date=date, vulnerabilities=vulnerabilities, licenses=licenses, anti_patterns=anti_patterns, complexity=complexity, energy_consumption_kwh=energy_consumption_kwh, carbon_emission_gco2e=carbon_emission_gco2e, sbom=sbom, quality_gate=quality_gate, certificate=certificate)
+        new_audit = Audit(
+            id_project=id_project,
+            date=date,
+            vulnerabilities=vulnerabilities,
+            licenses=licenses,
+            anti_patterns=anti_patterns,
+            complexity=complexity,
+            energy_consumption_kwh=energy_consumption_kwh,
+            carbon_emission_gco2e=carbon_emission_gco2e,
+            sbom=sbom,
+            quality_gate=quality_gate,
+            certificate=certificate,
+        )
         return new_audit if AuditDao().create(new_audit) else None
 
     @log
@@ -125,7 +137,7 @@ class AuditService:
         energy_consumption_kwh = analysis.energy_kwh
         carbon_emission_gco2e = analysis.carbon_gco2e
 
-        sbom = SBOMService().generate(project)
+        sbom = SBOMService().generate(project, vulnerabilities)
 
         quality_gate = QualityGateService().create(
             quality_gate_type,
@@ -133,7 +145,7 @@ class AuditService:
             max_critical_vulnerabilities=max_critical_vuln,
             max_carbon_emission=max_carbon,
             max_energy_consumption=max_energy,
-            status="Unevaluated"
+            status="Unevaluated",
         )
 
         date = datetime.now()

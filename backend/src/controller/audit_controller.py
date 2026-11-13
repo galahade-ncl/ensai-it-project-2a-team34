@@ -188,3 +188,27 @@ async def audit_certificate(
 
     except (binascii.Error, ValueError):
         raise HTTPException(status_code=500, detail="Invalid certificate content.") from None
+
+
+@router.get("/{id_audit}/sbom", tags=["Audits"])
+async def audit_sbom(
+    id_audit: int,
+    user=Depends(verify_token),
+    audit_service=Depends(get_audit_service),
+    project_service=Depends(get_project_service),
+):
+    audit = audit_service.find_by_id(id_audit)
+
+    if not audit or not project_service.find_by_id_and_user(audit.id_project, user.id_user):
+        raise HTTPException(
+            status_code=404, detail="Audit not found or you do not have access to it."
+        )
+
+    if not audit.sbom or not audit.sbom.content or audit.sbom.content == b"0":
+        raise HTTPException(status_code=404, detail="No SBOM for this audit.")
+
+    return Response(
+        content=audit.sbom.content,
+        media_type="application/json",
+        headers={"Content-Disposition": f'attachment; filename="sbom_{id_audit}.json"'},
+    )

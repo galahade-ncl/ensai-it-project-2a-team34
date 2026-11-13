@@ -4,7 +4,6 @@ import uuid
 from datetime import datetime
 
 from api_deps_dev.api_deps_dev import API_DEPSDEV
-from business_object.dependency import Dependency
 from business_object.file.sbomfile import SBOMFile
 from business_object.vulnerability.critical_vulnerability import CriticalVulnerability
 from business_object.vulnerability.high_vulnerability import HighVulnerability
@@ -31,23 +30,29 @@ class SBOMService:
             return re.sub(r"[-_.]+", "-", name).lower()
         return name.lower()
 
-    def generate(
-        self,
-        project,
-        dependencies: list[Dependency] | None = None,
-        vulnerabilities=None,
-    ) -> SBOMFile:
-        """Generate the SBOM of a project.
+    def generate(self, project, vulnerabilities) -> SBOMFile:
+        """Generate the SBOM (CycloneDX, JSON) of a project.
 
         Parameters
-        ----------
+        ---------
         project: Project
-            Project to inventory
-        dependencies: list[Dependency], optional
-            Dependencies of the project (parsed from the dependency file if None)
+            Proejct to inventory
         vulnerabilities: list[Vulnerability], optional
-            Vulnerabilities found by SecurityService; the severity is
+            Vulnerabilities found by SecurityService (instance of
+            ``CriticalVulnerability``, ``HighVulnerability``,
+            ``MediumVulnerability`` or ``LowVulnerability``). They are
+            added to the SBOM and linked to the affected . The severity is
             deduced from the class of each vulnerability.
+
+        Returns
+        ------
+        SbomFile
+            SBOM whose content is the JSON document in bytes
+
+        Raises
+        ------
+        ValueError
+            If the project is ''None''.
         """
         if project is None:
             raise ValueError("Cannot generate a SBOM: project is None.")
@@ -59,9 +64,8 @@ class SBOMService:
         filename = file_service.get_filename(dependencyfile).lower()
         ecosystem = PURL_TYPES.get(filename, "pypi")
 
-        # 2) Dependencies: already parsed by the right service (txt/json/xml/toml)
-        if dependencies is None:
-            dependencies = file_service.parse_dependencies(dependencyfile)
+        # 2) Dependencies :
+        dependencies = file_service.parse_dependencies(dependencyfile)
 
         # 3) One CycloneDX component per dependency
         components = []

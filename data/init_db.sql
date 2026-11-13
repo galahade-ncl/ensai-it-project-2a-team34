@@ -41,5 +41,6 @@ CREATE TABLE audit_table (
     certificate_pdf         BYTEA,
     certificate_signed      JSONB,
     certificate_id          TEXT UNIQUE,
+    sbom_content            BYTEA,
     FOREIGN KEY (id_project) REFERENCES project_table(id_project)
 );

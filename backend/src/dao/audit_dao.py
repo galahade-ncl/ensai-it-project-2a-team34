@@ -2,6 +2,7 @@ import json
 
 from business_object.audit import Audit
 from business_object.file.certificatefile import CertificateFile
+from business_object.file.sbomfile import SBOMFile
 from business_object.project import Project
 from dao.db_connection import DBConnection
 from service.qualitygate_services.qualitygate_service import QualityGateService
@@ -33,6 +34,15 @@ class AuditDao(metaclass=Singleton):
             )
         else:
             certificate = None
+        if row.get("sbom_content"):
+            sbom = SBOMFile(
+                name=f"sbom_{row['id_audit']}.json",
+                content=bytes(row["sbom_content"]),
+                type_file="json",
+                date=row["date"],
+            )
+        else:
+            sbom = SBOMService().create_empty_sbom()
         return Audit(
             id_audit=row["id_audit"],
             id_project=row["id_project"],
@@ -43,7 +53,7 @@ class AuditDao(metaclass=Singleton):
             complexity=row["complexity"],
             energy_consumption_kwh=row["energy_comsumption"],
             carbon_emission_gco2e=row["carbon_emission_gco2e"],
-            sbom=SBOMService().create_empty_sbom(),
+            sbom=sbom,
             quality_gate=QualityGateService().create(
                 row["type_qualitygate"], 5, 0, 1, 0.001, row["status_qualitygate"]
             ),
@@ -65,7 +75,8 @@ class AuditDao(metaclass=Singleton):
                             energy_comsumption,
                             carbon_emission_gco2e,
                             type_qualitygate,
-                            status_qualitygate
+                            status_qualitygate,
+                            sbom_content
                         )
                         VALUES (
                             %(id_project)s,
@@ -74,7 +85,8 @@ class AuditDao(metaclass=Singleton):
                             %(energy_comsumption)s,
                             %(carbon_emission_gco2e)s,
                             %(type_qualitygate)s,
-                            %(status_qualitygate)s
+                            %(status_qualitygate)s,
+                            %(sbom_content)s
                         )
                         RETURNING id_audit, date;
                         """,
@@ -90,6 +102,7 @@ class AuditDao(metaclass=Singleton):
                                 if isinstance(audit.quality_gate, str)
                                 else getattr(audit.quality_gate, "status", None)
                             ),
+                            "sbom_content": getattr(audit.sbom, "content", None),
                         },
                     )
                     res = cursor.fetchone()
