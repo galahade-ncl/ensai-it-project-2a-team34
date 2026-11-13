@@ -1,7 +1,6 @@
 from business_object.file.file import File
 
 
-# UNDONE
 class DependencyFile(File):
     """
     Dependency file submitted for audit.
@@ -23,16 +22,6 @@ class DependencyFile(File):
         self.content = content
         self.type_file = type_file
         self.date = date
-        # self.dependencies = dependencies -> withdrawn for now
-
-    # Move this method to “utils,” unless it differs from the method in the code file
-    # def get_content(self) -> bool:
-    #     try:
-    #         with open(self.path, encoding="utf-8") as file:
-    #             self.content = file.read()
-    #         return True
-    #     except (FileNotFoundError, OSError):
-    #         return False
 
     def get_duty(self) -> str:
         """

@@ -95,7 +95,7 @@ async def create_audit(
         dep_content = base64.b64decode(p.project.dependencyfile.content)
     except Exception as e:
         logger.error(f"Base64 decoding error: {e}")
-        raise HTTPException(status_code=400, detail="Invalid Base64 content in files.")
+        raise HTTPException(status_code=400, detail="Invalid Base64 content in files.") from None
 
     # Update the project
     project = Project(
@@ -118,7 +118,7 @@ async def create_audit(
     try:
         signature_bytes = base64.b64decode(p.hmac_signature, validate=True)
     except (binascii.Error, ValueError):
-        raise HTTPException(status_code=400, detail="Invalid signature format")
+        raise HTTPException(status_code=400, detail="Invalid signature format") from None
 
     # Verify HMAC signature before the launch of the audit
     if not project_service.verify_signature(project=project, signature=signature_bytes):
@@ -187,4 +187,4 @@ async def audit_certificate(
         )
 
     except (binascii.Error, ValueError):
-        raise HTTPException(status_code=500, detail="Invalid certificate content.")
+        raise HTTPException(status_code=500, detail="Invalid certificate content.") from None

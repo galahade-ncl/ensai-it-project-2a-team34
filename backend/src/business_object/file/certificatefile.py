@@ -3,7 +3,6 @@ from datetime import datetime
 from business_object.file.file import File
 
 
-# UNDONE
 class CertificateFile(File):
     """
     Certificate of a file.
@@ -30,15 +29,6 @@ class CertificateFile(File):
         self.qualitygate_type = qualitygate_type
         self.date = date if date is not None else datetime.now()
         self.signed_data = signed_data
-
-    # Move this method to “utils,” unless it differs from the method in the code file
-    # def get_content(self) -> bool:
-    #     try:
-    #         with open(self.path, encoding="utf-8") as file:
-    #             self.content = file.read()
-    #         return True
-    #     except (FileNotFoundError, OSError):
-    #         return False
 
     def get_duty(self) -> str:
         """
