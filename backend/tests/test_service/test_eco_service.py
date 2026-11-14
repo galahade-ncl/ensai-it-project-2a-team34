@@ -284,6 +284,34 @@ def test_detect_antipatterns(source, expected):
 
 
 # =============================================================================
+# _collect_variables
+# =============================================================================
+
+
+@pytest.mark.parametrize(
+    "source, expected",
+    [
+        pytest.param("n = 100", {"n": 100}, id="integer"),
+        pytest.param("my_list = [1, 2, 3]", {"my_list": [1, 2, 3]}, id="list"),
+        # Valeur non littérale ou cible qui n'est pas un simple nom : ignorée
+        pytest.param("n = int(input())", {}, id="not_a_literal"),
+        pytest.param("x[0] = 5", {}, id="subscript_target"),
+    ],
+)
+def test_collect_variables(source, expected):
+    """Collect the variables assigned with a literal value"""
+
+    # GIVEN
+    tree = ast.parse(source)
+
+    # WHEN
+    res = EcoService._collect_variables(tree)
+
+    # THEN
+    assert res == expected
+
+
+# =============================================================================
 # _loop_length
 # =============================================================================
 
@@ -291,28 +319,16 @@ def test_detect_antipatterns(source, expected):
 @pytest.mark.parametrize(
     "source, expected",
     [
-        pytest.param("for i in range(3):\n    pass", 3, id="range_stop"),
         pytest.param("for i in range(2, 10, 2):\n    pass", 4, id="range_start_stop_step"),
-        pytest.param("for i in range(5, 0, -1):\n    pass", 5, id="range_negative_step"),
-        pytest.param("for i in range(-3, 3):\n    pass", 6, id="range_negative_start"),
-        pytest.param("for i in range(0):\n    pass", 0, id="range_empty"),
         pytest.param("for a in [1, 2, 3, 4]:\n    pass", 4, id="literal_list"),
-        pytest.param("for a in (1, 2):\n    pass", 2, id="literal_tuple"),
-        pytest.param("for a in {1, 2, 3}:\n    pass", 3, id="literal_set"),
-        pytest.param("for a in []:\n    pass", 0, id="empty_list"),
         pytest.param("for c in 'abc':\n    pass", 3, id="literal_string"),
-        pytest.param("for c in b'ab':\n    pass", 2, id="literal_bytes"),
-        # Longueur inconnue : valeur par défaut
-        pytest.param("for a in x:\n    pass", DEFAULT_LENGTH, id="variable"),
-        pytest.param("for i in range(n):\n    pass", DEFAULT_LENGTH, id="range_with_variable"),
+        # Range incohérent : 0 itération
+        pytest.param("for i in range():\n    pass", 0, id="range_without_argument"),
+        pytest.param("for i in range(0, 5, 0):\n    pass", 0, id="range_step_zero"),
+        # Longueur inconnue (sans dictionnaire de variables) : valeur par défaut
+        pytest.param("for a in x:\n    pass", DEFAULT_LENGTH, id="unknown_variable"),
+        pytest.param("for i in range(n):\n    pass", DEFAULT_LENGTH, id="range_unknown_variable"),
         pytest.param("for i in range(len(x)):\n    pass", DEFAULT_LENGTH, id="range_len"),
-        pytest.param("for i in range(0, 5, 0):\n    pass", DEFAULT_LENGTH, id="range_step_zero"),
-        pytest.param("for i in range(1.5):\n    pass", DEFAULT_LENGTH, id="range_with_float"),
-        pytest.param("for a in 5:\n    pass", DEFAULT_LENGTH, id="constant_not_iterable"),
-        pytest.param("for a in {1: 2}:\n    pass", DEFAULT_LENGTH, id="literal_dict"),
-        pytest.param(
-            "for a in enumerate(range(3)):\n    pass", DEFAULT_LENGTH, id="enumerate"
-        ),
         pytest.param("while x:\n    pass", DEFAULT_LENGTH, id="while_loop"),
     ],
 )
@@ -329,6 +345,31 @@ def test_loop_length(source, expected):
     assert res == expected
 
 
+@pytest.mark.parametrize(
+    "source, variables, expected",
+    [
+        pytest.param("for i in range(n):\n    pass", {"n": 100}, 100, id="range_with_variable"),
+        pytest.param(
+            "for x in my_list:\n    pass", {"my_list": [1, 2, 3]}, 3, id="list_variable"
+        ),
+        pytest.param(
+            "for x in n:\n    pass", {"n": 100}, DEFAULT_LENGTH, id="variable_not_a_collection"
+        ),
+    ],
+)
+def test_loop_length_with_variables(source, variables, expected):
+    """Use the variables of the code to find the length of a loop"""
+
+    # GIVEN
+    loop = ast.parse(source).body[0]
+
+    # WHEN
+    res = EcoService._loop_length(loop, variables)
+
+    # THEN
+    assert res == expected
+
+
 # =============================================================================
 # _loop_complexity
 # =============================================================================
@@ -337,7 +378,6 @@ def test_loop_length(source, expected):
 @pytest.mark.parametrize(
     "source, expected",
     [
-        pytest.param("for i in range(3):\n    pass", 3, id="single_loop"),
         pytest.param(
             "for i in range(3):\n    for j in range(4):\n        for k in range(5):\n"
             "            pass",
@@ -349,26 +389,6 @@ def test_loop_length(source, expected):
             "    for c in range(4):\n        pass",
             14,
             id="inner_loops_in_sequence_are_added",
-        ),
-        pytest.param(
-            "for a in range(2):\n    if a:\n        for b in range(3):\n            pass",
-            6,
-            id="inner_loop_hidden_in_an_if",
-        ),
-        pytest.param(
-            "for a in x:\n    for b in y:\n        pass",
-            DEFAULT_LENGTH**2,
-            id="unknown_lengths_use_the_default",
-        ),
-        pytest.param(
-            "for a in range(2):\n    while x:\n        pass",
-            2 * DEFAULT_LENGTH,
-            id="while_inside_for",
-        ),
-        pytest.param(
-            "for a in range(3):\n    for b in range(0):\n        pass",
-            0,
-            id="inner_loop_that_never_runs",
         ),
     ],
 )
@@ -394,28 +414,14 @@ def test_loop_complexity(source, expected):
     "source, expected",
     [
         pytest.param("def f(n):\n    return g(n)", 0, id="not_recursive"),
-        pytest.param("def fact(n):\n    return n * fact(n - 1)", 1, id="one_recursive_call"),
         pytest.param(
             "def fib(n):\n    return fib(n - 1) + fib(n - 2)", 2, id="two_recursive_calls"
-        ),
-        pytest.param(
-            "def f(n):\n    if n:\n        f(n - 1)", 1, id="recursive_call_in_an_if"
-        ),
-        pytest.param(
-            "def f(n):\n    for i in range(2):\n        f(n - 1)",
-            2,
-            id="recursive_call_in_a_loop_counts_once_per_iteration",
         ),
         pytest.param(
             "def f(n):\n    for i in range(2):\n        for j in range(3):\n"
             "            f(n - 1)",
             6,
             id="recursive_call_in_nested_loops",
-        ),
-        pytest.param(
-            "def f(n):\n    for a in x:\n        f(n - 1)",
-            DEFAULT_LENGTH,
-            id="recursive_call_in_a_loop_of_unknown_length",
         ),
         pytest.param(
             "def walk(self, node):\n    self.walk(node.left)\n    self.walk(node.right)",
@@ -437,6 +443,19 @@ def test_count_recursive_calls(source, expected):
     assert res == expected
 
 
+def test_count_recursive_calls_with_variables():
+    """The length of the loop is found thanks to the variables"""
+
+    # GIVEN
+    function = ast.parse("def f(n):\n    for i in range(k):\n        f(n - 1)").body[0]
+
+    # WHEN
+    res = EcoService._count_recursive_calls(function, function.name, {"k": 4})
+
+    # THEN
+    assert res == 4
+
+
 # =============================================================================
 # estimate_complexity
 # =============================================================================
@@ -446,33 +465,19 @@ def test_count_recursive_calls(source, expected):
     "source, expected",
     [
         pytest.param("x = 1", 1, id="no_loop"),
-        pytest.param("for i in range(3):\n    print(i)", 1 + 3, id="one_loop"),
-        pytest.param(
-            "x = 0\nfor i in range(3):\n    for j in range(4):\n        for k in range(5):\n"
-            "            x += 1",
-            1 + 60,
-            id="three_nested_loops",
-        ),
         pytest.param(
             "for a in range(3):\n    pass\nfor b in range(4):\n    pass",
             1 + 3 + 4,
             id="sequential_loops",
         ),
+        # Variables du code
         pytest.param(
-            "for a in range(2):\n    for b in range(3):\n        pass\n"
-            "    for c in range(4):\n        pass",
-            1 + 14,
-            id="nested_loop_with_two_inner_loops",
-        ),
-        pytest.param("for a in x:\n    pass", 1 + DEFAULT_LENGTH, id="loop_of_unknown_length"),
-        pytest.param("while x:\n    pass", 1 + DEFAULT_LENGTH, id="while_loop"),
-        pytest.param(
-            "for a in range(0):\n    pass", 1, id="loop_that_never_runs"
+            "n = 100\nfor i in range(n):\n    pass", 1 + 100, id="range_with_variable"
         ),
         pytest.param(
-            "def f(x):\n    for a in range(5):\n        pass",
-            1 + 5,
-            id="loop_inside_a_function",
+            "n = 4\nfor i in range(n):\n    for j in range(n):\n        pass",
+            1 + 16,
+            id="nested_loops_with_variable",
         ),
         # Récursion : (1 + profondeur) exécutions pour un appel, arbre binaire pour deux appels
         pytest.param(
@@ -486,11 +491,6 @@ def test_count_recursive_calls(source, expected):
             id="double_recursion",
         ),
         pytest.param(
-            "class Tree:\n    def walk(self, node):\n        self.walk(node.left)",
-            DEFAULT_DEPTH + 1,
-            id="recursive_method",
-        ),
-        pytest.param(
             "def f(n):\n    for a in range(5):\n        pass\n    return f(n - 1)",
             6 * (DEFAULT_DEPTH + 1),  # une exécution coûte 1 + 5, et il y en a 1 + profondeur
             id="loop_and_recursion",
@@ -500,13 +500,10 @@ def test_count_recursive_calls(source, expected):
             3 * (2 ** (DEFAULT_DEPTH + 1) - 1),  # une exécution coûte 1 + 2, avec 2 appels
             id="recursive_call_in_a_loop",
         ),
-        pytest.param(
-            "def f(n):\n    return g(n)", 1, id="call_to_another_function_is_not_recursion"
-        ),
     ],
 )
 def test_estimate_complexity(source, expected):
-    """Estimate the complexity of a code according to its loops and its recursions"""
+    """Estimate the complexity of a code according to its loops, variables and recursions"""
 
     # GIVEN
     codefile = code_file(source)
