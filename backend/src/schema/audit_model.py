@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Literal
 
 from pydantic import BaseModel
 
@@ -7,7 +8,6 @@ from schema.certificate_model import CertificateModel
 from schema.licence_model import LicenceModel
 from schema.project_model import ProjectCompletedModel
 from schema.qualitygate_model import QualityGateModel
-from schema.sbom_model import SbomModel
 from schema.vulnerability_model import VulnerabilityModel
 
 
@@ -33,7 +33,6 @@ class AuditResponseModel(BaseModel):
     complexity: float
     energy_consumption_kwh: float
     carbon_emission_gco2e: float
-    sbom: SbomModel
     quality_gate: QualityGateModel
     certificate: CertificateModel | None = None
 
@@ -41,5 +40,5 @@ class AuditResponseModel(BaseModel):
 # Model used to create the audit of a project
 class AuditCreateModel(BaseModel):
     project: ProjectCompletedModel
-    qualitygate_type: str
+    qualitygate_type: Literal["eco", "security", "global"]
     hmac_signature: str

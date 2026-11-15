@@ -14,7 +14,6 @@ class SignedCertificateModel(BaseModel):
 class CertificateModel(BaseModel):
     """ A COMPLETER """
     name: str
-    content: str
     type_file: str
     date: datetime
     signed_data: SignedCertificateModel | None = None

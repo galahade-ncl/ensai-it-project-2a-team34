@@ -1,8 +1,7 @@
-from business_object.qualitygate.servicequalitygate import SecurityQualityGate
-
 from business_object.qualitygate.ecoqualitygate import EcoQualityGate
 from business_object.qualitygate.globalqualitygate import GlobalQualityGate
 from business_object.qualitygate.qualitygate import QualityGate
+from business_object.qualitygate.securityqualitygate import SecurityQualityGate
 
 
 class QualityGateFactory:
@@ -16,17 +15,31 @@ class QualityGateFactory:
         Return an instance of the QualityGate matching the requested type.
     """
 
-    @classmethod
-    def get_qualitygate(self, type: str) -> QualityGate:
+    @staticmethod
+    def get_qualitygate(type_qualitygate: str,
+        max_vulnerabilities: int,
+        max_critical_vulnerabilities: int,
+        max_carbon_emission: float,
+        max_energy_consumption: float,
+        status: str) -> QualityGate:
         """
         Return an instance of the requested type of quality gate.
 
         Parameters
         ----------
-        type : str
+        type_qualitygate : str
             Type of the quality gate expected (``'eco'``, ``'security'``
             or ``'global'``). The value is case-insensitive.
-
+        max_vulnerabilities : int
+            Maximum number of vulnerabilities tolerated for a project.
+        max_critical_vulnerabilities : int
+            Maximum number of critical vulnerabilities tolerated for a project.
+        max_carbon_emission : float
+            Maximum carbon emission tolerated for a project.
+        max_energy_consumption : float
+            Maximum energy consumption tolerated for a project.
+        status : str
+            Status of the quality gate.
         Returns
         -------
         QualityGate
@@ -37,13 +50,18 @@ class QualityGateFactory:
         ValueError
             If the requested type is not supported.
         """
-        type = type.lower()
+        type_qg = type_qualitygate.lower()
 
-        if type == "eco":
-            return EcoQualityGate()
-        elif type == "security":
-            return SecurityQualityGate()
-        elif type == "global":
-            return GlobalQualityGate()
-        else:
-            raise ValueError(f"'{type}'QualityGate is not supported.")
+        if type_qg == "eco":
+            return EcoQualityGate(max_carbon_emission, max_energy_consumption, status)
+        if type_qg == "security":
+            return SecurityQualityGate(max_vulnerabilities, max_critical_vulnerabilities, status)
+        if type_qg == "global":
+            return GlobalQualityGate(
+                max_vulnerabilities,
+                max_critical_vulnerabilities,
+                max_carbon_emission,
+                max_energy_consumption,
+                status,
+            )
+        raise ValueError(f"'{type_qualitygate}' QualityGate is not supported.")

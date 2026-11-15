@@ -49,7 +49,10 @@ indent-style = "space"
 pythonpath = ["src"]
 testpaths = ["tests"]
 python_files = ["*test*.py"]
-addopts = "-v -s -x"
+markers = [
+    "network: tests qui font de vrais appels réseau (lents, dépendent d'Internet)",
+]
+addopts = '-v -s -m "not network"'
 
 [tool.coverage.run]
 branch = true

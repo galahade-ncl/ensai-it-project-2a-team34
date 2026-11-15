@@ -1,5 +1,6 @@
 import requests
 from cvss import CVSS2, CVSS3, CVSS4
+from cvss.exceptions import CVSSError
 
 from business_object.dependency import Dependency
 from business_object.vulnerability.critical_vulnerability import CriticalVulnerability
@@ -120,7 +121,7 @@ class API_OSV:
                     return "HIGH"
                 return "CRITICAL"
 
-            except (ValueError, TypeError, IndexError):
+            except (CVSSError, ValueError, TypeError, IndexError):
                 continue
 
         return None

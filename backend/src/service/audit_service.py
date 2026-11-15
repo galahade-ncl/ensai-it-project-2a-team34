@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from service.qualitygate_services.qualitygate_service import QualityGateService
+
 from business_object.antipattern.antipattern import AntiPattern
 from business_object.audit import Audit
 from business_object.file.certificatefile import CertificateFile
@@ -11,7 +13,6 @@ from business_object.vulnerability.vulnerability import Vulnerability
 from dao.audit_dao import AuditDao
 from service.certificate_service import CertificateService
 from service.eco_service import EcoService
-from service.qualitygate_services.qualitygate_service import QualityGateService
 from service.sbom_service import SBOMService
 from service.security_service import SecurityService
 from utils.log_utils import log
