@@ -10,8 +10,8 @@ router = APIRouter()
 logger = get_logger(__name__)
 
 
-@router.post("/hmac/key")
-async def create_hmac_key(secret, project_id, code, dependency):
+@router.post("/signature")
+async def create_hmac_signature(secret, project_id, code, dependency):
     project_id_bytes = str(project_id).encode("utf-8")
     secret_bytes = base64.b64decode(secret)
     code_bytes = base64.b64decode(code)

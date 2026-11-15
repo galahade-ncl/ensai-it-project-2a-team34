@@ -18,7 +18,9 @@ def get_project_service():
 
 # projects/ -> pas utile, on a déjà le chemin project/
 @router.get("/{id_project}", response_model=ProjectReadModel, tags=["Projects"])
-async def project_by_id(id_project: int, user=Depends(verify_token), project_service=Depends(get_project_service)):
+async def project_by_id(
+    id_project: int, user=Depends(verify_token), project_service=Depends(get_project_service)
+):
     """Find a project by its unique ID.
     Args:
         id_project (int)
@@ -31,7 +33,9 @@ async def project_by_id(id_project: int, user=Depends(verify_token), project_ser
     logger.info("Find a project by id")
     project = project_service.find_by_id_and_user(id_project, user.id_user)
     if not project:
-        raise HTTPException(status_code=404, detail="Project not found or you do not have access to it.")
+        raise HTTPException(
+            status_code=404, detail="Project not found or you do not have access to it."
+        )
     return project
 
 
@@ -65,7 +69,9 @@ async def create_project(
 
 
 @router.delete("/{id_project}", tags=["Projects"])
-async def delete_project(id_project: int, user=Depends(verify_token), project_service=Depends(get_project_service)):
+async def delete_project(
+    id_project: int, user=Depends(verify_token), project_service=Depends(get_project_service)
+):
     """Delete a project from the system.
     Args:
         id_project (int)
@@ -78,7 +84,9 @@ async def delete_project(id_project: int, user=Depends(verify_token), project_se
     logger.info("Delete a project")
     project = project_service.find_by_id_and_user(id_project, user.id_user)
     if not project:
-        raise HTTPException(status_code=404, detail="Project not found or you do not have access to it.")
+        raise HTTPException(
+            status_code=404, detail="Project not found or you do not have access to it."
+        )
 
     project_service.delete(project)
     return f"Project {project.name_project} deleted"
@@ -86,7 +94,10 @@ async def delete_project(id_project: int, user=Depends(verify_token), project_se
 
 @router.put("/{id_project}", response_model=ProjectReadModel, tags=["Projects"])
 async def update_project(
-    id_project: int, p: ProjectCreateModel, user=Depends(verify_token), project_service=Depends(get_project_service)
+    id_project: int,
+    p: ProjectCreateModel,
+    user=Depends(verify_token),
+    project_service=Depends(get_project_service),
 ):
     """Update an existing project's information.
     Args:
@@ -102,7 +113,9 @@ async def update_project(
     logger.info("Update a project")
     project = project_service.find_by_id_and_user(id_project, user.id_user)
     if not project:
-        raise HTTPException(status_code=404, detail="Project not found or you do not have access to it.")
+        raise HTTPException(
+            status_code=404, detail="Project not found or you do not have access to it."
+        )
 
     project.name_project = p.name_project
 
@@ -113,12 +126,40 @@ async def update_project(
     return project
 
 
+@router.post("/{id_project}/secret-key", tags=["Projects"])
+async def regenerate_secret_key(
+    id_project: int,
+    user=Depends(verify_token),
+    project_service=Depends(get_project_service),
+):
+    """Generate a new secret key for a project. The old key stops working."""
+    project = project_service.find_by_id_and_user(id_project=id_project, id_user=user.id_user)
+    if not project:
+        raise HTTPException(
+            status_code=404, detail="Project not found or you do not have access to it."
+        )
+
+    new_key = project_service.regenerate_secret_key(project)
+    if not new_key:
+        raise HTTPException(status_code=500, detail="Could not regenerate the secret key.")
+
+    return {
+        "id_project": project.id_project,
+        "name_project": project.name_project,
+        "secretHMACkey": new_key,
+    }
+
+
 @router.get("/{id_project}/audit", response_model=list[AuditReadModel], tags=["Projects"])
-async def audit_by_project(id_project: int, user=Depends(verify_token), project_service=Depends(get_project_service)):
+async def audit_by_project(
+    id_project: int, user=Depends(verify_token), project_service=Depends(get_project_service)
+):
     """
     Retrieve audits filtered by project ID.
     """
     project = project_service.find_by_id_and_user(id_project, user.id_user)
     if not project:
-        raise HTTPException(status_code=404, detail="Project not found or you do not have access to it.")
+        raise HTTPException(
+            status_code=404, detail="Project not found or you do not have access to it."
+        )
     return project_service.list_all_audit(id_project)

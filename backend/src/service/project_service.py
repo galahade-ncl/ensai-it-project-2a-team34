@@ -6,7 +6,7 @@ from business_object.user import User
 from dao.audit_dao import AuditDao
 from dao.project_dao import ProjectDao
 from utils.log_utils import log
-from utils.security import generate_secret_HMAC_key, generate_signature
+from utils.security import encode_secret_key, generate_secret_HMAC_key, generate_signature
 
 
 class ProjectService:
@@ -102,3 +102,15 @@ class ProjectService:
         if not project:
             return None
         return AuditDao().list_all_audit(project)
+
+    @log
+    def regenerate_secret_key(self, project: Project) -> str | None:
+        """Generate and store a new secret key for the project.
+
+        Returns:
+            The new key encoded in base64, or None if the update failed.
+        """
+        project.secretHMACkey = generate_secret_HMAC_key()
+        if not ProjectDao().update_secret_key(project):
+            return None
+        return encode_secret_key(project.secretHMACkey)

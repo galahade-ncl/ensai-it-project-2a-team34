@@ -5,7 +5,7 @@ from business_object.file.certificatefile import CertificateFile
 from business_object.file.sbomfile import SBOMFile
 from business_object.project import Project
 from dao.db_connection import DBConnection
-from service.qualitygate_services.qualitygate_service import QualityGateService
+from service.qualitygate_service import QualityGateService
 from service.sbom_service import SBOMService
 from utils.log_utils import get_logger, log
 from utils.singleton import Singleton

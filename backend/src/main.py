@@ -64,7 +64,6 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 app.include_router(user_controller.router, prefix="/user", tags=["Users"])
 app.include_router(login_controller.router, prefix="/login", tags=["Login"])
 app.include_router(project_controller.router, prefix="/project", tags=["Projects"])
-# app.include_router(file_controller.router, prefix="/file", tags=["Files"])
 app.include_router(audit_controller.router, prefix="/audit", tags=["Audits"])
 app.include_router(hmac_controller.router, prefix="/hmac", tags=["Hmac"])
 app.include_router(certificate_controller.router, tags=["Certificates"])

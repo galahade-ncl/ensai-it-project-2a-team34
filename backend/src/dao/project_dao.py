@@ -208,38 +208,6 @@ class ProjectDao(metaclass=Singleton):
 
         return nb_affected_rows == 1
 
-    # @log
-    # def get_secretHMACkey(self, id_project: int) -> str | None:
-    #     """
-    #     Retrieve the secret HMAC key for a specific project.
-
-    #     Arguments
-    #     ---------
-    #     id_project : int
-    #         The ID of the project
-
-    #     Returns
-    #     -------
-    #     str | None
-    #         The secret HMAC key if found, None otherwise
-    #     """
-    #     try:
-    #         with DBConnection().connection as connection:
-    #             with connection.cursor() as cursor:
-    #                 cursor.execute(
-    #                     "SELECT secretHMACkey FROM project_table WHERE id_project = %(id_project)s;",
-    #                     {"id_project": id_project},
-    #                 )
-    #                 res = cursor.fetchone()
-    #     except Exception as e:
-    #         logger.error(e)
-    #         raise
-
-    #     if res:
-    #         return res["secretHMACkey"]
-
-    #     return None
-
     @log
     def delete(self, project: Project) -> bool:
         """
@@ -268,3 +236,25 @@ class ProjectDao(metaclass=Singleton):
             raise
 
         return res > 0
+
+    @log
+    def update_secret_key(self, project: Project) -> bool:
+        """Replace the secret HMAC key of a project."""
+        try:
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        """
+                        UPDATE project_table
+                        SET secretHMACkey = %(secret_key)s
+                        WHERE id_project = %(id_project)s;
+                        """,
+                        {
+                            "secret_key": project.secretHMACkey,
+                            "id_project": project.id_project,
+                        },
+                    )
+                    return cursor.rowcount == 1
+        except Exception as e:
+            logger.error(e)
+            raise
