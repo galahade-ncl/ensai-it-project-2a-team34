@@ -2,7 +2,6 @@ import streamlit as st
 
 from utils.api_client import api_client
 
-# After a login, go straight to the projects (now registered in the menu)
 if st.session_state.pop("just_logged_in", False):
     st.switch_page("pages/projects.py")
 
@@ -63,7 +62,8 @@ else:
                 if res["status_code"] in (200, 201):
                     st.success("Account created, you can now log in.")
                 else:
-                    st.error(f"Account creation failed ({res['status_code']}).")
+                    st.error(f"Account creation failed ({res["status_code"]}).")
+                # Add the detail of the HTTPException
 
 st.divider()
 

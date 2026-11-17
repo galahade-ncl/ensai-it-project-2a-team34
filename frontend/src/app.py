@@ -23,7 +23,7 @@ if "logs_initialized" not in st.session_state:
 
 logged_in = bool(st.session_state.get("access_token"))
 
-home = st.Page("pages/home.py", title="CleanOps", icon="🌿", default=True)
+home = st.Page("pages/home.py", title="CleanOps", icon="🧹", default=True)
 public_key = st.Page("pages/public_key.py", title="Public key", icon="🔑", url_path="public-key")
 verify = st.Page(
     "pages/verify_certificate.py", title="Verify a certificate", icon="✅", url_path="verify"

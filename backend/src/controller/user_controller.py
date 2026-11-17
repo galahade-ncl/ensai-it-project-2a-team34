@@ -39,7 +39,6 @@ async def create_user(u: UserModel, user_service=Depends(get_user_service)):
         raise HTTPException(status_code=400, detail="Username already used.")
 
     user = user_service.create(u.username, u.password, u.email)
-    # Pas de token donné par l'utilisateur -> générer pendant la création du user u.access_token
     if not user:
         raise HTTPException(status_code=500, detail="Error while creating user.")
 
