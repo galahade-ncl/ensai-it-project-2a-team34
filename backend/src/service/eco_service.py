@@ -50,16 +50,16 @@ class EcoService:
         antipatterns, metrics, complexity, energy and carbon.
         """
         tree = self.parse(code_file)
-        antipatterns = self._detect_antipatterns(tree)
+        antipatterns = self.detect_antipatterns(tree)
         metrics = self._extract_metrics(tree, antipatterns)
-        energy = self._calculate_energy(metrics, input_size)
+        energy = self.calculate_energy(metrics, input_size)
 
         return AstAnalysis(
             metrics=metrics,
             antipatterns=antipatterns,
-            complexity=self._estimate_complexity(tree),
+            complexity=self.estimate_complexity(tree),
             energy_kwh=energy,
-            carbon_gco2e=self._calculate_carbon(energy),
+            carbon_gco2e=self.calculate_carbon(energy),
         )
 
     def _extract_metrics(self, tree: ast.Module, antipatterns: list[AntiPattern]) -> dict:
@@ -90,14 +90,7 @@ class EcoService:
             },
         }
 
-    @log
-    def calculate_energy(self, code_file: CodeFile, input_size: int = 1000) -> float:
-        """Estimate theoretical energy consumption in kWh of a code file."""
-        tree = self.parse(code_file)
-        metrics = self._extract_metrics(tree, self._detect_antipatterns(tree))
-        return self._calculate_energy(metrics, input_size)
-
-    def _calculate_energy(self, metrics: dict, input_size: int = 1000) -> float:
+    def calculate_energy(self, metrics: dict, input_size: int = 1000) -> float:
         if input_size < 1:
             raise ValueError("input_size must be positive.")
         operations = metrics["operations"] + metrics["function_calls"] + metrics["ast_nodes"]
@@ -109,18 +102,7 @@ class EcoService:
         runtime_seconds = operations / self.OPERATIONS_PER_SECOND
         return self.CPU_POWER_W * runtime_seconds / 3_600_000
 
-    @log
     def calculate_carbon(
-        self,
-        code_file: CodeFile,
-        input_size: int = 1000,
-        carbon_intensity_gco2e_per_kwh: float | None = None,
-    ) -> float:
-        """Calculate carbon emissions in gCO2e of a code file."""
-        energy_kwh = self.calculate_energy(code_file, input_size)
-        return self._calculate_carbon(energy_kwh, carbon_intensity_gco2e_per_kwh)
-
-    def _calculate_carbon(
         self,
         energy_kwh: float,
         carbon_intensity_gco2e_per_kwh: float | None = None,
@@ -193,18 +175,7 @@ class EcoService:
         return isinstance(func, ast.Attribute) and func.attr == function_name
 
     @log
-    def detect_antipatterns(self, code_file: CodeFile) -> list[AntiPattern]:
-        """
-        Detect all the antipatterns in a Python code
-        Args:
-            code_file (CodeFile) : The code to analyse
-        Returns:
-            A list of the Antipatterns of the code
-        """
-        return self._detect_antipatterns(self.parse(code_file))
-
-    @log
-    def _detect_antipatterns(self, tree: ast.Module) -> list[AntiPattern]:
+    def detect_antipatterns(self, tree: ast.Module) -> list[AntiPattern]:
         """
         Detect all the antipatterns in a Python code
         Args:
@@ -328,18 +299,7 @@ class EcoService:
         return total
 
     @log
-    def estimate_complexity(self, codefile: CodeFile) -> float:
-        """
-        Estimate the complexity of a Python code
-        Args:
-            codefile (CodeFile) : The code to be estimate
-        Returns:
-            float : complexity of the code
-        """
-        return self._estimate_complexity(self.parse(codefile))
-
-    @log
-    def _estimate_complexity(self, tree: ast.Module) -> float:
+    def estimate_complexity(self, tree: ast.Module) -> float:
         """
         Estimate the complexity of a Python code
         Args:

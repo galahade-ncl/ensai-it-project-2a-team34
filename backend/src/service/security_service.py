@@ -64,12 +64,6 @@ class SecurityService:
         ecosystem = self.detect_ecosystem(dependencyfile=dep_file)
         list_dep = FileService().parse_dependencies(dependencyfile=dep_file)
 
-        # licences = {}  # key = licence name, to avoid duplicates
-        # for dep in list_dep:
-        #     for licence in API_DEPSDEV.find_licences(dependency=dep, ecosystem=ecosystem):
-        #         licences.setdefault(licence.name, licence)
-        # return list(licences.values())
-
         list_licence = []
         for dep in list_dep:
             for licence in API_DEPSDEV.find_licences(dependency=dep, ecosystem=ecosystem):

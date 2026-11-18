@@ -151,9 +151,3 @@ class CertificateService:
             return True
         except (InvalidSignature, KeyError, TypeError, ValueError):
             return False
-
-    # Temporaire
-    # def create_empty_certificate(self):
-    #     return CertificateFile(
-    #         name="Empty", content=b"0", type_file="pdf", qualitygate_type="global", date=None
-    #     )

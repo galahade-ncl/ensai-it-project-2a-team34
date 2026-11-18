@@ -40,6 +40,7 @@ class API_OSV:
             Vulnerabilities linked to the dependency. The list is empty
             if none are found.
         """
+        # Json to post on the API
         payload = {
             "package": {
                 "name": dependency.name,
@@ -48,6 +49,7 @@ class API_OSV:
             "version": dependency.version,
         }
 
+        # Call of the API
         response = requests.post(
             API_OSV.BASE_URL,
             json=payload,

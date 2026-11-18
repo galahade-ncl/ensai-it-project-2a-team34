@@ -106,7 +106,8 @@ class ProjectService:
     @log
     def regenerate_secret_key(self, project: Project) -> str | None:
         """Generate and store a new secret key for the project.
-
+        Args:
+            Project (project) : Project linked to the secret key to regenerate
         Returns:
             The new key encoded in base64, or None if the update failed.
         """

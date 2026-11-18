@@ -1,6 +1,5 @@
 from business_object.dependency import Dependency
 from business_object.file.dependencyfile import DependencyFile
-from business_object.file.file import File
 from service.file_services.json_service import JsonService
 from service.file_services.toml_service import TomlService
 from service.file_services.txt_service import TxtService
@@ -16,12 +15,6 @@ from utils.log_utils import log
 
 class FileService:
     """Service that handles business logic related to a file"""
-
-    # Utilité de la méthode ? -> on l'utilise pour la version bytes des fichiers peut etre ? De toute façon va falloir la changer, c'est pas censé être une méthode abstraite 🫠 (ça change pas selon le file)
-    @log
-    def get_content(self, file: File) -> bool:
-        """Méthode temporaire"""
-        return file.get_content()
 
     @log
     def get_filename(self, dependencyfile: DependencyFile) -> str:

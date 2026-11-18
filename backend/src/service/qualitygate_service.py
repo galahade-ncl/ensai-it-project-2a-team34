@@ -1,6 +1,4 @@
 from business_object.audit import Audit
-
-# from business_object.certificate import Certificate
 from business_object.qualitygate.qualitygate import QualityGate
 from business_object.qualitygate.qualitygatefactory import QualityGateFactory
 from utils.log_utils import log
@@ -14,9 +12,15 @@ class QualityGateService:
     """Service that handles business logic related to a qualitygate"""
 
     @log
-    def create(self, type_qualitygate: str, max_vulnerabilities: int,
-        max_critical_vulnerabilities: int, max_carbon_emission: float,
-        max_energy_consumption: float, status: str) -> QualityGate:
+    def create(
+        self,
+        type_qualitygate: str,
+        max_vulnerabilities: int,
+        max_critical_vulnerabilities: int,
+        max_carbon_emission: float,
+        max_energy_consumption: float,
+        status: str,
+    ) -> QualityGate:
         """Create a QualityGate object of the type chosen
         Args:
             type_qualitygate (str): type of the qualitygate
