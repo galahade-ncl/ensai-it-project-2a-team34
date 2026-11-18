@@ -1,3 +1,5 @@
+import bcrypt
+
 from business_object.user import User
 from dao.db_connection import DBConnection
 from utils.log_utils import get_logger, log
@@ -7,7 +9,50 @@ logger = get_logger(__name__)
 
 
 class UserDao(metaclass=Singleton):
-    """Class containing methods to access Users in the database."""
+    """
+    Class containing methods to access Users in the database.
+    """
+
+    ROUND = 12
+
+    @staticmethod
+    def hash_pw(password: str) -> str:
+        """
+        Hash the password.
+
+        Parameters
+        ----------
+        password : str
+            User's password
+
+        Return
+        ------
+        str
+            The bcrypt hash of a password.
+        """
+        hashed = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt(rounds=UserDao.ROUND))
+        return hashed.decode("ascii")
+
+    @staticmethod
+    def verify_pw(password: str, hashed: str) -> bool:
+        """
+        Compare password given with the hashed registered one.
+        Parameters
+        ----------
+        password : str
+            User's password
+        hashed : str
+            The hashed password from the database
+
+        Return
+        ------
+        Bool
+            True if the password matches the hash.
+        """
+        try:
+            return bcrypt.checkpw(password.encode("utf-8"), hashed.encode("ascii"))
+        except ValueError:  # malformed hash or password too long
+            return False
 
     @log
     def create(self, user) -> bool:

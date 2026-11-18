@@ -22,7 +22,7 @@ class UserService:
         Returns:
             User object created or None if creation failed.
         """
-        new_user = User(username=username, password=password, email=email, access_token=None)
+        new_user = User(username=username, password=UserDao.hash_pssw(password), email=email, access_token=None)
         # Problème: comment créer le id -> est créé dans la DAO
         return new_user if UserDao().create(new_user) else None
 
