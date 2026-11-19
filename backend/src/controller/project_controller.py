@@ -132,7 +132,22 @@ async def regenerate_secret_key(
     user=Depends(verify_token),
     project_service=Depends(get_project_service),
 ):
-    """Generate a new secret key for a project. The old key stops working."""
+    """Regenerates the secret HMAC key of a project.
+    Args:
+        id_project: ID of the project whose secret key must be regenerated.
+        user: Authenticated user obtained through token verification.
+        project_service: Project service used to retrieve the project and regenerate its secret key.
+    Returns:
+        dict: containing:
+            - id_project: Project identifier.
+            - name_project: Project name.
+            - secretHMACkey: Newly generated secret HMAC key.
+    Raises:
+        HTTPException:
+            401 error if the authentication token is invalid or missing.
+            404 error if the project does not exist or the user does not have access to it.
+            500 error if the secret key could not be regenerated.
+    """
     project = project_service.find_by_id_and_user(id_project=id_project, id_user=user.id_user)
     if not project:
         raise HTTPException(
@@ -154,8 +169,17 @@ async def regenerate_secret_key(
 async def audit_by_project(
     id_project: int, user=Depends(verify_token), project_service=Depends(get_project_service)
 ):
-    """
-    Retrieve audits filtered by project ID.
+    """Retrieves all audits associated with a project.
+    Args:
+        id_project: ID of the project whose audits must be retrieved.
+        user: Authenticated user obtained through token verification.
+        project_service: Project service used to retrieve the project and its audits.
+    Returns:
+        list[AuditReadModel]: List of audits associated with the specified project.
+    Raises:
+        HTTPException:
+            401 error if the authentication token is invalid or missing.
+            404 error if the project does not exist or the user does not have access to it.
     """
     project = project_service.find_by_id_and_user(id_project, user.id_user)
     if not project:

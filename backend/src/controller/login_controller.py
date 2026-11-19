@@ -22,7 +22,8 @@ def login(credentials: UserLoginModel, service=Depends(get_user_service)):
     Returns:
         dict: containing id_user and username
     Raises:
-        HTTPException: 401 error if the credentials are invalid or the user does not exist."""
+        HTTPException: 401 error if the credentials are invalid or the user does not exist.
+    """
     logger.info("Login")
     user = service.login(credentials.username, credentials.password)
     if user:

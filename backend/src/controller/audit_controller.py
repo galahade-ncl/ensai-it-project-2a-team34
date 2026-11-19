@@ -139,23 +139,6 @@ async def create_audit(
     return audit
 
 
-# @router.get("/{id_audit}/certificate", tags=["Audits"])
-# async def audit_certificate(
-#     id_audit: int,
-#     user=Depends(verify_token),
-#     audit_service=Depends(get_audit_service),
-#     project_service=Depends(get_project_service),
-# ):
-#     audit = audit_service.find_by_id(id_audit)
-#     if not audit or not project_service.find_by_id_and_user(audit.id_project, user.id_user):
-#         raise HTTPException(
-#             status_code=404, detail="Audit not found or you do not have access to it."
-#         )
-#     if not audit.certificate:
-#         raise HTTPException(status_code=404, detail="No certificate for this audit.")
-#     return Response(content=audit.certificate.content, media_type="application/pdf")
-
-
 @router.get("/{id_audit}/certificate", tags=["Audits"])
 async def audit_certificate(
     id_audit: int,
@@ -163,6 +146,20 @@ async def audit_certificate(
     audit_service=Depends(get_audit_service),
     project_service=Depends(get_project_service),
 ):
+    """Retrieves and downloads the PDF certificate associated with an audit.
+    Args:
+        id_audit: ID of the audit whose certificate must be retrieved.
+        user: Authenticated user obtained through token verification.
+        audit_service: Audit service used to retrieve the audit.
+        project_service: Project service used to verify the user's access to the project.
+    Returns:
+        Response: PDF file containing the audit certificate, provided as a downloadable attachment.
+    Raises:
+        HTTPException:
+            401 error if the authentication token is invalid or missing.
+            404 error if the audit does not exist, the user does not have access to it, or no certificate is available.
+            500 error if the certificate content is invalid or cannot be decoded.
+    """
     audit = audit_service.find_by_id(id_audit)
 
     if not audit or not project_service.find_by_id_and_user(audit.id_project, user.id_user):
@@ -197,6 +194,19 @@ async def audit_sbom(
     audit_service=Depends(get_audit_service),
     project_service=Depends(get_project_service),
 ):
+    """Retrieves and downloads the SBOM associated with an audit.
+    Args:
+        id_audit: ID of the audit whose SBOM must be retrieved.
+        user: Authenticated user obtained through token verification.
+        audit_service: Audit service used to retrieve the audit.
+        project_service: Project service used to verify the user's access to the project.
+    Returns:
+        Response: JSON file containing the audit's Software Bill of Materials (SBOM), provided as a downloadable attachment.
+    Raises:
+        HTTPException:
+            401 error if the authentication token is invalid or missing.
+            404 error if the audit does not exist, the user does not have access to it, or no SBOM is available.
+    """
     audit = audit_service.find_by_id(id_audit)
 
     if not audit or not project_service.find_by_id_and_user(audit.id_project, user.id_user):

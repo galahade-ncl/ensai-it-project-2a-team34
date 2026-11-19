@@ -1,0 +1,21 @@
+# Intentionally outdated dependencies (known CVEs in OSV)
+requests==2.19.1
+PyYAML==5.3.1
+Django==2.2.0
+Flask==0.12.2
+Jinja2==2.10
+urllib3==1.24.1
+Pillow==8.0.0
+
+# Licenses with legal risks (strong copyleft)
+PyQt5==5.15.9
+mysql-connector-python==8.0.33
+gnureadline==8.1.2
+
+# Healthy Dependencies
+click==8.1.7
+rich==13.7.1
+
+# Edge Cases in the Parser
+numpy>=1.24
+pytest

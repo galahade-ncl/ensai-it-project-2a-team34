@@ -1,3 +1,5 @@
+import base64
+
 import streamlit as st
 
 from utils.api_client import api_client
@@ -61,6 +63,41 @@ selected = st.selectbox(
     projects,
     format_func=lambda p: f"{p['id_project']} - {p['name_project']}",
 )
+
+with st.expander("Compute an HMAC signature"):
+    st.caption(
+        "To call the API yourself. The signature is only valid for this project and "
+        "these exact two files."
+    )
+    sig_key = "".join(st.text_input("Secret key of the project", key="sig_key").split()).strip(
+        "\"'"
+    )
+    sig_code = st.file_uploader("Code file", key="sig_code")
+    sig_dep = st.file_uploader("Dependency file", key="sig_dep")
+
+    if st.button("Compute the signature"):
+        if not (sig_key and sig_code and sig_dep):
+            st.warning("Please provide the key and both files.")
+        else:
+            res = api_client.post(
+                "/hmac/signature",
+                json={
+                    "secret": sig_key,
+                    "project_id": selected["id_project"],
+                    "code": base64.b64encode(sig_code.getvalue()).decode("ascii"),
+                    "dependency": base64.b64encode(sig_dep.getvalue()).decode("ascii"),
+                },
+                sensitive=True,
+            )
+            data = res["data"] if isinstance(res["data"], dict) else {}
+            if res["status_code"] == 200 and "signature" in data:
+                st.code(data["signature"])
+                st.caption(f"Received by the server: {data.get('debug')}")
+            elif res["status_code"] == 400:
+                st.error("The secret key is not valid base64.")
+            else:
+                st.error(f"Signature failed ({res['status_code']}).")
+
 col_audits, col_audit, col_key, col_delete = st.columns(4)
 
 if col_audits.button("See the audits"):

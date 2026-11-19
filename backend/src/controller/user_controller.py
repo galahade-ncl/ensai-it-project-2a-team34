@@ -107,8 +107,15 @@ async def delete_user(
 
 @router.get("/{id_user}/project", response_model=list[ProjectReadModel], tags=["Users"])
 async def project_by_user(user=Depends(verify_token), user_service=Depends(get_user_service)):
-    """
-    Retrieve projects filtered by user ID.
+    """Retrieves all projects associated with the authenticated user.
+    Args:
+        user: Authenticated user obtained through token verification.
+        user_service: User service used to retrieve the user's projects.
+    Returns:
+        list[ProjectReadModel]: List of projects associated with the authenticated user.
+    Raises:
+        HTTPException:
+            401 error if the authentication token is invalid or missing.
     """
     id_user = user.id_user
     return user_service.list_all_project(id_user)
