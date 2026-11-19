@@ -1,3 +1,5 @@
 class PyService:
-    """Service that handles file.py methods"""
+    """
+    Service that handles ``.py`` files.
+    """
     pass

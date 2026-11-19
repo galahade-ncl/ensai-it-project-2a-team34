@@ -10,7 +10,7 @@ class RecursiveCall(AntiPattern):
 
     Attributes
     ----------
-    id_antipattern : int
+    id_antipattern : int or None
         Unique identifier of the recursive call.
     line : int
         Line number where the recursive call was detected.

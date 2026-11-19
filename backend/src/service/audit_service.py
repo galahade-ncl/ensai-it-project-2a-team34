@@ -19,7 +19,20 @@ from utils.log_utils import log
 
 class AuditService:
     """
-    Service that handles business logic related to the eco analyse of a Python code
+    Service that handles business logic related to the audit of a project.
+
+    Methods
+    -------
+    create(...)
+        Create a new audit and store it.
+    find_by_id(id_audit)
+        Find an audit by its identifier.
+    list_all_audit(id_project)
+        List all the audits.
+    update(audit)
+        Update an audit.
+    run_audit(project, quality_gate_type)
+        Run a full audit on a project.
     """
 
     @log
@@ -38,22 +51,38 @@ class AuditService:
         certificate: CertificateFile,
     ) -> Audit:
         """
-        Create a new audit in the system
-        Args:
-            id_audit (int) : The unique identifier of the audit
-            id_project (int) : The unique identifier of the project from which this audit is linked
-            date (datetime) : The date the audit was created
-            vulnerabilities (list[Vulnerability]) : The list of vulnerabilities found in the dependancies of the project
-            licenses (list[License]) : The list of licence used by the code of the project
-            anti_patterns (list[AntiPattern]) : The list of antipatterns found in the project
-            complexity (float) : The complexity of the code
-            energy_consumption_kwh (float) : The energy consumption of the code (kwh)
-            carbon_emission_gco2e (float) : The carbon emission of the code
-            sbom (SBOM): Software Bill of Materials, the inventory of components used for the project
-            quality_gate (QualityGate) : The quality gate associated to the project
-            certificate (CertificateFile) : The certificate associated to the audit
-        Returns:
-            Audit object created or None if failed
+        Create a new audit in the system.
+
+        Parameters
+        ----------
+        id_project : int
+            Unique identifier of the project linked to this audit.
+        date : datetime
+            Date the audit was created.
+        vulnerabilities : list of Vulnerability
+            Vulnerabilities found in the dependencies of the project.
+        licenses : list of Licence
+            Licences used by the dependencies of the project.
+        anti_patterns : list of AntiPattern
+            Antipatterns found in the project.
+        complexity : float
+            Complexity of the code.
+        energy_consumption_kwh : float
+            Energy consumption of the code (kWh).
+        carbon_emission_gco2e : float
+            Carbon emission of the code (gCO2e).
+        sbom : SBOMFile
+            Software Bill of Materials, the inventory of components used
+            by the project.
+        quality_gate : QualityGate
+            Quality gate associated with the project.
+        certificate : CertificateFile or None
+            Certificate associated with the audit.
+
+        Returns
+        -------
+        Audit or None
+            The created audit, or None if the creation failed.
         """
         new_audit = Audit(
             id_project=id_project,
@@ -73,42 +102,76 @@ class AuditService:
     @log
     def find_by_id(self, id_audit: int) -> Audit:
         """
-        Find an audit by an its id
-        Args:
-            id_audit (int) : The id of the audit
-        Returns:
-            Audit or None if search failed
+        Find an audit by its identifier.
+
+        Parameters
+        ----------
+        id_audit : int
+            Identifier of the audit.
+
+        Returns
+        -------
+        Audit or None
+            The audit found, or None if the search failed.
         """
         return AuditDao().find_by_id(id_audit)
 
     @log
     def list_all_audit(self, id_project: int) -> list[Audit]:
         """
-        List all the audit
-        Args:
-            id
-        Returns:
-            The list of audits
+        List all the audits of a project.
+
+        Parameters
+        ----------
+        id_project : int
+            Identifier of the project.
+
+        Returns
+        -------
+        list of Audit
+            Audits of the project.
         """
         return AuditDao().find_all(id_project)
 
     @log
     def update(self, audit: Audit):
         """
-        Update an Audit
-        Args:
-            audit
+        Update an audit.
+
+        Parameters
+        ----------
+        audit : Audit
+            Audit to update.
+
+        Returns
+        -------
+        bool
+            True if the update is successful, False otherwise.
         """
         return AuditDao().update(audit)
 
     @log
     def run_audit(self, project: Project, quality_gate_type: str):
         """
-        Runs an audit on a project
-        Args:
-            project
-        Returns:
-            The audit
+        Run a full audit on a project.
+
+        Finds the vulnerabilities and licences of the dependencies, analyses
+        the code (antipatterns, complexity, energy, carbon), generates the
+        SBOM, evaluates the quality gate and, if it is passed, generates
+        a certificate.
+
+        Parameters
+        ----------
+        project : Project
+            Project to audit, with its code file and dependency file.
+        quality_gate_type : str
+            Type of quality gate to apply (``'eco'``, ``'security'`` or
+            ``'global'``).
+
+        Returns
+        -------
+        Audit
+            The completed audit.
         """
         id_project = project.id_project
 

@@ -40,14 +40,48 @@ TEMPLATES = {
 
 
 class CertificateService:
+    """
+    Service that generates, signs and verifies audit certificates.
+
+    Methods
+    -------
+    generate_certificate(audit, project, qualitygate_type)
+        Generate a signed PDF certificate for an audited project.
+    sign_certificate(payload)
+        Sign a certificate payload with the application's private key.
+    verify_certificate(certificate)
+        Check a signed certificate against the application's public key.
+    """
+
     @log
     def generate_certificate(
         self, audit: Audit, project: Project, qualitygate_type: str
     ) -> CertificateFile:
-        """Generates a signed PDF certificate for an audited project.
+        """
+        Generate a signed PDF certificate for an audited project.
 
         The PDF embeds a QR code containing the signed certificate
-        (payload, kid, signature), so it can be verified without database access.
+        (payload, kid, signature), so it can be verified without database
+        access.
+
+        Parameters
+        ----------
+        audit : Audit
+            Audit whose quality gate was passed.
+        project : Project
+            Audited project.
+        qualitygate_type : str
+            Type of the quality gate (``'eco'``, ``'security'`` or ``'global'``).
+
+        Returns
+        -------
+        CertificateFile
+            Certificate containing the PDF in bytes and the signed data.
+
+        Raises
+        ------
+        ValueError
+            If the quality gate type is unknown.
         """
         if qualitygate_type not in TEMPLATES:
             raise ValueError(f"Unknown Certification : {qualitygate_type}")
@@ -129,7 +163,20 @@ class CertificateService:
 
     @staticmethod
     def sign_certificate(payload: dict) -> dict:
-        """Signs a certificate payload with the application's private key."""
+        """
+        Sign a certificate payload with the application's private key.
+
+        Parameters
+        ----------
+        payload : dict
+            Data of the certificate to sign.
+
+        Returns
+        -------
+        dict
+            Signed certificate containing ``payload``, ``kid``, ``alg``
+            and ``signature`` (encoded in Base64).
+        """
         signature = load_signing_key().sign(canonical_json(payload))
         return {
             "payload": payload,
@@ -140,7 +187,20 @@ class CertificateService:
 
     @staticmethod
     def verify_certificate(certificate: dict) -> bool:
-        """Checks a signed certificate against the application's public key."""
+        """
+        Check a signed certificate against the application's public key.
+
+        Parameters
+        ----------
+        certificate : dict
+            Signed certificate (``payload``, ``kid``, ``alg``, ``signature``).
+
+        Returns
+        -------
+        bool
+            True if the key identifier matches and the signature is valid,
+            False otherwise.
+        """
         try:
             if certificate["kid"] != get_key_id():
                 return False

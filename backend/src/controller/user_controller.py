@@ -12,27 +12,53 @@ router = APIRouter()
 logger = get_logger(__name__)
 
 
-def get_user_service():
-    """Dependency Injection provider for UserService."""
+def get_user_service() -> UserService:
+    """
+    Dependency injection provider for UserService.
+
+    Returns
+    -------
+    UserService
+        Instance of the user service.
+    """
     return UserService()
 
 
-def get_project_service():
-    """Dependency Injection provider for ProjectService."""
+def get_project_service() -> ProjectService:
+    """
+    Dependency injection provider for ProjectService.
+
+    Returns
+    -------
+    ProjectService
+        Instance of the project service.
+    """
     return ProjectService()
 
 
 @router.post("/", response_model=UserReadModel, tags=["Users"])
-async def create_user(u: UserModel, user_service=Depends(get_user_service)):
-    """Create a new user.
-    Args:
-        u (UserModel): The user data to create.
-        user_service (UserService): The service used to interact with user data.
-    Returns:
-        UserReadModel: The newly created user data.
-    Raises:
-        HTTPException: 400 error if the username is already taken.
-        HTTPException: 500 error if the creation process fails.
+async def create_user(u: UserModel, user_service=Depends(get_user_service)) -> UserReadModel:
+    """
+    Create a new user.
+
+    Parameters
+    ----------
+    u : UserModel
+        User data to create.
+    user_service : UserService
+        Service used to interact with user data.
+
+    Returns
+    -------
+    UserReadModel
+        The newly created user data.
+
+    Raises
+    ------
+    HTTPException
+        400 error if the username is already taken.
+    HTTPException
+        500 error if the creation process fails.
     """
     logger.info("Create a player")
     if user_service.username_already_used(u.username):
@@ -46,17 +72,36 @@ async def create_user(u: UserModel, user_service=Depends(get_user_service)):
 
 
 @router.put("/{id_user}", response_model=UserReadModel, tags=["Users"])
-async def update_user(u: UserResponseModel, user=Depends(verify_token), user_service=Depends(get_user_service)):
-    """Update an existing user's information.
-    Args:
-        id_user (int)
-        u (UserModel): The new data for the user.
-        user_service (UserService): The service used to interact with user data.
-    Returns:
-        str: A confirmation message indicating the user was updated.
-    Raises:
-        HTTPException: 404 error if the user is not found.
-        HTTPException: 500 error if the update process fails.
+async def update_user(
+    u: UserResponseModel,
+    user=Depends(verify_token),
+    user_service=Depends(get_user_service)
+):
+    """
+    Update the information of the authenticated user.
+
+    Parameters
+    ----------
+    u : UserResponseModel
+        New data for the user.
+    user : User
+        Authenticated user (injected by ``verify_token``).
+    user_service : UserService
+        Service used to interact with user data.
+
+    Returns
+    -------
+    UserReadModel
+        The updated user data.
+
+    Raises
+    ------
+    HTTPException
+        400 error if the new username is already taken.
+    HTTPException
+        404 error if the user is not found.
+    HTTPException
+        500 error if the update process fails.
     """
     logger.info("Update a user")
     if not user:
@@ -80,15 +125,28 @@ async def delete_user(
     user=Depends(verify_token),
     user_service=Depends(get_user_service),
     project_service=Depends(get_project_service),
-):
-    """Delete a user from the system.
-    Args:
-        id_user (int)
-        user_service UserService): The service used to interact with user data.
-    Returns:
-        str: A confirmation message indicating the user was deleted.
-    Raises:
-        HTTPException: 404 error if the user is not found.
+) -> str:
+    """
+    Delete the authenticated user and all their projects.
+
+    Parameters
+    ----------
+    user : User
+        Authenticated user (injected by ``verify_token``).
+    user_service : UserService
+        Service used to interact with user data.
+    project_service : ProjectService
+        Service used to delete the projects of the user.
+
+    Returns
+    -------
+    str
+        Confirmation message indicating the user was deleted.
+
+    Raises
+    ------
+    HTTPException
+        404 error if the user is not found.
     """
     logger.info("Delete a user")
 
@@ -106,9 +164,24 @@ async def delete_user(
 
 
 @router.get("/{id_user}/project", response_model=list[ProjectReadModel], tags=["Users"])
-async def project_by_user(user=Depends(verify_token), user_service=Depends(get_user_service)):
+async def project_by_user(
+    user=Depends(verify_token),
+    user_service=Depends(get_user_service)
+) -> list[ProjectReadModel]:
     """
-    Retrieve projects filtered by user ID.
+    Retrieve the projects of the authenticated user.
+
+    Parameters
+    ----------
+    user : User
+        Authenticated user (injected by ``verify_token``).
+    user_service : UserService
+        Service used to interact with user data.
+
+    Returns
+    -------
+    list of ProjectReadModel
+        Projects owned by the user.
     """
     id_user = user.id_user
     return user_service.list_all_project(id_user)

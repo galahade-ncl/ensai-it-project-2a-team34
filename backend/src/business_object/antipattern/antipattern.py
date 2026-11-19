@@ -7,14 +7,17 @@ class AntiPattern(ABC):
 
     Attributes
     ----------
-    id_antipattern : int
+    id_antipattern : int or None
         Unique identifier of the antipattern.
-    type : str
-        Type of the antipattern.
     line : int
         Line number where the antipattern was detected.
     description : str
         Description of the antipattern.
+
+    Methods
+    -------
+    __str__()
+        Return a readable representation of the antipattern.
     """
 
     def __init__(self, line, description, id_antipattern: int | None = None):
@@ -25,11 +28,13 @@ class AntiPattern(ABC):
     @abstractmethod
     def __str__(self):
         """
-        Return a string representation of the audit.
+        Return a readable representation of the antipattern.
+
+        Must be implemented by subclasses.
 
         Returns
         -------
         str
-            String representation of the audit.
+            String representation of the antipattern.
         """
         pass
