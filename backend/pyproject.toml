@@ -21,7 +21,8 @@ dependencies = [
     "cvss",
     "reportlab",
     "pypdf",
-    "cryptography"
+    "cryptography",
+    "bcrypt>=5.0.0",
 ]
 
 # Dependencies used only for development, not for runtime
