@@ -1,5 +1,4 @@
 import ast
-import operator
 from dataclasses import dataclass, field
 from typing import Optional
 
@@ -101,7 +100,7 @@ class EcoService:
     def calculate_carbon(
         self,
         energy_kwh: float,
-        carbon_intensity_gco2e_per_kwh: Optional[float] = None,
+        carbon_intensity_gco2e_per_kwh: float | None = None,
     ) -> float:
         """Calculate carbon emissions in gCO2e."""
         if energy_kwh < 0:
@@ -237,7 +236,7 @@ class EcoService:
         return variables
 
     @staticmethod
-    def _loop_length(node: ast.stmt, variables: Optional[dict] = None) -> int:
+    def _loop_length(node: ast.stmt, variables: dict | None = None) -> int:
         """
         Calculate the length of a loop
         Args:
@@ -295,7 +294,7 @@ class EcoService:
         return EcoService.DEFAULT_LOOP_LENGTH
 
     @staticmethod
-    def _loop_complexity(node: ast.stmt, variables: Optional[dict] = None) -> int:
+    def _loop_complexity(node: ast.stmt, variables: dict | None = None) -> int:
         complexity = EcoService._loop_length(node, variables)
 
         if EcoService._loop_depth(node) >= 2:
@@ -307,7 +306,7 @@ class EcoService:
         return complexity
 
     @staticmethod
-    def _count_recursive_calls(node: ast.AST, function_name: str, variables: Optional[dict] = None) -> int:
+    def _count_recursive_calls(node: ast.AST, function_name: str, variables: dict | None = None) -> int:
         total = 0
 
         for child in ast.iter_child_nodes(node):
