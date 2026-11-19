@@ -15,4 +15,4 @@ RUN mkdir -p /app/frontend/logs
 EXPOSE 8000
 
 WORKDIR /app/frontend
-CMD ["uv", "run", "--project", ".", "streamlit", "run", "src/app.py"]
+CMD ["uv", "run", "--project", ".", "streamlit", "run", "src/app.py", "--server.port=8000", "--server.address=0.0.0.0"]
