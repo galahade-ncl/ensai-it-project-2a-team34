@@ -106,7 +106,7 @@ class AuditService:
 
         anti_patterns = EcoService().detect_antipatterns(code_file)
 
-        complexity = None  # EcoService().estimate_complexity(code_file)
+        complexity = EcoService().estimate_complexity(code_file)
 
         energy_consumption_kwh = EcoService().calculate_energy(code_file)
 
