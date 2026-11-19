@@ -18,13 +18,21 @@ from dao.user_dao import UserDao
 
 
 def hash_password(password: str, salt: str = "") -> str:
-    """Hashes a password using the SHA-256 algorithm.
-    Args:
-        password (str): The plain text password to be hashed.
-        salt (str, optional): A string added to the password before hashing
-            to protect against rainbow table attacks.
-    Returns:
-        str: The resulting hexadecimal hash string.
+    """
+    Hash a password using the SHA-256 algorithm.
+
+    Parameters
+    ----------
+    password : str
+        Plain text password to hash.
+    salt : str, optional
+        String added to the password before hashing to protect against
+        rainbow table attacks.
+
+    Returns
+    -------
+    str
+        Resulting hexadecimal hash string.
     """
     password_bytes = password.encode("utf-8") + salt.encode("utf-8")
     hash_object = hashlib.sha256(password_bytes)
@@ -35,18 +43,26 @@ def hash_password(password: str, salt: str = "") -> str:
 
 
 def verify_token(x_auth_token=Header(None)) -> UserDao:
-    """Verifies the authenticity of a user via the provided auth token.
+    """
+    Verify the authenticity of a user via the provided auth token.
 
-    This function checks if a token is present in the request headers and
-    validates it against the database.
-    Args:
-        x_auth_token (str, optional): The token extracted from the
-            'X-Auth-Token' HTTP header. Defaults to None.
-    Returns:
-        User object associated with the valid token.
-    Raises:
-        HTTPException: 401 error if the token is missing.
-        HTTPException: 401 error if the token is not found in the database.
+    Checks that a token is present in the request headers and validates
+    it against the database.
+
+    Parameters
+    ----------
+    x_auth_token : str, optional
+        Token extracted from the ``X-Auth-Token`` HTTP header.
+
+    Returns
+    -------
+    User
+        User associated with the valid token.
+
+    Raises
+    ------
+    HTTPException
+        401 error if the token is missing or not found in the database.
     """
     if not x_auth_token:
         raise HTTPException(status_code=401, detail="Missing token.")
@@ -65,9 +81,12 @@ def verify_token(x_auth_token=Header(None)) -> UserDao:
 
 def generate_secret_HMAC_key() -> bytes:
     """
-    Generate a new secret key
-    Returns:
-        New secret key (bytes object)
+    Generate a new secret HMAC key.
+
+    Returns
+    -------
+    bytes
+        New random secret key of 32 bytes.
     """
     return secrets.token_bytes(32)
 
@@ -75,10 +94,17 @@ def generate_secret_HMAC_key() -> bytes:
 def encode_secret_key(key: bytes | str) -> str:
     """
     Encode a binary secret key as a Base64 string.
-    Args:
-        key (bytes | str): key to convert into str
-    Return:
-        A str representation of the key"""
+
+    Parameters
+    ----------
+    key : bytes or str
+        Key to convert. A ``str`` is returned unchanged.
+
+    Returns
+    -------
+    str
+        Base64 representation of the key.
+    """
     if isinstance(key, bytes):
         return base64.b64encode(key).decode("ascii")
     return key
@@ -88,13 +114,26 @@ def generate_signature(
     secret: bytes, project_id_bytes: bytes, code: bytes, dependency: bytes
 ) -> bytes:
     """
-    Generate a new signature
-    Args:
-        secret (str): A secret key
-        code (bytes): The binary version of a codefile
-        dependency (bytes): The binary version of a dependencyfile
-    Returns:
-        Signature associated with the secret and the files (bytes object)
+    Generate the HMAC-SHA256 signature of a project submission.
+
+    Each element is prefixed with its length, so that the boundaries
+    between the elements cannot be shifted.
+
+    Parameters
+    ----------
+    secret : bytes
+        Secret HMAC key of the project.
+    project_id_bytes : bytes
+        Identifier of the project, encoded in UTF-8.
+    code : bytes
+        Content of the code file.
+    dependency : bytes
+        Content of the dependency file.
+
+    Returns
+    -------
+    bytes
+        Signature associated with the secret and the files.
     """
     hmac_key = hmac.new(secret, digestmod=hashlib.sha256)
 
@@ -117,7 +156,21 @@ def generate_signature(
 
 @lru_cache(maxsize=1)
 def load_signing_key() -> Ed25519PrivateKey:
-    """Loads the application's private signing key from the environment."""
+    """
+    Load the application's private signing key from the environment.
+
+    The key is read from ``CERT_SIGNING_PRIVATE_KEY`` and cached.
+
+    Returns
+    -------
+    Ed25519PrivateKey
+        Private signing key of the application.
+
+    Raises
+    ------
+    RuntimeError
+        If ``CERT_SIGNING_PRIVATE_KEY`` is missing.
+    """
     pem = os.environ.get("CERT_SIGNING_PRIVATE_KEY")
     if not pem:
         raise RuntimeError(
@@ -128,7 +181,14 @@ def load_signing_key() -> Ed25519PrivateKey:
 
 
 def get_public_key_pem() -> str:
-    """Returns the public key (PEM), safe to expose."""
+    """
+    Return the public key in PEM format, safe to expose.
+
+    Returns
+    -------
+    str
+        Public key in PEM format.
+    """
     return (
         load_signing_key()
         .public_key()
@@ -141,7 +201,14 @@ def get_public_key_pem() -> str:
 
 
 def get_key_id() -> str:
-    """Fingerprint of the public key, used as 'kid' in certificates."""
+    """
+    Return the fingerprint of the public key, used as ``kid`` in certificates.
+
+    Returns
+    -------
+    str
+        First 16 hexadecimal characters of the SHA-256 of the public key.
+    """
     raw = (
         load_signing_key()
         .public_key()
@@ -151,7 +218,19 @@ def get_key_id() -> str:
 
 
 def canonical_json(payload: dict) -> bytes:
-    """Deterministic serialization, required for stable signatures."""
+    """
+    Serialize a payload deterministically, as required for stable signatures.
+
+    Parameters
+    ----------
+    payload : dict
+        Data to serialize.
+
+    Returns
+    -------
+    bytes
+        JSON with sorted keys and no spaces, encoded in UTF-8.
+    """
     return json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode(
         "utf-8"
     )

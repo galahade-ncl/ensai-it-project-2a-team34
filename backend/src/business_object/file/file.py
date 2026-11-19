@@ -20,17 +20,19 @@ class File(ABC):
     -------
     __str__()
         Return a string representation of the file.
-    __eq__(other)
-        Return True if the compared files are identical.
-    __hash__()
-        Return a hash of the file ID, allowing files to be used in a set or as dict keys.
-    get_content()
-        Retrieve the content of the file and return whether it succeeded.
-    get_type()
-        Return the type of the file (dependency file or code file).
+    get_duty()
+        Return the role of the file within a project.
     """
 
     def __str__(self) -> str:
+        """
+        Return a string representation of the file.
+
+        Returns
+        -------
+        str
+            String showing the name and the submission date of the file.
+        """
         return f"{self.name} (date : {self.date})"
 
     # def __eq__(self, other) -> bool:

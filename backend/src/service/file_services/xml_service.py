@@ -4,15 +4,25 @@ from business_object.dependency import Dependency
 
 
 class XmlService:
-    """Service that handles file.xml methods"""
+    """
+    Service that parses ``.xml`` dependency files (``pom.xml``).
+    """
 
     def parse_dependencies(self, content: bytes) -> list[Dependency]:
         """
-        Find all the dependencies from a content (xml)
-        Args:
-            content (bytes): content of a file.xml
-        Returns:
-            List of Dependency object found in the file
+        Find all the dependencies in the content of a ``.xml`` file.
+
+        Each dependency is named ``'groupId:artifactId'``.
+
+        Parameters
+        ----------
+        content : bytes
+            Content of the ``.xml`` file.
+
+        Returns
+        -------
+        list of Dependency
+            Dependencies found in the file.
         """
         root = ET.fromstring(content)
         list_dep = []

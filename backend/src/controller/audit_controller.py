@@ -18,12 +18,26 @@ logger = get_logger(__name__)
 
 
 def get_audit_service():
-    """Dependency Injection provider for AuditService."""
+    """
+    Dependency injection provider for AuditService.
+
+    Returns
+    -------
+    AuditService
+        Instance of the audit service.
+    """
     return AuditService()
 
 
 def get_project_service():
-    """Dependency Injection provider for ProjectService."""
+    """
+    Dependency injection provider for ProjectService.
+
+    Returns
+    -------
+    ProjectService
+        Instance of the project service.
+    """
     return ProjectService()
 
 
@@ -34,14 +48,30 @@ async def audit_by_id(
     audit_service=Depends(get_audit_service),
     project_service=Depends(get_project_service),
 ):
-    """Find an audit by its unique ID.
-    Args:
-        id_audit (int)
-        audit_service (AuditService): The service used to interact with audit data
-    Returns:
-        AuditReadModel: The audit data if found
-    Raises:
-        HTTPException: 404 error if the audit is not found
+    """
+    Find an audit by its unique ID.
+
+    Parameters
+    ----------
+    id_audit : int
+        Unique identifier of the audit.
+    user : User
+        Authenticated user (injected by ``verify_token``).
+    audit_service : AuditService
+        Service used to interact with audit data.
+    project_service : ProjectService
+        Service used to check that the user owns the audited project.
+
+    Returns
+    -------
+    AuditReadModel
+        The audit data if found.
+
+    Raises
+    ------
+    HTTPException
+        404 error if the audit is not found or if the user does not own
+        the project linked to the audit.
     """
     logger.info("Find an audit by id")
 
@@ -68,14 +98,39 @@ async def create_audit(
     audit_service=Depends(get_audit_service),
     project_service=Depends(get_project_service),
 ):
-    """Create a new audit.
-    Args:
-        p (AuditCreateModel): The audit data to create.
-        audit_service (AuditService): The service used to interact with audit data.
-    Returns:
-        AuditResponseModel: The newly created audit data.
-    Raises:
-        HTTPException: 500 error if the creation process fails.
+    """
+    Create and run a new audit on a project.
+
+    Decodes the Base64 files sent by the client, verifies the HMAC
+    signature of the request, then runs the audit.
+
+    Parameters
+    ----------
+    p : AuditCreateModel
+        Audit data to create (project files, quality gate type and
+        HMAC signature).
+    user : User
+        Authenticated user (injected by ``verify_token``).
+    audit_service : AuditService
+        Service used to interact with audit data.
+    project_service : ProjectService
+        Service used to interact with project data.
+
+    Returns
+    -------
+    AuditResponseModel
+        The newly created audit data.
+
+    Raises
+    ------
+    HTTPException
+        400 error if the files or the signature are not valid Base64.
+    HTTPException
+        401 error if the HMAC signature is invalid.
+    HTTPException
+        404 error if the project is not found or not owned by the user.
+    HTTPException
+        500 error if the creation process fails.
     """
     logger.info("Create an audit")
 
@@ -146,19 +201,32 @@ async def audit_certificate(
     audit_service=Depends(get_audit_service),
     project_service=Depends(get_project_service),
 ):
-    """Retrieves and downloads the PDF certificate associated with an audit.
-    Args:
-        id_audit: ID of the audit whose certificate must be retrieved.
-        user: Authenticated user obtained through token verification.
-        audit_service: Audit service used to retrieve the audit.
-        project_service: Project service used to verify the user's access to the project.
-    Returns:
-        Response: PDF file containing the audit certificate, provided as a downloadable attachment.
-    Raises:
-        HTTPException:
-            401 error if the authentication token is invalid or missing.
-            404 error if the audit does not exist, the user does not have access to it, or no certificate is available.
-            500 error if the certificate content is invalid or cannot be decoded.
+    """
+    Download the PDF certificate of an audit.
+
+    Parameters
+    ----------
+    id_audit : int
+        Unique identifier of the audit.
+    user : User
+        Authenticated user (injected by ``verify_token``).
+    audit_service : AuditService
+        Service used to interact with audit data.
+    project_service : ProjectService
+        Service used to check that the user owns the audited project.
+
+    Returns
+    -------
+    Response
+        PDF file of the certificate, sent as an attachment.
+
+    Raises
+    ------
+    HTTPException
+        404 error if the audit is not found, not owned by the user, or
+        has no certificate.
+    HTTPException
+        500 error if the certificate content is invalid.
     """
     audit = audit_service.find_by_id(id_audit)
 
@@ -194,18 +262,30 @@ async def audit_sbom(
     audit_service=Depends(get_audit_service),
     project_service=Depends(get_project_service),
 ):
-    """Retrieves and downloads the SBOM associated with an audit.
-    Args:
-        id_audit: ID of the audit whose SBOM must be retrieved.
-        user: Authenticated user obtained through token verification.
-        audit_service: Audit service used to retrieve the audit.
-        project_service: Project service used to verify the user's access to the project.
-    Returns:
-        Response: JSON file containing the audit's Software Bill of Materials (SBOM), provided as a downloadable attachment.
-    Raises:
-        HTTPException:
-            401 error if the authentication token is invalid or missing.
-            404 error if the audit does not exist, the user does not have access to it, or no SBOM is available.
+    """
+    Download the SBOM of an audit.
+
+    Parameters
+    ----------
+    id_audit : int
+        Unique identifier of the audit.
+    user : User
+        Authenticated user (injected by ``verify_token``).
+    audit_service : AuditService
+        Service used to interact with audit data.
+    project_service : ProjectService
+        Service used to check that the user owns the audited project.
+
+    Returns
+    -------
+    Response
+        JSON file of the SBOM, sent as an attachment.
+
+    Raises
+    ------
+    HTTPException
+        404 error if the audit is not found, not owned by the user, or
+        has no SBOM.
     """
     audit = audit_service.find_by_id(id_audit)
 

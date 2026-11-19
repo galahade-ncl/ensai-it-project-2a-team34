@@ -16,16 +16,41 @@ logger = get_logger(__name__)
 
 class ResetDatabase(metaclass=Singleton):
     """
-    Database reset utility
+    Database reset utility.
+
+    Attributes
+    ----------
+    base_path : pathlib.Path
+        Root folder of the project, containing the ``data`` folder.
     """
 
     def __init__(self):
         self.base_path = Path(__file__).resolve().parent.parent.parent.parent
 
     @log
-    def run(self, test_dao=False):
-        """Run the database reset
-        If test_dao=True: reset test data
+    def run(self, test_dao=False) -> bool:
+        """
+        Run the database reset.
+
+        Drops and recreates the schema, runs ``init_db.sql`` and
+        ``pop_db.sql``, then hashes the passwords of all users.
+
+        Parameters
+        ----------
+        test_dao : bool, default False
+            If True, reset the test data (currently not used).
+
+        Returns
+        -------
+        bool
+            True if the reset succeeded.
+
+        Raises
+        ------
+        FileNotFoundError
+            If an SQL file cannot be found.
+        Exception
+            If an SQL query fails.
         """
         # if test_dao:
         #     mock.patch.dict(os.environ, {"POSTGRES_SCHEMA": "project_test_dao"}).start()
@@ -40,7 +65,7 @@ class ResetDatabase(metaclass=Singleton):
         schema = os.environ["POSTGRES_SCHEMA"]
         create_schema = f"DROP SCHEMA IF EXISTS {schema} CASCADE; CREATE SCHEMA {schema};"
 
-        # Utilisation de l'objet Path pour lire les fichiers
+        # Using the Path object to read files
         try:
             with open(init_db_path, encoding="utf-8") as init_db_file:
                 init_db_as_string = init_db_file.read()

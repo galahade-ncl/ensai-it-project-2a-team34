@@ -10,19 +10,39 @@ logger = get_logger(__name__)
 
 
 def get_user_service():
-    """Dependency provider."""
+    """
+    Dependency injection provider for UserService.
+
+    Returns
+    -------
+    UserService
+        Instance of the user service.
+    """
     return UserService()
 
 
 @router.post("/", tags=["Login"])
 def login(credentials: UserLoginModel, service=Depends(get_user_service)):
-    """Authenticates a user.
-    Args:
-        credentials: username and password.
-    Returns:
-        dict: containing id_user and username
-    Raises:
-        HTTPException: 401 error if the credentials are invalid or the user does not exist.
+    """
+    Authenticate a user.
+
+    Parameters
+    ----------
+    credentials : UserLoginModel
+        Username and password of the user.
+    service : UserService
+        Service used to interact with user data.
+
+    Returns
+    -------
+    dict
+        Dictionary containing ``id_user``, ``username`` and
+        ``access_token``.
+
+    Raises
+    ------
+    HTTPException
+        401 error if the credentials are invalid or the user does not exist.
     """
     logger.info("Login")
     user = service.login(credentials.username, credentials.password)

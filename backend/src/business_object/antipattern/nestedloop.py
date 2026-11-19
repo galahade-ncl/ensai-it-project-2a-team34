@@ -7,7 +7,7 @@ class NestedLoop(AntiPattern):
 
     Attributes
     ----------
-    id_antipattern : int
+    id_antipattern : int or None
         Unique identifier of the nested loop.
     line : int
         Line number where the nested loop was detected.

@@ -4,15 +4,25 @@ from business_object.dependency import Dependency
 
 
 class TomlService:
-    """Service that handles file.toml methods"""
+    """
+    Service that parses ``.toml`` dependency files (``Cargo.toml``).
+    """
 
     def parse_dependencies(self, content: bytes) -> list[Dependency]:
         """
-        Find all the dependencies from a content (toml)
-        Args:
-            content (bytes): content of a file.toml
-        Returns:
-            List of Dependency object found in the file
+        Find all the dependencies in the content of a ``.toml`` file.
+
+        Reads the ``[dependencies]`` table.
+
+        Parameters
+        ----------
+        content : bytes
+            Content of the ``.toml`` file.
+
+        Returns
+        -------
+        list of Dependency
+            Dependencies found in the file.
         """
         data = tomllib.loads(content.decode("utf-8"))
         list_dep = []

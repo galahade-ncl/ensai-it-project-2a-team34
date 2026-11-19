@@ -1,3 +1,10 @@
+"""
+Generate a new Ed25519 signing key pair.
+
+Prints the private key in PEM format, on one line, ready to be copied
+into the ``CERT_SIGNING_PRIVATE_KEY`` environment variable.
+"""
+
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 

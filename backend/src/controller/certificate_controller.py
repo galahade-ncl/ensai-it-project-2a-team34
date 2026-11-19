@@ -9,14 +9,15 @@ router = APIRouter()
 
 @router.get("/.well-known/public-key", tags=["Certificates"])
 def get_public_key():
-    """Retrieves the public key used to verify signed certificates.
-    Args:
-        None.
-    Returns:
-        dict: containing:
-            - kid: Identifier of the public key.
-            - alg: Cryptographic algorithm used (Ed25519).
-            - public_key: Public key in PEM format.
+    """
+    Expose the public key used to sign the certificates.
+
+    Returns
+    -------
+    dict
+        Dictionary containing the key identifier (``kid``), the signing
+        algorithm (``alg``) and the public key in PEM format
+        (``public_key``).
     """
     return {"kid": get_key_id(), "alg": "Ed25519", "public_key": get_public_key_pem()}
 
@@ -25,14 +26,19 @@ def get_public_key():
     "/certificate/verify", response_model=CertificateVerifyResponseModel, tags=["Certificates"]
 )
 def verify_certificate(cert: SignedCertificateModel):
-    """Verifies the authenticity and signature of a signed certificate.
-    Args:
-        cert: Signed certificate containing the payload and its cryptographic signature.
-    Returns:
-        CertificateVerifyResponseModel: containing:
-            - valid: Boolean indicating whether the certificate signature is valid.
-            - payload: Certificate payload if the signature is valid.
-            - reason: Error description if the signature is invalid.
+    """
+    Verify the signature of a certificate.
+
+    Parameters
+    ----------
+    cert : SignedCertificateModel
+        Signed certificate to verify (content of the QR code).
+
+    Returns
+    -------
+    CertificateVerifyResponseModel
+        Result of the verification: ``valid=True`` with the payload if
+        the signature is correct, ``valid=False`` with a reason otherwise.
     """
     if CertificateService.verify_certificate(cert.model_dump()):
         return CertificateVerifyResponseModel(valid=True, payload=cert.payload)

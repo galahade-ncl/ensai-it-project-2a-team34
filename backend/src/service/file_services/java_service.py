@@ -1,3 +1,5 @@
 class JavaService:
-    """Service that handles file.java methods"""
+    """
+    Service that handles ``.java`` files.
+    """
     pass

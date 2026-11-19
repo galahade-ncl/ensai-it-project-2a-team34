@@ -5,21 +5,24 @@ from business_object.file.file import File
 
 class CertificateFile(File):
     """
-    Certificate of a file.
+    Certificate issued at the end of an audit.
 
     Attributes
     ----------
     name : str
         Name of the file.
     content : bytes
-        Content of the SBOM in bytes.
+        Content of the certificate (PDF) in bytes.
     type_file : str
         Extension of the file.
     qualitygate_type : str
-        Type of the quality gate.
+        Type of the quality gate (``'eco'``, ``'security'`` or ``'global'``).
     date : datetime
-        Generation date of the SBOM
-    signed_data : A COMPLETER
+        Generation date of the certificate. Set to the current date if
+        None is given.
+    signed_data : dict
+        Signed certificate data (``payload``, ``kid``, ``alg`` and
+        ``signature``), as embedded in the QR code.
     """
 
     def __init__(self, name, content, type_file, qualitygate_type, date, signed_data) -> None:

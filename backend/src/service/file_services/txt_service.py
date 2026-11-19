@@ -4,15 +4,26 @@ from business_object.dependency import Dependency
 
 
 class TxtService:
-    """Service that handles file.txt methods"""
+    """
+    Service that parses ``.txt`` dependency files (``requirements.txt``).
+    """
 
     def parse_dependencies(self, content: bytes) -> list[Dependency]:
         """
-        Find all the dependencies from a content (txt)
-        Args:
-            content (bytes): content of a file.txt
-        Returns:
-            List of Dependency object found in the file
+        Find all the dependencies in the content of a ``.txt`` file.
+
+        Comments, empty lines and pip options (``-r``, ``-e``...) are
+        ignored. Only exact versions (``==``) are kept.
+
+        Parameters
+        ----------
+        content : bytes
+            Content of the ``.txt`` file.
+
+        Returns
+        -------
+        list of Dependency
+            Dependencies found in the file.
         """
         text = content.decode("utf-8-sig")
         list_dep = []

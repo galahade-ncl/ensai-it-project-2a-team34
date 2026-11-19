@@ -21,38 +21,57 @@ PURL_TYPES = {
 
 
 class SBOMService:
-    """Generate the SBOM (CycloneDX, JSON) of a project"""
+    """
+    Generate the SBOM (CycloneDX, JSON) of a project.
+    """
 
     @staticmethod
     def _normalize(name: str, ecosystem: str) -> str:
-        """PEP 503 normalization for PyPI, lowercase for the others."""
+        """
+        Normalize the name of a package.
+
+        Applies PEP 503 normalization for PyPI, lowercase for the others.
+
+        Parameters
+        ----------
+        name : str
+            Name of the package.
+        ecosystem : str
+            Purl type of the ecosystem (e.g. ``'pypi'``).
+
+        Returns
+        -------
+        str
+            Normalized name of the package.
+        """
         if ecosystem == "pypi":
             return re.sub(r"[-_.]+", "-", name).lower()
         return name.lower()
 
     def generate(self, project, vulnerabilities) -> SBOMFile:
-        """Generate the SBOM (CycloneDX, JSON) of a project.
+        """
+        Generate the SBOM (CycloneDX, JSON) of a project.
 
         Parameters
-        ---------
-        project: Project
-            Proejct to inventory
-        vulnerabilities: list[Vulnerability], optional
-            Vulnerabilities found by SecurityService (instance of
+        ----------
+        project : Project
+            Project to inventory.
+        vulnerabilities : list of Vulnerability, optional
+            Vulnerabilities found by SecurityService (instances of
             ``CriticalVulnerability``, ``HighVulnerability``,
             ``MediumVulnerability`` or ``LowVulnerability``). They are
-            added to the SBOM and linked to the affected . The severity is
-            deduced from the class of each vulnerability.
+            added to the SBOM and linked to the affected component. The
+            severity is deduced from the class of each vulnerability.
 
         Returns
-        ------
-        SbomFile
-            SBOM whose content is the JSON document in bytes
+        -------
+        SBOMFile
+            SBOM whose content is the JSON document in bytes.
 
         Raises
         ------
         ValueError
-            If the project is ''None''.
+            If the project is None.
         """
         if project is None:
             raise ValueError("Cannot generate a SBOM: project is None.")
@@ -145,4 +164,14 @@ class SBOMService:
 
     # Temporaire
     def create_empty_sbom(self):
+        """
+        Create an empty SBOM.
+
+        Used when an audit has no stored SBOM.
+
+        Returns
+        -------
+        SBOMFile
+            SBOM named ``'Empty'`` whose content is ``b'0'``.
+        """
         return SBOMFile(name="Empty", content=b"0", type_file="json", date=None)

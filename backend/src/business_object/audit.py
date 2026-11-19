@@ -22,12 +22,12 @@ class Audit:
         Energy consumption of the code (kWh).
     carbon_emission_gco2e : float
         Carbon emission of the code (gCO2e).
-    sbom : SBOM
+    sbom : SBOMFile
         Software Bill of Materials, the inventory of components used
         by the project.
     quality_gate : QualityGate
         Quality gate associated with the project.
-    certificate : CertificateFile | None
+    certificate : CertificateFile or None
         Certificate associated with the audit.
 
     Methods
