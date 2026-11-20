@@ -3,10 +3,7 @@ from cvss import CVSS2, CVSS3, CVSS4
 from cvss.exceptions import CVSSError
 
 from business_object.dependency import Dependency
-from business_object.vulnerability.critical_vulnerability import CriticalVulnerability
-from business_object.vulnerability.high_vulnerability import HighVulnerability
-from business_object.vulnerability.low_vulnerability import LowVulnerability
-from business_object.vulnerability.medium_vulnerability import MediumVulnerability
+from business_object.vulnerability.severity import Severity
 from business_object.vulnerability.vulnerability import Vulnerability
 from utils.log_utils import log
 
@@ -157,14 +154,22 @@ class API_OSV:
             None,
         )
 
-        classes = {
-            "LOW": LowVulnerability,
-            "MEDIUM": MediumVulnerability,
-            "HIGH": HighVulnerability,
-            "CRITICAL": CriticalVulnerability,
-        }
+        # classes = {
+        #     "LOW": LowVulnerability,
+        #     "MEDIUM": MediumVulnerability,
+        #     "HIGH": HighVulnerability,
+        #     "CRITICAL": CriticalVulnerability,
+        # }
 
-        return classes[severity](
+        # return classes[severity](
+        #     id_vulnerability=None,
+        #     osv_id=osv_vuln["id"],
+        #     cve_id=cve_id,
+        #     package=dependency.name,
+        #     version_package=dependency.version,
+        # )
+
+        return Severity[severity].value(
             id_vulnerability=None,
             osv_id=osv_vuln["id"],
             cve_id=cve_id,
