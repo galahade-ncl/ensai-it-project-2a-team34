@@ -126,6 +126,7 @@ def test_login_successful():
     # GIVEN
     user = User(id_user=1, username="Jean", password="0123456789", email="jean@example.com")
     UserDao.login = MagicMock(return_value=user)
+    UserDao.update_access_token = MagicMock(return_value=True)
 
     # WHEN
     res = UserService().login("Jean", "0123456789")
@@ -133,6 +134,7 @@ def test_login_successful():
     # THEN
     assert res == user
     assert UserDao.login.call_count == 1
+    UserDao.update_access_token.assert_called_once_with(1, user.access_token)
 
 
 def test_login_failed():

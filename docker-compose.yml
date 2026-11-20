@@ -17,6 +17,7 @@ services:
       - UVICORN_HOST=0.0.0.0
       - UVICORN_PORT=5000
       - ELO_K_FACTOR=32
+      - CERT_SIGNING_PRIVATE_KEY=${CERT_SIGNING_PRIVATE_KEY:?set CERT_SIGNING_PRIVATE_KEY in .env (see README)}
     depends_on:
       - postgres
 
@@ -41,7 +42,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql
 
 volumes:
   postgres_data:
