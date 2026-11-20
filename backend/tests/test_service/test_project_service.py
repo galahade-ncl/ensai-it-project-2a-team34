@@ -206,11 +206,14 @@ def test_list_all_project():
     # GIVEN
     ProjectDao().list_all_project = MagicMock(return_value=project_list_michel)
 
+    user = User(id_user=1, username="Jean", password="0123456789", email="jean@example.com")
+    UserService().find_by_id = MagicMock(return_value=user)
+
     # WHEN
     res = UserService().list_all_project(1)
 
     # THEN
-    assert len(res) == 3
+    assert res == project_list_michel
 
 
 def test_update_successful():
