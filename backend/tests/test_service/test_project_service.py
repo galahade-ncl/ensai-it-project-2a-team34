@@ -24,7 +24,6 @@ project_list_michel = [
     Project(
         id_project=1,
         name_project="project_numero_1",
-        user=User(id_user=1, username="Jean-michel", email="jean-michel@mail.fr", password="0000"),
         secretHMACkey=bytes.fromhex(
             "7f2cd2cada12a1c7f6550f4b9aa3873776d6b0228b2d9c1596dcdf8eda301930"
         ),
@@ -32,7 +31,6 @@ project_list_michel = [
     Project(
         id_project=2,
         name_project="project_numero_2",
-        user=User(id_user=1, username="Jean-michel", email="jean-michel@mail.fr", password="0000"),
         secretHMACkey=bytes.fromhex(
             "36ae536d5635a5ed214da489269b91dc9b9d4b97db9c077bd66830b54208329d"
         ),
@@ -40,7 +38,6 @@ project_list_michel = [
     Project(
         id_project=3,
         name_project="project_numero_3",
-        user=User(id_user=1, username="Jean-michel", email="jean-michel@mail.fr", password="0000"),
         secretHMACkey=bytes.fromhex(
             "4712c1bd6f34b112bc4af1f4ed09ba7e6f3db902a38b84c0754845862046cee7"
         ),
@@ -52,7 +49,6 @@ project_list = [
     Project(
         id_project=4,
         name_project="salade_de_fruit",
-        user=User(id_user=2, username="Clémentine", email="poire@pomme.fr", password="banane"),
         codefile=CodeFile(
             name="citron",
             content=b"print('Hello World')\n",
@@ -72,7 +68,6 @@ project_list = [
     Project(
         id_project=5,
         name_project="compote",
-        user=User(id_user=2, username="Clémentine", email="poire@pomme.fr", password="banane"),
         codefile=CodeFile(
             name="sucre",
             content=b"function add(a, b) { return a + b; }\n",
@@ -91,7 +86,6 @@ project_list = [
     Project(
         id_project=6,
         name_project="derniere_minute",
-        user=User(id_user=3, username="Gérard", email="gg@mail.fr", password="abcd"),
         secretHMACkey=bytes.fromhex(
             "3473cd7a6732d97355b5c8fa4e56420fad119fcf01d5255aa81a0cf576ccc912"
         ),
@@ -99,7 +93,6 @@ project_list = [
     Project(
         id_project=7,
         name_project="impressions",
-        user=User(id_user=4, username="Jean-Edouard", email="je@mail.oo", password="tropical"),
         codefile=CodeFile(
             name="le_fichier_code",
             content=b"def multiply(a, b):\n    return a * b\n",
@@ -119,7 +112,6 @@ project_list = [
     Project(
         id_project=8,
         name_project="project_numero_1502",
-        user=User(id_user=5, username="Jean-Nemard", email="jn@hotmail.nul", password="desert"),
         codefile=CodeFile(
             name="fichier_1",
             content=b"public class Main { public static void main(String[] args) {} }\n",
