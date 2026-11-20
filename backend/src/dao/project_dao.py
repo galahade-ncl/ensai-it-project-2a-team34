@@ -6,6 +6,19 @@ from utils.singleton import Singleton
 logger = get_logger(__name__)
 
 
+def _secret_key_to_bytes(value):
+    """Normalize a database HMAC key to bytes."""
+    if value is None:
+        return None
+    if isinstance(value, bytes):
+        return value
+    if isinstance(value, (bytearray, memoryview)):
+        return bytes(value)
+    if isinstance(value, str):
+        return value.encode("utf-8")
+    return bytes(value)
+
+
 class ProjectDao(metaclass=Singleton):
     """Class containing methods to access Projects in the database."""
 
@@ -87,7 +100,7 @@ class ProjectDao(metaclass=Singleton):
             project = Project(
                 id_project=res_project["id_project"],
                 name_project=res_project["name_project"],
-                secretHMACkey=bytes(res_project["secrethmackey"]),
+                secretHMACkey=_secret_key_to_bytes(res_project["secrethmackey"]),
             )
 
         return project
@@ -127,7 +140,7 @@ class ProjectDao(metaclass=Singleton):
             project = Project(
                 id_project=res_project["id_project"],
                 name_project=res_project["name_project"],
-                secretHMACkey=bytes(res_project["secrethmackey"]),
+                secretHMACkey=_secret_key_to_bytes(res_project["secrethmackey"]),
             )
 
         return project
@@ -167,7 +180,7 @@ class ProjectDao(metaclass=Singleton):
                 Project(
                     id_project=row["id_project"],
                     name_project=row["name_project"],
-                    secretHMACkey=bytes(row["secrethmackey"]),
+                    secretHMACkey=_secret_key_to_bytes(row["secrethmackey"]),
                 )
             )
 

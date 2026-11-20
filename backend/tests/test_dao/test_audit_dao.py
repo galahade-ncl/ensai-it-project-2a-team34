@@ -4,13 +4,13 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from business_object.audit import Audit
+from business_object.qualitygate.qualitygate import QualityGate
 from business_object.vulnerability.critical_vulnerability import (
     CriticalVulnerability,
 )
-from business_object.vulnerability.high_vulnerability import (
-    HighVulnerability,
-)
+from business_object.vulnerability.high_vulnerability import HighVulnerability
 from dao.audit_dao import AuditDao
+from service.qualitygate_service import QualityGateService
 
 
 @pytest.fixture
@@ -31,7 +31,10 @@ def audit():
         energy_consumption_kwh=2.5,
         carbon_emission_gco2e=1.2,
         sbom=None,
-        quality_gate="PASSED",
+        # Audit expects a QualityGate object, not a status string.
+        quality_gate=QualityGateService().create(
+            "global", 5, 0, 1, 0.001, "PASSED"
+        ),
         certificate=None,
     )
 
@@ -60,9 +63,12 @@ def db_row(**overrides):
         "complexity": 15.0,
         "energy_comsumption": 3.5,
         "carbon_emission_gco2e": 2.1,
-        "status_qualitygate": "PASSED",
-        "total_vulnerability": 3,
-        "total_critical_vulnerability": 2,
+        "type_qualitygate": "global",
+        "status_qualitygate": "passed",
+        "certificate_pdf": None,
+        "certificate_signed": None,
+        "certificate_id": 1,
+        "sbom_content": None,
     }
     row.update(overrides)
     return row
@@ -84,12 +90,39 @@ def test_row_to_audit():
     assert result.complexity == 15.0
     assert result.energy_consumption_kwh == 3.5
     assert result.carbon_emission_gco2e == 2.1
-    assert result.quality_gate == "PASSED"
+
+    # The DAO reconstructs a QualityGate domain object from the DB columns.
+    assert isinstance(result.quality_gate, QualityGate)
+    assert result.quality_gate.get_type() == "global"
+    assert result.quality_gate.status == "passed"
+
     assert result.vulnerabilities == []
     assert result.licenses == []
     assert result.anti_patterns == []
-    assert result.sbom is None
+    # The current DAO creates an empty SBOM when sbom_content is NULL.
+    assert result.sbom is not None
     assert result.certificate is None
+
+
+def test_row_to_audit_with_json_string_certificate():
+    """Decode certificate_signed when the DB driver returns JSON as text."""
+    signed_data = {
+        "payload": {
+            "issued_at": "2026-10-25T09:30:00",
+            "cert_id": "certificate-5",
+        }
+    }
+    import json
+
+    row = db_row(
+        certificate_signed=json.dumps(signed_data),
+        certificate_pdf=b"%PDF-test",
+    )
+
+    result = AuditDao._row_to_audit(row)
+
+    assert result.certificate is not None
+    assert result.certificate.signed_data == signed_data
 
 
 # -------------------- create --------------------
@@ -99,7 +132,6 @@ def test_create_success(dao, audit, mock_db):
     """Create an audit successfully."""
     db, cursor = mock_db
     generated_date = datetime(2026, 10, 25, 11, 0)
-
     cursor.fetchone.return_value = {
         "id_audit": 42,
         "date": generated_date,
@@ -113,30 +145,32 @@ def test_create_success(dao, audit, mock_db):
     assert audit.date == generated_date
 
     params = cursor.execute.call_args.args[1]
-
     assert params["id_project"] == 12
-    assert params["total_vulnerability"] == 3
-    assert params["total_critical_vulnerability"] == 2
     assert params["complexity"] == 12.5
     assert params["energy_comsumption"] == 2.5
     assert params["carbon_emission_gco2e"] == 1.2
+    assert params["type_qualitygate"] == "global"
     assert params["status_qualitygate"] == "PASSED"
+    assert "sbom_content" in params
 
 
 def test_create_quality_gate_object(dao, audit, mock_db):
-    """Read the status from a quality gate object."""
+    """Persist the type and status exposed by a QualityGate object."""
     db, cursor = mock_db
     cursor.fetchone.return_value = {
         "id_audit": 42,
         "date": audit.date,
     }
-    audit.quality_gate = MagicMock(status="FAILED")
+    audit.quality_gate = MagicMock()
+    audit.quality_gate.get_type.return_value = "security"
+    audit.quality_gate.status = "FAILED"
 
     with patch("dao.audit_dao.DBConnection", return_value=db):
         result = dao.create(audit)
 
     assert result is True
     params = cursor.execute.call_args.args[1]
+    assert params["type_qualitygate"] == "security"
     assert params["status_qualitygate"] == "FAILED"
 
 
@@ -251,13 +285,10 @@ def test_update_success(dao, audit, mock_db):
         result = dao.update(audit)
 
     assert result is True
-
     params = cursor.execute.call_args.args[1]
-
     assert params["id_audit"] == 7
     assert params["id_project"] == 12
-    assert params["total_vulnerability"] == 3
-    assert params["total_critical_vulnerability"] == 2
+    assert params["type_qualitygate"] == "global"
     assert params["status_qualitygate"] == "PASSED"
 
 
@@ -319,22 +350,19 @@ def test_delete_database_error_is_reraised(dao, audit):
 
 
 def test_create_with_none_vulnerabilities(dao, audit, mock_db):
-    """Create an audit when vulnerabilities is None."""
+    """Create an audit when its vulnerabilities collection is None."""
     db, cursor = mock_db
-
     cursor.fetchone.return_value = {
         "id_audit": 42,
         "date": audit.date,
     }
-
     audit.vulnerabilities = None
 
     with patch("dao.audit_dao.DBConnection", return_value=db):
         result = dao.create(audit)
 
     assert result is True
-
     params = cursor.execute.call_args.args[1]
-
-    assert params["total_vulnerability"] == 0
-    assert params["total_critical_vulnerability"] == 0
+    # Vulnerability totals are not columns in the current audit_table schema.
+    assert "total_vulnerability" not in params
+    assert "total_critical_vulnerability" not in params

@@ -17,6 +17,20 @@ class AuditDao(metaclass=Singleton):
     """Class containing methods to access Audits in the database."""
 
     @staticmethod
+    def _get_quality_gate_data(quality_gate):
+        if quality_gate is None:
+            return None, None
+
+        if isinstance(quality_gate, str):
+            # Compatibilité avec les anciens tests
+            return None, quality_gate
+
+        return (
+            quality_gate.get_type(),
+            getattr(quality_gate, "status", None),
+        )
+
+    @staticmethod
     def _row_to_audit(row: dict) -> Audit:
         """Convert a database row into an Audit object."""
         signed = row.get("certificate_signed")
@@ -63,6 +77,7 @@ class AuditDao(metaclass=Singleton):
     @log
     def create(self, audit: Audit) -> bool:
         """Create an audit in the database."""
+        type_qualitygate, status_qualitygate = (self._get_quality_gate_data(audit.quality_gate))
         try:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
@@ -96,12 +111,8 @@ class AuditDao(metaclass=Singleton):
                             "complexity": audit.complexity,
                             "energy_comsumption": audit.energy_consumption_kwh,
                             "carbon_emission_gco2e": audit.carbon_emission_gco2e,
-                            "type_qualitygate": audit.quality_gate.get_type(),
-                            "status_qualitygate": (
-                                audit.quality_gate
-                                if isinstance(audit.quality_gate, str)
-                                else getattr(audit.quality_gate, "status", None)
-                            ),
+                            "type_qualitygate": type_qualitygate,
+                            "status_qualitygate": status_qualitygate,
                             "sbom_content": getattr(audit.sbom, "content", None),
                         },
                     )
@@ -165,6 +176,7 @@ class AuditDao(metaclass=Singleton):
     @log
     def update(self, audit: Audit) -> bool:
         """Update an existing audit."""
+        type_qualitygate, status_qualitygate = (self._get_quality_gate_data(audit.quality_gate))
         try:
             signed = getattr(audit.certificate, "signed_data", None)
 
@@ -192,12 +204,8 @@ class AuditDao(metaclass=Singleton):
                             "complexity": audit.complexity,
                             "energy_comsumption": audit.energy_consumption_kwh,
                             "carbon_emission_gco2e": audit.carbon_emission_gco2e,
-                            "type_qualitygate": audit.quality_gate.get_type(),
-                            "status_qualitygate": (
-                                audit.quality_gate
-                                if isinstance(audit.quality_gate, str)
-                                else getattr(audit.quality_gate, "status", None)
-                            ),
+                            "type_qualitygate": type_qualitygate,
+                            "status_qualitygate": status_qualitygate,
                             "certificate_pdf": audit.certificate.content if signed else None,
                             "certificate_signed": json.dumps(signed) if signed else None,
                             "certificate_id": signed["payload"]["cert_id"] if signed else None,

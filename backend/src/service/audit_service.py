@@ -227,6 +227,10 @@ class AuditService:
             None,
         )
 
+        # Stop if the audit could not be persisted.
+        if audit is None:
+            return None
+
         # Evaluate the audit
         QualityGateService().evaluate(quality_gate, audit)
 
