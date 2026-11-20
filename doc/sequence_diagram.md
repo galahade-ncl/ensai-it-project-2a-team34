@@ -39,52 +39,52 @@ sequenceDiagram
     participant DAO
     participant BDD@{ "type" : "database" }
 
+    rect rgb(254, 239, 226)
+        Note over Utilisateur,BDD: Créer un user 
+
+        Utilisateur->>API: Dépose les informations de l'utilisateur<br/>(username, password, email)
+        API->>DAO: Vérifier si le nom existe
+        DAO->>BDD: Recherche un utilisateut par le username
+        BDD-->DAO: Résultat de la recherche
+
+        alt Nom déjà utilisé
+            DAO-->>API: Nom existant
+            API-->>Utilisateur: Erreur : Nom déjà utilisé
+        else Nom disponible
+            API->>API: Hashe le mot de passe
+            DAO-->>API: Nom disponible
+            API->>DAO: Crée l'utilisateur
+            DAO->>BDD: Enregistre les informations de l'utilisateur
+            BDD-->DAO: Utilisateur enregistré
+            DAO-->>API: Utilisateur créé
+            API-->>Utilisateur: Confirmation de la création du compte
+        end
+    end
+
+    rect rgb(225, 245, 230)
+        Note over Utilisateur,BDD: Importer un projet
+
+        Utilisateur->>API: Dépose un projet
+        API->>API: Génère la clé secrète HMAC du projet
+
+        API->DAO: Crée le projet
+        DAO->BDD: Enregistre le projet et sa clé
+        BDD-->DAO: Projet enregistré
+        DAO-->API: Projet créé
+        API-->Utilisateur: Confirmation de l'importation du projet + <br/>donne la clé secrète HMAC
+
+    end
+
     rect rgb(225, 245, 255)
         Note over Utilisateur,BDD: Demander un audit
 
-        Utilisateur-->>API: Demande un audit sur un projet
+        Utilisateur-->>API: Envoie le code et le fichier de dépendances + <br/> 
         API-->>DAO: Demande les fichiers du projet
         DAO-->>BDD: Demande les informations relatives au projet
         DAO-->>API: Envoie les informations liées au projet à auditer
         API-->>Utilisateur: Donne les résultats de l'audit
     end
 
-    rect rgb(225, 245, 230)
-        Note over Utilisateur,BDD: Importer un projet
-
-        Utilisateur->>API: Dépose un projet<br/>(projet + clé HMAC)
-        API->>API: Vérifie la clé HMAC
-
-        alt Clé HMAC incorrecte
-            API-->>Utilisateur: Erreur : Création refusée
-        else Clé HMAC correcte
-            API->>DAO: Transmet les informations du projet
-            DAO->>BDD: Crée le projet
-            DAO->>BDD: Crée le fichier de code
-            DAO->>BDD: Crée le fichier de dépendances
-            DAO-->>API: Projet créé avec ses fichiers
-            API-->>Utilisateur: Confirmation de l'importation du Projet
-        end
-    end
-
-    rect rgb(254, 239, 226)
-        Note over Utilisateur,BDD: Création d'un user
-
-        Utilisateur->>API: Dépose les informations relatives à l'utilisation
-        API->>DAO: Vérifier si le nom existe
-        DAO->>BDD: Demande les informations relatives au nom du user donné
-
-        alt Nom déjà utilisé
-            DAO-->>API: Nom existant
-            API-->>Utilisateur: Erreur : Nom déjà utilisé
-        else Nom disponible
-            API->>API: Hasher le mot de passe
-            API->>DAO: Créer l'utilisateur
-            DAO->>BDD: Enregistre les informations de l'utilisateur
-            DAO-->>API: Utilisateur créé
-            API-->>Utilisateur: Confirmation de la création du compte
-        end
-    end
 ````
 
 
