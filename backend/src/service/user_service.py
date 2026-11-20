@@ -32,7 +32,7 @@ class UserService:
         """
         new_user = User(
             username=username,
-            password=UserDao.hash_pssw(password),
+            password=UserDao.hash_pw(password),
             email=email,
             access_token=None
             )
@@ -115,9 +115,8 @@ class UserService:
         """
         user = UserDao().login(username, password)
         if user:
-            # Generate a token and update the User
             user.access_token = secrets.token_urlsafe(32)
-            self.update(user)
+            UserDao().update_access_token(user.id_user, user.access_token)
             return user
         return None
 
