@@ -33,7 +33,6 @@ class Project:
         codefile=None,
         dependencyfile=None,
     ) -> None:
-        """Constructor"""
         self.id_project = id_project
         self.name_project = name_project
         self.codefile = codefile

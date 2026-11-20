@@ -4,15 +4,25 @@ from business_object.dependency import Dependency
 
 
 class JsonService:
-    """Service that handles file.json methods"""
+    """
+    Service that parses ``.json`` dependency files (``package.json``).
+    """
 
     def parse_dependencies(self, content: bytes) -> list[Dependency]:
         """
-        Find all the dependencies from a content (json)
-        Args:
-            content (bytes): content of a file.json
-        Returns:
-            List of Dependency object found in the file
+        Find all the dependencies in the content of a ``.json`` file.
+
+        Reads both ``dependencies`` and ``devDependencies``.
+
+        Parameters
+        ----------
+        content : bytes
+            Content of the ``.json`` file.
+
+        Returns
+        -------
+        list of Dependency
+            Dependencies found in the file.
         """
         data = json.loads(content)
         list_dep = {**data.get("dependencies", {}), **data.get("devDependencies", {})}

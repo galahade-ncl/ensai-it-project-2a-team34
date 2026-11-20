@@ -8,14 +8,30 @@ from utils.log_utils import log
 
 
 class SecurityService:
+    """
+    Service that finds the vulnerabilities and the licences of the
+    dependencies of a project.
+    """
     @log
     def detect_ecosystem(self, dependencyfile: DependencyFile) -> str:
         """
-        Find the ecosystem related to the type of the dependencyfile
-        Args:
-            dependencyfile (DependencyFile): file containing all the dependencies
-        Returns:
-            String object if the name of the ecosystem is found
+        Find the ecosystem related to the dependency file.
+
+        Parameters
+        ----------
+        dependencyfile : DependencyFile
+            File containing all the dependencies.
+
+        Returns
+        -------
+        str
+            Name of the ecosystem (``'PyPI'``, ``'npm'``, ``'Maven'`` or
+            ``'crates.io'``).
+
+        Raises
+        ------
+        ValueError
+            If the file is not supported.
         """
 
         SUPPORTED_FILES = {
@@ -37,11 +53,17 @@ class SecurityService:
     @log
     def find_vulnerabilities(self, dep_file: DependencyFile) -> list[Vulnerability]:
         """
-        Found vulnerabilities from the dependencyfile and with the call of API_OSV
-        Args:
-            dependencyfile (DependencyFile): file containing all the dependencies
-        Returns:
-            List of Vulnerability object found related to dependencyfile
+        Find the vulnerabilities of the dependencies using the OSV API.
+
+        Parameters
+        ----------
+        dep_file : DependencyFile
+            File containing all the dependencies.
+
+        Returns
+        -------
+        list of Vulnerability
+            Vulnerabilities found for the dependencies of the file.
         """
         list_vuln = []
         chosen_ecosystem = SecurityService().detect_ecosystem(dependencyfile=dep_file)
@@ -55,20 +77,20 @@ class SecurityService:
     @log
     def find_licences(self, dep_file: DependencyFile) -> list[Licence]:
         """
-        Find all the licences in the dependencyfile
-        Args:
-            dep_file (DependencyFile): file containing all the dependencies
-        Returns:
-            List of Licence object found in the file (without duplicates)
+        Find all the licences of the dependencies using the deps.dev API.
+
+        Parameters
+        ----------
+        dep_file : DependencyFile
+            File containing all the dependencies.
+
+        Returns
+        -------
+        list of Licence
+            Licences found in the file, without duplicates.
         """
         ecosystem = self.detect_ecosystem(dependencyfile=dep_file)
         list_dep = FileService().parse_dependencies(dependencyfile=dep_file)
-
-        # licences = {}  # key = licence name, to avoid duplicates
-        # for dep in list_dep:
-        #     for licence in API_DEPSDEV.find_licences(dependency=dep, ecosystem=ecosystem):
-        #         licences.setdefault(licence.name, licence)
-        # return list(licences.values())
 
         list_licence = []
         for dep in list_dep:

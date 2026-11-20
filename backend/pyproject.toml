@@ -1,8 +1,11 @@
 [project]
-name = "project_name_back"
+name = "ensai_it_project_2A_team34_back"
 version = "0.1.0"
-description = "API Template for the ENSAI 2nd year IT project"
-authors = [{ name = "Lastname Firstname" }, { name = "Author2" }]
+description = "API for the 2nd year IT project of team 34"
+authors = [{ name = "MANAMBIRAVAKA Anaëlle" }, { name = "NADIN Sarah" },
+{ name = "NICOLIE Galahade" }, { name = "PERRIN-BEAU Madie" },
+{ name = "VILARRUPLA Thomas" }, { name = "ZHU Annabelle" }, 
+]
 requires-python = ">=3.13"
 
 dependencies = [
@@ -18,7 +21,8 @@ dependencies = [
     "cvss",
     "reportlab",
     "pypdf",
-    "cryptography"
+    "cryptography",
+    "bcrypt>=5.0.0",
 ]
 
 # Dependencies used only for development, not for runtime
@@ -49,7 +53,10 @@ indent-style = "space"
 pythonpath = ["src"]
 testpaths = ["tests"]
 python_files = ["*test*.py"]
-addopts = "-v -s -x"
+markers = [
+    "network: tests qui font de vrais appels réseau (lents, dépendent d'Internet)",
+]
+addopts = '-v -s -m "not network"'
 
 [tool.coverage.run]
 branch = true
@@ -65,4 +72,5 @@ directory = "coverage_report"
 [dependency-groups]
 dev = [
     "black>=26.10.1",
+    "pytest>=9.0.2",
 ]

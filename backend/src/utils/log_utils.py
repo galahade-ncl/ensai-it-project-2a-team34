@@ -10,7 +10,21 @@ from starlette.middleware.base import BaseHTTPMiddleware
 
 
 def initialize_logs(name: str):
-    """Initialize logging from a configuration file"""
+    """
+    Initialize logging from the ``logging_config.yml`` configuration file.
+
+    Creates the ``logs`` folder at the root of the project if it does
+    not exist.
+
+    Parameters
+    ----------
+    name : str
+        Name of the application, written in the first log lines.
+
+    Returns
+    -------
+    None
+    """
 
     # Create the logs folder at project root if it doesn't exist
     logs_dir = Path(__file__).resolve().parents[2] / "logs"
@@ -29,8 +43,22 @@ def initialize_logs(name: str):
 
 def get_logger(module_name: str, max_size: int = 25):
     """
-    Returns a logger with a shortened name based on the module path.
-    If the path exceeds max_size, it uses initials for the prefix parts.
+    Return a logger with a shortened name based on the module path.
+
+    If the path exceeds ``max_size``, the initials of the prefix parts
+    are used (e.g. ``'s.f.file_service'``).
+
+    Parameters
+    ----------
+    module_name : str
+        Full name of the module (usually ``__name__``).
+    max_size : int, default 25
+        Maximum length of the name before it is shortened.
+
+    Returns
+    -------
+    logging.Logger
+        Logger with the (possibly shortened) name.
     """
     if len(module_name) <= max_size:
         return logging.getLogger(module_name)
@@ -43,33 +71,72 @@ def get_logger(module_name: str, max_size: int = 25):
 
 
 class LogIndentation:
-    """For indenting logs when entering a new method"""
+    """
+    Indent logs when entering a new method.
+
+    Attributes
+    ----------
+    current_indentation : int
+        Current indentation level.
+    indentation_size : int
+        Number of spaces per indentation level.
+    """
 
     current_indentation = 0
     indentation_size = 2
 
     @classmethod
     def increase_indentation(cls):
-        """Increase indentation"""
+        """
+        Increase the indentation level by one.
+
+        Returns
+        -------
+        None
+        """
         cls.current_indentation += 1
 
     @classmethod
     def decrease_indentation(cls):
-        """Decrease indentation"""
+        """
+        Decrease the indentation level by one.
+
+        Returns
+        -------
+        None
+        """
         cls.current_indentation -= 1
 
     @classmethod
     def get_indentation(cls):
-        """Get the current indentation"""
+        """
+        Get the current indentation.
+
+        Returns
+        -------
+        str
+            Spaces corresponding to the current indentation level.
+        """
         return " " * cls.indentation_size * cls.current_indentation
 
 
 def log(func):
-    """Decorator to log method calls and their outputs.
+    """
+    Decorator to log method calls and their outputs.
 
-    When applied to a method, it logs:
-    - the method call with parameter values
-    - the return value of the method
+    When applied to a method, it logs the call with the parameter values
+    (sensitive values such as passwords or keys are masked) and the
+    return value of the method (shortened if too long).
+
+    Parameters
+    ----------
+    func : callable
+        Method to decorate.
+
+    Returns
+    -------
+    callable
+        Wrapped method.
     """
 
     SENSITIVE_KEYWORDS = {
@@ -94,7 +161,7 @@ def log(func):
 
         # Retrieve method parameters
         method_name = func.__name__
-        param_names = func.__code__.co_varnames[1 : func.__code__.co_argcount]
+        param_names = func.__code__.co_varnames[1: func.__code__.co_argcount]
         args_list = []
 
         for i, arg in enumerate(args[1:]):
@@ -141,10 +208,33 @@ def log(func):
 
 
 class LogMiddleware(BaseHTTPMiddleware):
+    """
+    Middleware that logs every HTTP request and response.
+    """
     async def dispatch(self, request: Request, call_next):
         """
-        Middleware to log HTTP requests and responses.
-        It captures the method, path, status code, and error details.
+        Log an HTTP request and its response.
+
+        Captures the method, the path, the status code and the error
+        details.
+
+        Parameters
+        ----------
+        request : Request
+            Incoming HTTP request.
+        call_next : callable
+            Function that passes the request to the next handler.
+
+        Returns
+        -------
+        Response
+            Response returned by the next handler.
+
+        Raises
+        ------
+        Exception
+            Any exception raised while handling the request, re-raised
+            after being logged.
         """
 
         method = request.method

@@ -1,5 +1,6 @@
 import requests
 from cvss import CVSS2, CVSS3, CVSS4
+from cvss.exceptions import CVSSError
 
 from business_object.dependency import Dependency
 from business_object.vulnerability.critical_vulnerability import CriticalVulnerability
@@ -39,6 +40,7 @@ class API_OSV:
             Vulnerabilities linked to the dependency. The list is empty
             if none are found.
         """
+        # Json to post on the API
         payload = {
             "package": {
                 "name": dependency.name,
@@ -47,6 +49,7 @@ class API_OSV:
             "version": dependency.version,
         }
 
+        # Call of the API
         response = requests.post(
             API_OSV.BASE_URL,
             json=payload,
@@ -120,7 +123,7 @@ class API_OSV:
                     return "HIGH"
                 return "CRITICAL"
 
-            except (ValueError, TypeError, IndexError):
+            except (CVSSError, ValueError, TypeError, IndexError):
                 continue
 
         return None

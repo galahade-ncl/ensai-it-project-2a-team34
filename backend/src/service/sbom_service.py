@@ -4,7 +4,6 @@ import uuid
 from datetime import datetime
 
 from api_deps_dev.api_deps_dev import API_DEPSDEV
-from business_object.dependency import Dependency
 from business_object.file.sbomfile import SBOMFile
 from business_object.vulnerability.critical_vulnerability import CriticalVulnerability
 from business_object.vulnerability.high_vulnerability import HighVulnerability
@@ -22,32 +21,57 @@ PURL_TYPES = {
 
 
 class SBOMService:
-    """Generate the SBOM (CycloneDX, JSON) of a project"""
+    """
+    Generate the SBOM (CycloneDX, JSON) of a project.
+    """
 
     @staticmethod
     def _normalize(name: str, ecosystem: str) -> str:
-        """PEP 503 normalization for PyPI, lowercase for the others."""
+        """
+        Normalize the name of a package.
+
+        Applies PEP 503 normalization for PyPI, lowercase for the others.
+
+        Parameters
+        ----------
+        name : str
+            Name of the package.
+        ecosystem : str
+            Purl type of the ecosystem (e.g. ``'pypi'``).
+
+        Returns
+        -------
+        str
+            Normalized name of the package.
+        """
         if ecosystem == "pypi":
             return re.sub(r"[-_.]+", "-", name).lower()
         return name.lower()
 
-    def generate(
-        self,
-        project,
-        dependencies: list[Dependency] | None = None,
-        vulnerabilities=None,
-    ) -> SBOMFile:
-        """Generate the SBOM of a project.
+    def generate(self, project, vulnerabilities) -> SBOMFile:
+        """
+        Generate the SBOM (CycloneDX, JSON) of a project.
 
         Parameters
         ----------
-        project: Project
-            Project to inventory
-        dependencies: list[Dependency], optional
-            Dependencies of the project (parsed from the dependency file if None)
-        vulnerabilities: list[Vulnerability], optional
-            Vulnerabilities found by SecurityService; the severity is
-            deduced from the class of each vulnerability.
+        project : Project
+            Project to inventory.
+        vulnerabilities : list of Vulnerability, optional
+            Vulnerabilities found by SecurityService (instances of
+            ``CriticalVulnerability``, ``HighVulnerability``,
+            ``MediumVulnerability`` or ``LowVulnerability``). They are
+            added to the SBOM and linked to the affected component. The
+            severity is deduced from the class of each vulnerability.
+
+        Returns
+        -------
+        SBOMFile
+            SBOM whose content is the JSON document in bytes.
+
+        Raises
+        ------
+        ValueError
+            If the project is None.
         """
         if project is None:
             raise ValueError("Cannot generate a SBOM: project is None.")
@@ -59,9 +83,8 @@ class SBOMService:
         filename = file_service.get_filename(dependencyfile).lower()
         ecosystem = PURL_TYPES.get(filename, "pypi")
 
-        # 2) Dependencies: already parsed by the right service (txt/json/xml/toml)
-        if dependencies is None:
-            dependencies = file_service.parse_dependencies(dependencyfile)
+        # 2) Dependencies :
+        dependencies = file_service.parse_dependencies(dependencyfile)
 
         # 3) One CycloneDX component per dependency
         components = []
@@ -141,4 +164,14 @@ class SBOMService:
 
     # Temporaire
     def create_empty_sbom(self):
+        """
+        Create an empty SBOM.
+
+        Used when an audit has no stored SBOM.
+
+        Returns
+        -------
+        SBOMFile
+            SBOM named ``'Empty'`` whose content is ``b'0'``.
+        """
         return SBOMFile(name="Empty", content=b"0", type_file="json", date=None)

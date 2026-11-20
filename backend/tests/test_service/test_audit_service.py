@@ -1,6 +1,8 @@
 import datetime
 from unittest.mock import MagicMock, patch
 
+from service.qualitygate_services.qualitygate_service import QualityGateService
+
 from business_object.audit import Audit
 from business_object.file.sbomfile import SBOMFile
 from business_object.project import Project
@@ -9,7 +11,6 @@ from business_object.user import User
 from dao.audit_dao import AuditDao
 from service.audit_service import AuditService
 from service.eco_service import EcoService
-from service.qualitygate_services.qualitygate_service import QualityGateService
 from service.sbom_service import SBOMService
 from service.security_service import SecurityService
 

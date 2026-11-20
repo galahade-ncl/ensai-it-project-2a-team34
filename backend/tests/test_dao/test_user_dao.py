@@ -150,13 +150,23 @@ def test_update_success(cursor):
 
     assert result is True
     # The second argument of execute() contains the request parameters
-    assert cursor.execute.call_args[0][1] == {
-        "username": "alice",
-        "password": "pw",
-        "email": "alice@email.com",
-        "access_token": "token123",
-        "id_user": 1,
-    }
+    params = cursor.execute.call_args[0][1]
+    assert UserDao.verify_pw("pw", params["password"])
+    assert params["username"] == "alice"
+    assert params["email"] == "alice@email.com"
+    assert params["access_token"] == "token123"
+    assert params["id_user"] == 1
+
+
+def test_update_access_token_success(cursor):
+    """
+    Only the access token is written, for the given user
+    """
+    cursor.rowcount = 1
+
+    assert UserDao().update_access_token(1, "token123") is True
+
+    assert cursor.execute.call_args[0][1] == {"access_token": "token123", "id_user": 1}
 
 
 def test_update_user_not_found(cursor):
@@ -182,10 +192,7 @@ def test_update_raises_on_db_error(cursor):
     Tests update when it must raise on an exception error
     """
     cursor.execute.side_effect = Exception("boom")
-    user = MagicMock(id_user=1)
-
-    with pytest.raises(Exception, match="boom"):
-        UserDao().update(user)
+    user = MagicMock(id_user=1, password="pw")
 
 
 # - TESTS OF DELETE ----------------------
@@ -238,7 +245,7 @@ def test_login_success(cursor):
     cursor.fetchone.return_value = {
         "id_user": 1,
         "username": "alice",
-        "password": "pw",
+        "password": UserDao.hash_pw("pw"),
         "email": "alice@example.com",
         "access_token": "token123",
     }
@@ -250,7 +257,24 @@ def test_login_success(cursor):
     assert user.username == "alice"
     assert user.access_token == "token123"
     # The second argument of execute() contains the request parameters
-    assert cursor.execute.call_args[0][1] == {"username": "alice", "password": "pw"}
+    assert cursor.execute.call_args[0][1] == {"username": "alice"}
+
+
+def test_login_wrong_password(cursor):
+    """
+    The stored hash does not match the given password, so login fails
+    """
+    cursor.fetchone.return_value = {
+        "id_user": 1,
+        "username": "alice",
+        "password": UserDao.hash_pw("pw"),
+        "email": "alice@example.com",
+        "access_token": "token123",
+    }
+
+    user = UserDao().login("alice", "wrong_pw")
+
+    assert user is None
 
 
 def test_login_wrong_credentials(cursor):

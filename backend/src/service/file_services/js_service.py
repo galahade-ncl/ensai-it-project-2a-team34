@@ -1,3 +1,5 @@
 class JsService:
-    """Service that handles file.js methods"""
+    """
+    Service that handles ``.js`` files.
+    """
     pass

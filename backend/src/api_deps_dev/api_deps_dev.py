@@ -29,7 +29,7 @@ LICENCE_RISK = {
     "GPL-3.0": "high",
     "AGPL-3.0": "high",
 }
-DEFAULT_RISK = "unknown"  # Missing, non-standard, or unrecognized license
+DEFAULT_RISK = "unknown"  # When the licence is missing or unrecognized
 
 
 class API_DEPSDEV:
@@ -72,7 +72,7 @@ class API_DEPSDEV:
         Find the licences of a dependency.
 
         Queries the deps.dev API for the given dependency and returns
-        the SPDX identifiers of its licences.
+        its licences with their risk level.
 
         Parameters
         ----------
@@ -83,9 +83,16 @@ class API_DEPSDEV:
 
         Returns
         -------
-        list of str
-            Licence names (SPDX identifiers). The list is empty if the
+        list of Licence
+            Licences of the dependency. The list is empty if the
             dependency is unknown to deps.dev.
+
+        Raises
+        ------
+        ValueError
+            If the ecosystem is not supported by deps.dev.
+        requests.HTTPError
+            If the deps.dev API returns an error other than 404.
         """
         system = DEPSDEV_SYSTEMS.get(ecosystem)
         if system is None:
