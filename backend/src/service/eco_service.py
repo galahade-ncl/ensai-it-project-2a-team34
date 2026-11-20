@@ -362,34 +362,46 @@ class EcoService:
     DEFAULT_RECURSION_DEPTH = 10
 
     @staticmethod
+    def _collect_variables(tree: ast.AST) -> dict:
+        """
+        Collect the variables assigned with a literal value
+        Args:
+            tree (ast.AST): The AST of the code
+        Returns:
+            A dict such as {"n": 100, "my_list": [1, 2, 3]}
+        """
+        variables = {}
+
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Assign) and isinstance(node.targets[0], ast.Name):
+                try:
+                    variables[node.targets[0].id] = ast.literal_eval(node.value)
+                except (ValueError, TypeError):  # n = int(input()) : not a literal
+                    pass
+
+        return variables
+
+    @staticmethod
     def _loop_length(node: ast.stmt, variables: dict | None = None) -> int:
         """
-        Calculate the number of iterations of a loop.
-
-        Parameters
-        ----------
-        node : ast.stmt
-            ``for`` or ``while`` loop.
-
-        Returns
-        -------
-        int
-            Number of iterations of the loop, or ``DEFAULT_LOOP_LENGTH``
-            if it cannot be known statically.
+        Calculate the length of a loop
+        Args:
+            node (ast.stmt): A for or while loop
+            variables (dict): The variables of the code, {"n": 100, "my_list": [1, 2, 3]}
+        Returns:
+            int: The length of the loop, or DEFAULT_LOOP_LENGTH if it cannot be known
         """
         variables = variables or {}
 
         if isinstance(node, ast.For):
             iteration = node.iter
 
-            if isinstance(
-                iteration, (ast.List, ast.Tuple, ast.Set)
-            ):  # for i in [1, 2, 3] / for i in (1, 2, 3) / for i in {1, 2, 3}
+            # for i in [1, 2, 3] / (1, 2, 3) / {1, 2, 3}
+            if isinstance(iteration, (ast.List, ast.Tuple, ast.Set)):
                 return len(iteration.elts)
 
-            if isinstance(iteration, ast.Constant) and isinstance(
-                iteration.value, (str, bytes)
-            ):  # for i in "abc"
+            # for i in "abc"
+            if isinstance(iteration, ast.Constant) and isinstance(iteration.value, (str, bytes)):
                 return len(iteration.value)
 
             # for i in my_list
@@ -403,12 +415,9 @@ class EcoService:
                 isinstance(iteration, ast.Call)
                 and isinstance(iteration.func, ast.Name)
                 and iteration.func.id == "range"
-            ):  # for i in range (3) / for i in range (2, 10, 2)
-                try:
-                    values = [ast.literal_eval(arg) for arg in iteration.args]
-                    return len(range(*values))
-                except (ValueError, TypeError):  # for i in range (n)
-                    pass
+            ):
+                if not 1 <= len(iteration.args) <= 3 or iteration.keywords:
+                    return 0
 
                 values = []
                 for arg in iteration.args:
@@ -431,21 +440,8 @@ class EcoService:
         return EcoService.DEFAULT_LOOP_LENGTH
 
     @staticmethod
-    def _loop_complexity(node: ast.stmt) -> int:
-        """
-        Calculate the complexity of a loop, including its inner loops.
-
-        Parameters
-        ----------
-        node : ast.stmt
-            Loop to analyse.
-
-        Returns
-        -------
-        int
-            Complexity of the loop.
-        """
-        complexity = EcoService._loop_length(node)
+    def _loop_complexity(node: ast.stmt, variables: dict | None = None) -> int:
+        complexity = EcoService._loop_length(node, variables)
 
         if EcoService._loop_depth(node) >= 2:
             inner_complexity = 0
@@ -456,24 +452,7 @@ class EcoService:
         return complexity
 
     @staticmethod
-    def _count_recursive_calls(node: ast.AST, function_name: str) -> int:
-        """
-        Count the recursive calls made by one execution of a function.
-
-        A call inside a loop is counted once per iteration.
-
-        Parameters
-        ----------
-        node : ast.AST
-            Function to analyse.
-        function_name : str
-            Name of the function.
-
-        Returns
-        -------
-        int
-            Number of recursive calls.
-        """
+    def _count_recursive_calls(node: ast.AST, function_name: str, variables: dict | None = None) -> int:
         total = 0
 
         for child in ast.iter_child_nodes(node):
@@ -490,20 +469,9 @@ class EcoService:
         return total
 
     @log
-    def estimate_complexity(self, tree: ast.Module) -> float:
-        """
-        Estimate the complexity of a Python code.
-
-        Parameters
-        ----------
-        tree : ast.Module
-            AST of the code to estimate.
-
-        Returns
-        -------
-        float
-            Complexity of the code.
-        """
+    def estimate_complexity(self, codefile: CodeFile) -> float:
+        tree = ast.parse(codefile.content)
+        variables = EcoService._collect_variables(tree)          # <-- nouveau
 
         complexity = 1
 
@@ -514,15 +482,16 @@ class EcoService:
             if not isinstance(function, ast.FunctionDef):
                 continue
 
-            calls = EcoService._count_recursive_calls(function, function.name)
-            if calls != 0:
-                executions = sum(
-                    calls**level for level in range(EcoService.DEFAULT_RECURSION_DEPTH + 1)
-                )
+            calls = EcoService._count_recursive_calls(function, function.name, variables)
+            if calls == 0:
+                continue
 
-                one_execution = 1
-                for loop in EcoService._outest_loop(function):
-                    one_execution += EcoService._loop_complexity(loop)
-                    complexity += one_execution * (executions - 1)
+            executions = sum(calls**level for level in range(EcoService.DEFAULT_RECURSION_DEPTH + 1))
+
+            one_execution = 1
+            for loop in EcoService._outest_loop(function):
+                one_execution += EcoService._loop_complexity(loop, variables)
+
+            complexity += one_execution * (executions - 1)
 
         return float(complexity)
