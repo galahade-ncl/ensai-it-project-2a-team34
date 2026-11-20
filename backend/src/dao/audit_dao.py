@@ -14,11 +14,50 @@ logger = get_logger(__name__)
 
 
 class AuditDao(metaclass=Singleton):
-    """Class containing methods to access Audits in the database."""
+    """
+    Class containing methods to access Audits in the database.
+
+    Methods
+    -------
+    _row_to_audit(row)
+        Convert a database row into an Audit object.
+    create(audit)
+        Create an audit in the database.
+    find_by_id(id_audit)
+        Find an audit by its identifier.
+    find_all()
+        Retrieve all audits from the database.
+    update(audit)
+        Update an existing audit in the database.
+    delete(audit)
+        Delete an audit from the database.
+    list_all_audit(project)
+        Retrieve all audits associated with a project.
+    """
 
     @staticmethod
     def _row_to_audit(row: dict) -> Audit:
-        """Convert a database row into an Audit object."""
+        """
+        Convert a database row into an Audit object.
+
+        This method reconstructs an Audit instance from a database row.
+        It also reconstructs the associated certificate and SBOM when
+        available. If no SBOM is stored, an empty SBOM is created.
+
+        Parameters
+        ----------
+        row : dict
+            Database row containing the audit information, including
+            its identifiers, date, quality gate, metrics, SBOM content
+            and optional certificate information.
+
+        Returns
+        -------
+        Audit
+            Audit object reconstructed from the database row.
+            The certificate is set to None if no signed certificate
+            and PDF content are available.
+        """
         signed = row.get("certificate_signed")
         if isinstance(signed, str):  # selon le driver, JSONB peut arriver en str
             signed = json.loads(signed)
@@ -62,7 +101,30 @@ class AuditDao(metaclass=Singleton):
 
     @log
     def create(self, audit: Audit) -> bool:
-        """Create an audit in the database."""
+        """
+        Create an audit in the database.
+
+        The audit identifier and date generated or assigned by the
+        database are set on the provided audit object.
+
+        Parameters
+        ----------
+        audit : Audit
+            Audit to create in the database. Contains the project
+            identifier, date, complexity, energy consumption,
+            carbon emissions, quality gate and SBOM information.
+
+        Returns
+        -------
+        bool
+            True if the audit is successfully created and its
+            identifier is returned by the database, False otherwise.
+
+        Raises
+        ------
+        Exception
+            If an error occurs during database insertion.
+        """
         try:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
@@ -120,7 +182,25 @@ class AuditDao(metaclass=Singleton):
 
     @log
     def find_by_id(self, id_audit: int) -> Audit:
-        """Find an audit by its ID."""
+        """
+        Find an audit by its identifier.
+
+        Parameters
+        ----------
+        id_audit : int
+            Identifier of the audit to retrieve.
+
+        Returns
+        -------
+        Audit or None
+            Audit object corresponding to the provided identifier,
+            or None if no audit is found.
+
+        Raises
+        ------
+        Exception
+            If an error occurs during database retrieval.
+        """
         try:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
@@ -145,7 +225,22 @@ class AuditDao(metaclass=Singleton):
 
     @log
     def find_all(self) -> list[Audit]:
-        """Return all audits ordered by ID."""
+        """
+        Retrieve all audits from the database.
+
+        Audits are ordered by their identifier in ascending order.
+
+        Returns
+        -------
+        list[Audit]
+            List of all audits stored in the database.
+            Returns an empty list if no audit is found.
+
+        Raises
+        ------
+        Exception
+            If an error occurs during database retrieval.
+        """
         try:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
@@ -164,7 +259,33 @@ class AuditDao(metaclass=Singleton):
 
     @log
     def update(self, audit: Audit) -> bool:
-        """Update an existing audit."""
+        """
+        Update an existing audit in the database.
+
+        The audit is identified by its identifier. Its project,
+        date, complexity, energy consumption, carbon emissions,
+        quality gate and certificate information are updated.
+
+        Certificate PDF content and signed data are stored when
+        a signed certificate is associated with the audit.
+
+        Parameters
+        ----------
+        audit : Audit
+            Audit containing the updated information.
+            The audit identifier is used to identify the database
+            record to update.
+
+        Returns
+        -------
+        bool
+            True if exactly one audit is updated, False otherwise.
+
+        Raises
+        ------
+        Exception
+            If an error occurs during database update.
+        """
         try:
             signed = getattr(audit.certificate, "signed_data", None)
 
@@ -210,7 +331,28 @@ class AuditDao(metaclass=Singleton):
 
     @log
     def delete(self, audit: Audit) -> bool:
-        """Delete an audit from the database."""
+        """
+        Delete an audit from the database.
+
+        The audit is identified by its identifier.
+
+        Parameters
+        ----------
+        audit : Audit
+            Audit to delete from the database.
+            Its identifier is used to locate the corresponding record.
+
+        Returns
+        -------
+        bool
+            True if at least one audit is deleted, False if no
+            matching audit is found.
+
+        Raises
+        ------
+        Exception
+            If an error occurs during database deletion.
+        """
         try:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
@@ -230,17 +372,26 @@ class AuditDao(metaclass=Singleton):
     @log
     def list_all_audit(self, project: Project) -> list[Audit]:
         """
-        List all audits on a given project.
+        Retrieve all audits associated with a given project.
 
-        Arguments
-        ---------
+        Audits are ordered by their identifier in ascending order.
+
+        Parameters
+        ----------
         project : Project
-            Project whose audits are to be listed
+            Project whose audits are to be retrieved.
+            Its identifier is used to filter the database records.
 
         Returns
         -------
         list[Audit]
-            List of the project's audits, or an empty list if there are none
+            List of audits associated with the specified project.
+            Returns an empty list if the project has no audits.
+
+        Raises
+        ------
+        Exception
+            If an error occurs during database retrieval.
         """
         res = []
 

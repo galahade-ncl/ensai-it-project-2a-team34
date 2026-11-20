@@ -12,7 +12,7 @@ router = APIRouter()
 logger = get_logger(__name__)
 
 
-@router.post("/signature", response_model=HmacSignatureResponse, tags=["HMAC"])
+@router.post("/signature", response_model=HmacSignatureResponse, tags=["Hmac"])
 async def create_hmac_signature(body: HmacSignatureRequest, user=Depends(verify_token)):
     """
     Compute the HMAC signature expected by POST /audit for the given files.

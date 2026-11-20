@@ -2,9 +2,13 @@
 name = "ensai_it_project_2A_team34_back"
 version = "0.1.0"
 description = "API for the 2nd year IT project of team 34"
-authors = [{ name = "MANAMBIRAVAKA Anaëlle" }, { name = "NADIN Sarah" },
-{ name = "NICOLIE Galahade" }, { name = "PERRIN-BEAU Madie" },
-{ name = "VILARRUPLA Thomas" }, { name = "ZHU Annabelle" }, 
+authors = [
+    { name = "MANAMBIRAVAKA Anaëlle" },
+    { name = "NADIN Sarah" },
+    { name = "NICOLIE Galahade" },
+    { name = "PERRIN-BEAU Madie" },
+    { name = "VILARRUPLA Thomas" },
+    { name = "ZHU Annabelle" },
 ]
 requires-python = ">=3.13"
 
@@ -21,7 +25,8 @@ dependencies = [
     "cvss",
     "reportlab",
     "pypdf",
-    "cryptography"
+    "cryptography",
+    "bcrypt",
 ]
 
 # Dependencies used only for development, not for runtime
@@ -69,6 +74,4 @@ show_missing = true
 directory = "coverage_report"
 
 [dependency-groups]
-dev = [
-    "black>=26.10.1",
-]
+dev = ["black>=26.10.1"]
