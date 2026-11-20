@@ -182,12 +182,13 @@ class UserDao(metaclass=Singleton):
         """
         Update a user in the database.
 
-        Password and access token are kept unchanged if they are None.
+        The password is hashed before being stored. The access token is
+        kept unchanged if it is None.
 
         Parameters
         ----------
         user : User
-            User to update.
+            User to update, with a plain text password.
 
         Returns
         -------
@@ -202,17 +203,52 @@ class UserDao(metaclass=Singleton):
                     cursor.execute(
                         "UPDATE user_table                                                  "
                         "   SET username = %(username)s,                                "
-                        "       password = COALESCE(%(password)s, password),            "
+                        "       password = %(password)s,                                "
                         "       email = %(email)s,                                      "
                         "       access_token = COALESCE(%(access_token)s, access_token) "
                         " WHERE id_user = %(id_user)s;                              ",
                         {
                             "username": user.username,
-                            "password": user.password,
+                            "password": UserDao.hash_pw(user.password),
                             "email": user.email,
                             "access_token": user.access_token,
                             "id_user": user.id_user,
                         },
+                    )
+                    nb_affected_rows = cursor.rowcount
+        except Exception as e:
+            logger.error(e)
+            raise
+
+        return nb_affected_rows == 1
+
+    @log
+    def update_access_token(self, id_user: int, access_token: str) -> bool:
+        """
+        Store the access token of a user, leaving every other field unchanged.
+
+        Parameters
+        ----------
+        id_user : int
+            Identifier of the user.
+        access_token : str
+            New access token.
+
+        Returns
+        -------
+        bool
+            True if the update is successful, False otherwise.
+        """
+        nb_affected_rows = 0
+
+        try:
+            with DBConnection().connection as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        "UPDATE user_table                      "
+                        "   SET access_token = %(access_token)s "
+                        " WHERE id_user = %(id_user)s;          ",
+                        {"access_token": access_token, "id_user": id_user},
                     )
                     nb_affected_rows = cursor.rowcount
         except Exception as e:
@@ -275,9 +311,8 @@ class UserDao(metaclass=Singleton):
                     cursor.execute(
                         "SELECT *                               "
                         "  FROM user_table                      "
-                        " WHERE username = %(username)s         "
-                        "   AND password = %(password)s;        ",
-                        {"username": username, "password": password},
+                        " WHERE username = %(username)s;        ",
+                        {"username": username},
                     )
                     res = cursor.fetchone()
         except Exception as e:
@@ -286,7 +321,7 @@ class UserDao(metaclass=Singleton):
 
         user = None
 
-        if res:
+        if res and UserDao.verify_pw(password, res["password"]):
             user = User(
                 username=res["username"],
                 password=res["password"],
