@@ -3,9 +3,8 @@ from textwrap import dedent
 
 import pytest
 
-from service.eco_service import EcoService
 from business_object.file.codefile import CodeFile
-
+from service.eco_service import EcoService
 
 DEFAULT_LENGTH = 10
 DEFAULT_DEPTH = 10
