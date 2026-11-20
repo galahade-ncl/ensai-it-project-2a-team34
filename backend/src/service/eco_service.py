@@ -362,7 +362,7 @@ class EcoService:
     DEFAULT_RECURSION_DEPTH = 10
 
     @staticmethod
-    def _loop_length(node: ast.stmt) -> int:
+    def _loop_length(node: ast.stmt, variables: dict | None = None) -> int:
         """
         Calculate the number of iterations of a loop.
 
@@ -377,6 +377,8 @@ class EcoService:
             Number of iterations of the loop, or ``DEFAULT_LOOP_LENGTH``
             if it cannot be known statically.
         """
+        variables = variables or {}
+
         if isinstance(node, ast.For):
             iteration = node.iter
 
@@ -390,6 +392,13 @@ class EcoService:
             ):  # for i in "abc"
                 return len(iteration.value)
 
+            # for i in my_list
+            if isinstance(iteration, ast.Name):
+                value = variables.get(iteration.id)
+                if isinstance(value, (list, tuple, set, dict, str, bytes)):
+                    return len(value)
+
+            # for i in range(3) / range(n) / range(2, 10, 2)
             if (
                 isinstance(iteration, ast.Call)
                 and isinstance(iteration.func, ast.Name)
@@ -401,7 +410,24 @@ class EcoService:
                 except (ValueError, TypeError):  # for i in range (n)
                     pass
 
-        # Cannot know the length : for val in values / while
+                values = []
+                for arg in iteration.args:
+                    if isinstance(arg, ast.Constant):      # range(3)
+                        values.append(arg.value)
+                    elif isinstance(arg, ast.Name):        # range(n)
+                        values.append(variables.get(arg.id))
+                    else:                                  # range(n + 1), range(len(x))...
+                        values.append(None)
+
+                if None in values:
+                    return EcoService.DEFAULT_LOOP_LENGTH
+
+                try:
+                    return len(range(*values))
+                except (ValueError, TypeError):
+                    return 0
+
+        # Cannot know the length : while / unknown iterable
         return EcoService.DEFAULT_LOOP_LENGTH
 
     @staticmethod
@@ -424,7 +450,7 @@ class EcoService:
         if EcoService._loop_depth(node) >= 2:
             inner_complexity = 0
             for inner_loop in EcoService._outest_loop(node):
-                inner_complexity += EcoService._loop_complexity(inner_loop)
+                inner_complexity += EcoService._loop_complexity(inner_loop, variables)
             return complexity * inner_complexity
 
         return complexity
@@ -451,13 +477,13 @@ class EcoService:
         total = 0
 
         for child in ast.iter_child_nodes(node):
-            count = EcoService._count_recursive_calls(child, function_name)
+            count = EcoService._count_recursive_calls(child, function_name, variables)
 
             if isinstance(child, ast.Call) and EcoService._is_recursive_call(child, function_name):
                 count += 1
 
             if isinstance(child, (ast.For, ast.While)):
-                count *= EcoService._loop_length(child)
+                count *= EcoService._loop_length(child, variables)
 
             total += count
 
@@ -481,11 +507,9 @@ class EcoService:
 
         complexity = 1
 
-        # Complexity of all the loops
         for loop in EcoService._outest_loop(tree):
-            complexity += EcoService._loop_complexity(loop)
+            complexity += EcoService._loop_complexity(loop, variables)
 
-        # Complexity of all the recursive calls
         for function in ast.walk(tree):
             if not isinstance(function, ast.FunctionDef):
                 continue

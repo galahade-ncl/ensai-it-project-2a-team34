@@ -72,4 +72,5 @@ directory = "coverage_report"
 [dependency-groups]
 dev = [
     "black>=26.10.1",
+    "pytest>=9.0.2",
 ]
