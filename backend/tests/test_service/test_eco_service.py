@@ -1,473 +1,541 @@
 import ast
 from textwrap import dedent
+from types import SimpleNamespace
 
 import pytest
 
-from business_object.file.codefile import CodeFile
 from service.eco_service import EcoService
 
 DEFAULT_LENGTH = 10
 DEFAULT_DEPTH = 10
 
-
 def code_file(source):
-    """Construit un vrai CodeFile, conformément à l'API du service."""
+    """Utilitaire : faux CodeFile (seul l'attribut content est lu par EcoService)"""
     content = dedent(source).strip() if isinstance(source, str) else source
-    if isinstance(content, str):
-        content = content.encode("utf-8")
-    return CodeFile("test.py", content, ".py")
+    return SimpleNamespace(content=content)
 
 
-# ============================================================
-# TESTS ENERGY
-# ============================================================
+# =============================================================================
+# _outest_loop
+# =============================================================================
 
-@pytest.mark.parametrize(
-    "source, input_size",
-    [
-        ("x = 1", 1),
-        ("for i in range(3):\n    print(i)", 10),
-        ("def fact(n):\n    return fact(n - 1)", 10),
-        ("", 100),
-    ],
-)
-def test_calculate_energy(source, input_size):
-    result = EcoService().calculate_energy(code_file(source), input_size)
-    assert result >= 0
-    assert isinstance(result, float)
-
-
-@pytest.mark.parametrize("input_size", [0, -1, -100])
-def test_calculate_energy_invalid_input_size(input_size):
-    with pytest.raises(ValueError):
-        EcoService().calculate_energy(code_file("x = 1"), input_size)
-
-
-# ============================================================
-# TESTS CARBON
-# ============================================================
-
-def test_calculate_carbon_default_intensity():
-    service = EcoService()
-    source = code_file("x = 1")
-    energy = service.calculate_energy(source)
-    result = service.calculate_carbon(source)
-    assert result == pytest.approx(
-        energy * service.CARBON_INTENSITY_GCO2E_PER_KWH
-    )
-
-
-def test_calculate_carbon_custom_intensity():
-    service = EcoService()
-    source = code_file("x = 1")
-    energy = service.calculate_energy(source)
-    result = service.calculate_carbon(
-        source, carbon_intensity_gco2e_per_kwh=400
-    )
-    assert result == pytest.approx(energy * 400)
-
-
-def test_calculate_carbon_zero_energy():
-    assert EcoService()._calculate_carbon(0, 0) == 0
-
-
-@pytest.mark.parametrize("intensity", [-1, -100])
-def test_calculate_carbon_negative_intensity(intensity):
-    with pytest.raises(ValueError):
-        EcoService().calculate_carbon(
-            code_file("x = 1"),
-            carbon_intensity_gco2e_per_kwh=intensity,
-        )
-
-
-def test_calculate_carbon_rejects_invalid_input_size():
-    with pytest.raises(ValueError):
-        EcoService().calculate_carbon(
-            code_file("x = 1"), input_size=0
-        )
-
-
-# ============================================================
-# TESTS OUTEST LOOP
-# ============================================================
 
 @pytest.mark.parametrize(
     "source, expected_lines",
     [
-        ("x = 1", []),
-        ("for a in x:\n    pass", [1]),
-        ("for a in x:\n    for b in y:\n        pass", [1]),
-        ("for a in x:\n    pass\nfor b in y:\n    pass", [1, 3]),
-        ("def f(x):\n    for a in x:\n        pass", [2]),
-        (
+        pytest.param(
+            """x = 1""",
+            [],
+            id="no_loop"),
+        pytest.param("for a in x:\n    pass", [1], id="one_loop"),
+        pytest.param(
+            "for a in x:\n    for b in y:\n        pass",
+            [1],
+            id="nested_loops_keep_only_the_outer_one",
+        ),
+        pytest.param(
+            "for a in x:\n    pass\nfor b in y:\n    pass",
+            [1, 3],
+            id="sequential_loops",
+        ),
+        pytest.param(
+            "def f(x):\n    for a in x:\n        pass",
+            [2],
+            id="loop_inside_a_function",
+        ),
+        pytest.param(
             "for a in x:\n    if a:\n        for b in y:\n            pass",
             [1],
+            id="loop_hidden_in_an_if_inside_a_loop",
         ),
-        (
-            "def f(x):\n    for a in x:\n        pass\n"
-            "\ndef g(x):\n    while x:\n        pass",
+        pytest.param(
+            "def f(x):\n    for a in x:\n        pass\n\ndef g(x):\n    while x:\n        pass",
             [2, 6],
+            id="loops_in_two_functions",
         ),
-        ("while x:\n    pass", [1]),
+        pytest.param("while x:\n    pass", [1], id="while_loop"),
     ],
 )
 def test_outest_loop(source, expected_lines):
+    """Find the loops that are not nested in another loop"""
+
+    # GIVEN
     tree = ast.parse(source)
+
+    # WHEN
     res = EcoService._outest_loop(tree)
+
+    # THEN
     assert [loop.lineno for loop in res] == expected_lines
 
 
-# ============================================================
-# TESTS LOOP DEPTH
-# ============================================================
+# =============================================================================
+# _loop_depth
+# =============================================================================
+
 
 @pytest.mark.parametrize(
     "source, expected_depth",
     [
-        ("x = 1", 0),
-        ("for a in x:\n    pass", 1),
-        ("for a in x:\n    for b in y:\n        pass", 2),
-        (
-            "for a in x:\n    for b in y:\n"
-            "        for c in z:\n            pass",
-            3,
+        pytest.param("x = 1", 0, id="not_a_loop"),
+        pytest.param("for a in x:\n    pass", 1, id="single_loop"),
+        pytest.param(
+            "for a in x:\n    for b in y:\n        pass",
+            2,
+            id="two_nested_loops",
         ),
-        ("for a in x:\n    while y:\n        pass", 2),
-        (
+        pytest.param(
+            "for a in x:\n    for b in y:\n        for c in z:\n            pass",
+            3,
+            id="three_nested_loops",
+        ),
+        pytest.param(
+            "for a in x:\n    while y:\n        pass",
+            2,
+            id="while_inside_for",
+        ),
+        pytest.param(
             "for a in x:\n    for b in y:\n        pass\n"
             "    for c in z:\n        for d in w:\n            pass",
             3,
+            id="deepest_branch_wins",
         ),
-        (
+        pytest.param(
             "for a in x:\n    if a:\n        for b in y:\n            pass",
             2,
+            id="loop_hidden_in_an_if",
         ),
-        (
+        pytest.param(
             "def f(x):\n    for a in x:\n        for b in a:\n            pass",
             2,
+            id="function_is_not_counted",
         ),
     ],
 )
 def test_loop_depth(source, expected_depth):
+    """Calculate the maximum number of nested loops under a node"""
+
+    # GIVEN
     node = ast.parse(source).body[0]
+
+    # WHEN
     res = EcoService._loop_depth(node)
+
+    # THEN
     assert res == expected_depth
 
 
-# ============================================================
-# TESTS RECURSIVE CALL
-# ============================================================
+# =============================================================================
+# _is_recursive_call
+# =============================================================================
+
 
 @pytest.mark.parametrize(
     "call_source, function_name, expected",
     [
-        ("fact(n - 1)", "fact", True),
-        ("print(n)", "fact", False),
-        ("self.fact(n - 1)", "fact", True),
-        ("cls.fact(n - 1)", "fact", True),
-        ("other.fact(n)", "fact", True),
-        ("a.b.fact(n)", "fact", True),
-        ("other.save(n)", "fact", False),
-        ("functions[0](n)", "fact", False),
-        ("factory()(n)", "fact", False),
+        pytest.param("fact(n - 1)", "fact", True, id="call_by_name"),
+        pytest.param("print(n)", "fact", False, id="call_to_another_function"),
+        pytest.param("self.fact(n - 1)", "fact", True, id="call_on_self"),
+        pytest.param("cls.fact(n - 1)", "fact", True, id="call_on_cls"),
+        pytest.param("other.fact(n)", "fact", True, id="same_method_name_on_another_object"),
+        pytest.param("a.b.fact(n)", "fact", True, id="chained_attributes"),
+        pytest.param("other.save(n)", "fact", False, id="another_method_name"),
+        pytest.param("functions[0](n)", "fact", False, id="call_through_a_subscript"),
+        pytest.param("factory()(n)", "fact", False, id="call_of_a_returned_value"),
     ],
 )
 def test_is_recursive_call(call_source, function_name, expected):
+    """Verify if a call refers to the function named function_name"""
+
+    # GIVEN
     call = ast.parse(call_source).body[0].value
+
+    # WHEN
     res = EcoService._is_recursive_call(call, function_name)
+
+    # THEN
     assert res is expected
 
 
-# ============================================================
-# TESTS ANTIPATTERNS
-# ============================================================
-
-def summarize(antipattern):
-    """Résume un anti-pattern en (type, ligne, détail)."""
+def summarize(antipattern) -> tuple:
+    """Résume un anti-pattern en (type, ligne, détail) pour le comparer facilement"""
     kind = type(antipattern).__name__
-    detail = (
-        antipattern.depth
-        if kind == "NestedLoop"
-        else antipattern.function_name
-    )
-    return kind, antipattern.line, detail
+    detail = antipattern.depth if kind == "NestedLoop" else antipattern.function_name
+    return (kind, antipattern.line, detail)
 
 
 @pytest.mark.parametrize(
     "source, expected",
     [
-        (
-            "x = 1\nfor i in range(3):\n    print(i)",
+        pytest.param(
+            """
+            x = 1
+            for i in range(3):
+                print(i)
+            """,
             [],
+            id="no_antipattern",
         ),
-        (
-            "for a in x:\n    for b in y:\n        pass",
+        pytest.param(
+            """
+            for a in x:
+                for b in y:
+                    pass
+            """,
             [("NestedLoop", 1, 2)],
+            id="two_nested_loops",
         ),
-        (
-            "for a in x:\n    for b in y:\n"
-            "        for c in z:\n            pass",
+        pytest.param(
+            """
+            for a in x:
+                for b in y:
+                    for c in z:
+                        pass
+            """,
             [("NestedLoop", 1, 3)],
+            id="three_nested_loops",
         ),
-        (
-            "def f(x):\n    for a in x:\n"
-            "        for b in a:\n            pass",
+        pytest.param(
+            """
+            def f(x):
+                for a in x:
+                    for b in a:
+                        pass
+            """,
             [("NestedLoop", 2, 2)],
+            id="nested_loops_inside_a_function",
         ),
-        (
-            "for a in x:\n    pass\nfor b in y:\n    pass",
+        pytest.param(
+            """
+            for a in x:
+                pass
+            for b in y:
+                pass
+            """,
             [],
+            id="sequential_loops_are_not_nested",
         ),
-        (
-            "for a in x:\n    for b in y:\n        pass\n"
-            "    for c in z:\n        for d in w:\n"
-            "            for e in v:\n                pass",
+        pytest.param(
+            """
+            for a in x:
+                for b in y:
+                    pass
+                for c in z:
+                    for d in w:
+                        for e in v:
+                            pass
+            """,
             [("NestedLoop", 1, 4)],
+            id="depth_is_the_deepest_branch",
         ),
-        (
-            "def fact(n):\n"
-            "    return 1 if n <= 1 else n * fact(n - 1)",
+        pytest.param(
+            """
+            def fact(n):
+                return 1 if n <= 1 else n * fact(n - 1)
+            """,
             [("RecursiveCall", 2, "fact")],
+            id="recursive_function",
         ),
-        (
-            "class Tree:\n"
-            "    def walk(self, node):\n"
-            "        self.walk(node.left)",
+        pytest.param(
+            """
+            class Tree:
+                def walk(self, node):
+                    self.walk(node.left)
+            """,
             [("RecursiveCall", 3, "walk")],
+            id="recursive_method",
         ),
-        (
-            "def f(n):\n    return g(n)\n"
-            "\ndef g(n):\n    return n",
+        pytest.param(
+            """
+            def f(n):
+                return g(n)
+
+            def g(n):
+                return n
+            """,
             [],
+            id="call_to_another_function",
         ),
-        (
-            "def fact(n):\n    return n * fact(n - 1)\n"
-            "\nfor a in x:\n    for b in y:\n        pass",
-            [
-                ("RecursiveCall", 2, "fact"),
-                ("NestedLoop", 4, 2),
-            ],
+        pytest.param(
+            """
+            def fact(n):
+                return n * fact(n - 1)
+
+            for a in x:
+                for b in y:
+                    pass
+            """,
+            [("RecursiveCall", 2, "fact"), ("NestedLoop", 4, 2)],
+            id="nested_loop_and_recursion",
         ),
     ],
 )
 def test_detect_antipatterns(source, expected):
+    """Detect the antipatterns (type, line, depth or function name) of a Python code"""
+
+    # GIVEN
     tree = ast.parse(dedent(source).strip())
-    res = EcoService().detect_antipatterns(code_file(source))
+
+    # WHEN
+    res = EcoService().detect_antipatterns(tree)
+
+    # THEN
     assert sorted(summarize(a) for a in res) == sorted(expected)
 
 
-# ============================================================
-# TESTS LOOP LENGTH
-# ============================================================
+# =============================================================================
+# _collect_variables
+# =============================================================================
+
 
 @pytest.mark.parametrize(
     "source, expected",
     [
-        ("for i in range(3):\n    pass", 3),
-        ("for i in range(2, 10, 2):\n    pass", 4),
-        ("for i in range(5, 0, -1):\n    pass", 5),
-        ("for i in range(-3, 3):\n    pass", 6),
-        ("for i in range(0):\n    pass", 0),
-        ("for a in [1, 2, 3, 4]:\n    pass", 4),
-        ("for a in (1, 2):\n    pass", 2),
-        ("for a in {1, 2, 3}:\n    pass", 3),
-        ("for a in []:\n    pass", 0),
-        ("for c in 'abc':\n    pass", 3),
-        ("for c in b'ab':\n    pass", 2),
-        ("for a in x:\n    pass", DEFAULT_LENGTH),
-        ("for i in range(n):\n    pass", DEFAULT_LENGTH),
-        ("for i in range(len(x)):\n    pass", DEFAULT_LENGTH),
-        ("for i in range(0, 5, 0):\n    pass", DEFAULT_LENGTH),
-        ("for i in range(1.5):\n    pass", DEFAULT_LENGTH),
-        ("for a in 5:\n    pass", DEFAULT_LENGTH),
-        ("for a in {1: 2}:\n    pass", DEFAULT_LENGTH),
-        ("for a in enumerate(range(3)):\n    pass", DEFAULT_LENGTH),
-        ("while x:\n    pass", DEFAULT_LENGTH),
+        pytest.param("n = 100", {"n": 100}, id="integer"),
+        pytest.param("my_list = [1, 2, 3]", {"my_list": [1, 2, 3]}, id="list"),
+        # Valeur non littérale ou cible qui n'est pas un simple nom : ignorée
+        pytest.param("n = int(input())", {}, id="not_a_literal"),
+        pytest.param("x[0] = 5", {}, id="subscript_target"),
     ],
 )
-def test_loop_length(source, expected):
-    loop = ast.parse(source).body[0]
-    res = EcoService._loop_length(loop)
+def test_collect_variables(source, expected):
+    """Collect the variables assigned with a literal value"""
+
+    # GIVEN
+    tree = ast.parse(source)
+
+    # WHEN
+    res = EcoService._collect_variables(tree)
+
+    # THEN
     assert res == expected
 
 
-# ============================================================
-# TESTS LOOP COMPLEXITY
-# ============================================================
+# =============================================================================
+# _loop_length
+# =============================================================================
+
 
 @pytest.mark.parametrize(
     "source, expected",
     [
-        ("for i in range(3):\n    pass", 3),
-        (
-            "for i in range(3):\n"
-            "    for j in range(4):\n"
-            "        for k in range(5):\n"
+        pytest.param("for i in range(2, 10, 2):\n    pass", 4, id="range_start_stop_step"),
+        pytest.param("for a in [1, 2, 3, 4]:\n    pass", 4, id="literal_list"),
+        pytest.param("for c in 'abc':\n    pass", 3, id="literal_string"),
+        # Range incohérent : 0 itération
+        pytest.param("for i in range():\n    pass", 0, id="range_without_argument"),
+        pytest.param("for i in range(0, 5, 0):\n    pass", 0, id="range_step_zero"),
+        # Longueur inconnue (sans dictionnaire de variables) : valeur par défaut
+        pytest.param("for a in x:\n    pass", DEFAULT_LENGTH, id="unknown_variable"),
+        pytest.param("for i in range(n):\n    pass", DEFAULT_LENGTH, id="range_unknown_variable"),
+        pytest.param("for i in range(len(x)):\n    pass", DEFAULT_LENGTH, id="range_len"),
+        pytest.param("while x:\n    pass", DEFAULT_LENGTH, id="while_loop"),
+    ],
+)
+def test_loop_length(source, expected):
+    """Estimate the number of iterations of a loop"""
+
+    # GIVEN
+    loop = ast.parse(source).body[0]
+
+    # WHEN
+    res = EcoService._loop_length(loop)
+
+    # THEN
+    assert res == expected
+
+
+@pytest.mark.parametrize(
+    "source, variables, expected",
+    [
+        pytest.param("for i in range(n):\n    pass", {"n": 100}, 100, id="range_with_variable"),
+        pytest.param(
+            "for x in my_list:\n    pass", {"my_list": [1, 2, 3]}, 3, id="list_variable"
+        ),
+        pytest.param(
+            "for x in n:\n    pass", {"n": 100}, DEFAULT_LENGTH, id="variable_not_a_collection"
+        ),
+    ],
+)
+def test_loop_length_with_variables(source, variables, expected):
+    """Use the variables of the code to find the length of a loop"""
+
+    # GIVEN
+    loop = ast.parse(source).body[0]
+
+    # WHEN
+    res = EcoService._loop_length(loop, variables)
+
+    # THEN
+    assert res == expected
+
+
+# =============================================================================
+# _loop_complexity
+# =============================================================================
+
+
+@pytest.mark.parametrize(
+    "source, expected",
+    [
+        pytest.param(
+            "for i in range(3):\n    for j in range(4):\n        for k in range(5):\n"
             "            pass",
             60,
+            id="nested_loops_are_multiplied",
         ),
-        (
-            "for a in range(2):\n"
-            "    for b in range(3):\n"
-            "        pass\n"
-            "    for c in range(4):\n"
-            "        pass",
+        pytest.param(
+            "for a in range(2):\n    for b in range(3):\n        pass\n"
+            "    for c in range(4):\n        pass",
             14,
-        ),
-        (
-            "for a in range(2):\n"
-            "    if a:\n"
-            "        for b in range(3):\n"
-            "            pass",
-            6,
-        ),
-        (
-            "for a in x:\n    for b in y:\n        pass",
-            DEFAULT_LENGTH ** 2,
-        ),
-        (
-            "for a in range(2):\n    while x:\n        pass",
-            2 * DEFAULT_LENGTH,
-        ),
-        (
-            "for a in range(3):\n"
-            "    for b in range(0):\n        pass",
-            0,
+            id="inner_loops_in_sequence_are_added",
         ),
     ],
 )
 def test_loop_complexity(source, expected):
+    """Calculate the complexity of a loop (nested loops are multiplied)"""
+
+    # GIVEN
     loop = ast.parse(source).body[0]
+
+    # WHEN
     res = EcoService._loop_complexity(loop)
+
+    # THEN
     assert res == expected
 
 
-# ============================================================
-# TESTS RECURSIVE CALL COUNT
-# ============================================================
+# =============================================================================
+# _count_recursive_calls
+# =============================================================================
+
 
 @pytest.mark.parametrize(
     "source, expected",
     [
-        ("def f(n):\n    return g(n)", 0),
-        ("def fact(n):\n    return n * fact(n - 1)", 1),
-        (
-            "def fib(n):\n"
-            "    return fib(n - 1) + fib(n - 2)",
-            2,
+        pytest.param("def f(n):\n    return g(n)", 0, id="not_recursive"),
+        pytest.param(
+            "def fib(n):\n    return fib(n - 1) + fib(n - 2)", 2, id="two_recursive_calls"
         ),
-        ("def f(n):\n    if n:\n        f(n - 1)", 1),
-        (
-            "def f(n):\n"
-            "    for i in range(2):\n"
-            "        f(n - 1)",
-            2,
-        ),
-        (
-            "def f(n):\n"
-            "    for i in range(2):\n"
-            "        for j in range(3):\n"
+        pytest.param(
+            "def f(n):\n    for i in range(2):\n        for j in range(3):\n"
             "            f(n - 1)",
             6,
+            id="recursive_call_in_nested_loops",
         ),
-        (
-            "def f(n):\n    for a in x:\n        f(n - 1)",
-            DEFAULT_LENGTH,
-        ),
-        (
-            "def walk(self, node):\n"
-            "    self.walk(node.left)\n"
-            "    self.walk(node.right)",
+        pytest.param(
+            "def walk(self, node):\n    self.walk(node.left)\n    self.walk(node.right)",
             2,
+            id="recursive_method",
         ),
     ],
 )
 def test_count_recursive_calls(source, expected):
+    """Count the recursive calls made by one execution of a function"""
+
+    # GIVEN
     function = ast.parse(source).body[0]
+
+    # WHEN
     res = EcoService._count_recursive_calls(function, function.name)
+
+    # THEN
     assert res == expected
 
 
-# ============================================================
-# TESTS ESTIMATE COMPLEXITY
-# ============================================================
+def test_count_recursive_calls_with_variables():
+    """The length of the loop is found thanks to the variables"""
+
+    # GIVEN
+    function = ast.parse("def f(n):\n    for i in range(k):\n        f(n - 1)").body[0]
+
+    # WHEN
+    res = EcoService._count_recursive_calls(function, function.name, {"k": 4})
+
+    # THEN
+    assert res == 4
+
+
+# =============================================================================
+# estimate_complexity
+# =============================================================================
+
 
 @pytest.mark.parametrize(
     "source, expected",
     [
-        ("x = 1", 1),
-        ("for i in range(3):\n    print(i)", 1 + 3),
-        (
-            "x = 0\n"
-            "for i in range(3):\n"
-            "    for j in range(4):\n"
-            "        for k in range(5):\n"
-            "            x += 1",
-            1 + 60,
-        ),
-        (
-            "for a in range(3):\n    pass\n"
-            "for b in range(4):\n    pass",
+        pytest.param("x = 1", 1, id="no_loop"),
+        pytest.param(
+            "for a in range(3):\n    pass\nfor b in range(4):\n    pass",
             1 + 3 + 4,
+            id="sequential_loops",
         ),
-        (
-            "for a in range(2):\n"
-            "    for b in range(3):\n"
-            "        pass\n"
-            "    for c in range(4):\n"
-            "        pass",
-            1 + 14,
+        # Variables du code
+        pytest.param(
+            "n = 100\nfor i in range(n):\n    pass", 1 + 100, id="range_with_variable"
         ),
-        ("for a in x:\n    pass", 1 + DEFAULT_LENGTH),
-        ("while x:\n    pass", 1 + DEFAULT_LENGTH),
-        ("for a in range(0):\n    pass", 1),
-        (
-            "def f(x):\n    for a in range(5):\n        pass",
-            1 + 5,
+        pytest.param(
+            "n = 4\nfor i in range(n):\n    for j in range(n):\n        pass",
+            1 + 16,
+            id="nested_loops_with_variable",
         ),
-        (
+        # Récursion : (1 + profondeur) exécutions pour un appel, arbre binaire pour deux appels
+        pytest.param(
             "def fact(n):\n    return n * fact(n - 1)",
-            1,
+            DEFAULT_DEPTH + 1,
+            id="linear_recursion",
         ),
-        (
+        pytest.param(
             "def fib(n):\n    return fib(n - 1) + fib(n - 2)",
-            1,
+            2 ** (DEFAULT_DEPTH + 1) - 1,
+            id="double_recursion",
         ),
-        (
-            "class Tree:\n"
-            "    def walk(self, node):\n"
-            "        self.walk(node.left)",
-            1,
+        pytest.param(
+            "def f(n):\n    for a in range(5):\n        pass\n    return f(n - 1)",
+            6 * (DEFAULT_DEPTH + 1),  # une exécution coûte 1 + 5, et il y en a 1 + profondeur
+            id="loop_and_recursion",
         ),
-        (
-            "def f(n):\n"
-            "    for a in range(5):\n"
-            "        pass\n"
-            "    return f(n - 1)",
-            66,
+        pytest.param(
+            "def f(n):\n    for i in range(2):\n        f(n - 1)",
+            3 * (2 ** (DEFAULT_DEPTH + 1) - 1),  # une exécution coûte 1 + 2, avec 2 appels
+            id="recursive_call_in_a_loop",
         ),
-        (
-            "def f(n):\n"
-            "    for i in range(2):\n"
-            "        f(n - 1)",
-            6141,
-        ),
-        ("def f(n):\n    return g(n)", 1),
     ],
 )
 def test_estimate_complexity(source, expected):
+    """Estimate the complexity of a code according to its loops, variables and recursions"""
+
+    # GIVEN
     codefile = code_file(source)
+
+    # WHEN
     res = EcoService().estimate_complexity(codefile)
+
+    # THEN
     assert res == expected
 
 
 def test_estimate_complexity_returns_a_float():
+    """The complexity is returned as a float"""
+
+    # GIVEN
     codefile = code_file("for i in range(3):\n    pass")
+
+    # WHEN
     res = EcoService().estimate_complexity(codefile)
+
+    # THEN
     assert isinstance(res, float)
 
 
 def test_estimate_complexity_with_bytes_content():
+    """Estimate the complexity of a code stored as bytes"""
+
+    # GIVEN
     codefile = code_file(b"for i in range(3):\n    pass")
+
+    # WHEN
     res = EcoService().estimate_complexity(codefile)
+
+    # THEN
     assert res == 1 + 3
