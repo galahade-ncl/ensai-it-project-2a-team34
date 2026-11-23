@@ -45,14 +45,14 @@ sequenceDiagram
         Utilisateur->>API: Dépose les informations de l'utilisateur<br/>(username, password, email)
         API->>DAO: Vérifier si le nom existe
         DAO->>BDD: Recherche un utilisateut par le username
-        BDD-->DAO: Résultat de la recherche
+        BDD-->>DAO: Résultat de la recherche
 
         alt Nom déjà utilisé
             DAO-->>API: Nom existant
             API-->>Utilisateur: Erreur : Nom déjà utilisé
         else Nom disponible
-            API->>API: Hashe le mot de passe
             DAO-->>API: Nom disponible
+            API->>API: Hashe le mot de passe
             API->>DAO: Crée l'utilisateur
             DAO->>BDD: Enregistre les informations de l'utilisateur
             BDD-->DAO: Utilisateur enregistré
@@ -67,22 +67,36 @@ sequenceDiagram
         Utilisateur->>API: Dépose un projet
         API->>API: Génère la clé secrète HMAC du projet
 
-        API->DAO: Crée le projet
-        DAO->BDD: Enregistre le projet et sa clé
-        BDD-->DAO: Projet enregistré
-        DAO-->API: Projet créé
-        API-->Utilisateur: Confirmation de l'importation du projet + <br/>donne la clé secrète HMAC
+        API->>DAO: Crée le projet
+        DAO->>BDD: Enregistre le projet et sa clé
+        BDD-->>DAO: Projet enregistré
+        DAO-->>API: Projet créé
+        API-->>Utilisateur: Confirmation de l'importation du projet + <br/>donne la clé secrète HMAC
 
     end
 
     rect rgb(225, 245, 255)
         Note over Utilisateur,BDD: Demander un audit
 
-        Utilisateur-->>API: Envoie le code et le fichier de dépendances + <br/> 
-        API-->>DAO: Demande les fichiers du projet
-        DAO-->>BDD: Demande les informations relatives au projet
-        DAO-->>API: Envoie les informations liées au projet à auditer
-        API-->>Utilisateur: Donne les résultats de l'audit
+        Utilisateur->>API: Envoie le code et le fichier de dépendances <br/>+ clé secrète HMAC
+        API-->>API: Génèren la signature HMAC
+        API-->>Utilisateur: Renvoie la signature
+        Utilisateur->>API: Envoie le code et le fichier de dépendances <br/>+ signature HMAC
+        API->>DAO: Demande le projet et sa clé secrète
+        DAO->>BDD: Demande les informations relatives au projet
+        BDD-->>DAO: Renvoie les informations et la clé secrète
+        DAO-->>API: Renvoie les informations et la clé secrète
+        API-->>API: Vérifie la signature HMAC
+        alt Signature incorrecte
+            API-->>Utilisateur: Erreur : signature incorrecte
+        else Signature correcte
+            API->>API: Réalise l'audit
+            API->>DAO: Crée l'audit
+            DAO->>BDD: Enregistre les résultats de l'audit
+            BDD-->DAO: Audit enregistré
+            DAO-->>API: Audit créé
+            API-->>Utilisateur: Renvoie les résultats de l'audit
+        end
     end
 
 ````
