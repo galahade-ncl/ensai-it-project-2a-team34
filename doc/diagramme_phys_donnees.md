@@ -36,13 +36,15 @@ classDiagram
         id_audit INT PK
         #id_project INT FK
         date DATE
-        total_vulnerability FLOAT
-        total_critical_vulnerability FLOAT
         complexity FLOAT
         energy_comsumption FLOAT
         carbon_emission_gco2e FLOAT
         type_qualitygate VARCHAR
         status_qualitygate VARCHAR
+        certificate_pdf BYTEA,
+        certificate_signed JSONB,
+        certificate_id TEXT UNIQUE,
+        sbom_content BYTEA,
     }
 
     %% Relationships

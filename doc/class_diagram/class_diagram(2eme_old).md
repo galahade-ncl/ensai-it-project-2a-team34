@@ -26,15 +26,16 @@ classDiagram
     %% Business objects
     class User {
         +id_user: int
-        +username: string
-        +password: string
-        +email: string
+        +username: str
+        +password: str
+        +email: str
+        +access_token: str
     }
 
     namespace ProjectClasses {
         class Project {
             +id_project: int
-            +name_project: string
+            +name_project: str
             +user: User
             +codefile: CodeFile | None
             +dependencyfile: DependencyFile | None
@@ -65,6 +66,16 @@ classDiagram
             +content: bytes
             +type_file: str
             +date: datetime
+            +get_duty(self): str
+            }
+        class CertificateFile {
+            +name: str
+            +content: bytes
+            +type_file: str
+            +date: datetime
+            +qualitygate_type: str
+            +date: datetime
+            +signed_data: dict
             +get_duty(self): str
             }
     }
