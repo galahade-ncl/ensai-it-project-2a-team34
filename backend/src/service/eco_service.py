@@ -5,26 +5,27 @@ from business_object.antipattern.antipattern import AntiPattern
 from business_object.antipattern.nestedloop import NestedLoop
 from business_object.antipattern.recursivecall import RecursiveCall
 from business_object.file.codefile import CodeFile
+from business_object.machinetype.machinetype import MachineType
 from utils.log_utils import log
 
 
 @dataclass
 class AstAnalysis:
     """
-    Result of ONE analysis of the code (parsed once).
+    Result of a single analysis of Python source code.
 
     Attributes
     ----------
     metrics : dict
-        Metrics extracted from the AST.
+        Metrics extracted from the Abstract Syntax Tree (AST).
     antipatterns : list of AntiPattern
-        Antipatterns detected in the code.
+        Antipatterns detected in the source code.
     complexity : float
-        Estimated complexity of the code.
+        Estimated computational complexity of the code.
     energy_kwh : float
-        Estimated energy consumption (kWh).
+        Estimated energy consumption, in kilowatt-hours (kWh).
     carbon_gco2e : float
-        Estimated carbon emission (gCO2e).
+        Estimated carbon emissions, in grams of CO2 equivalent (gCO2e).
     """
 
     metrics: dict
@@ -36,26 +37,28 @@ class AstAnalysis:
 
 class EcoService:
     """
-    Service responsible for AST analysis, energy estimation and carbon
+    Service responsible for AST analysis, computational complexity
+    estimation, energy consumption estimation and carbon emission
     estimation.
 
     Attributes
     ----------
-    OPERATIONS_PER_SECOND : int
-        Number of operations executed per second by the reference CPU.
-    CPU_POWER_W : float
-        Power of the reference CPU (W).
-    CARBON_INTENSITY_GCO2E_PER_KWH : float
-        Default carbon intensity of electricity (gCO2e/kWh).
+    machine_type : MachineType
+        Machine configuration used for energy and carbon estimations.
+    LOOP_TYPES : tuple of type
+        AST node types corresponding to loop statements (``for`` and ``while``).
+    CONDITION_TYPES : tuple of type
+        AST node types corresponding to conditional statements and expressions.
+    OPERATION_TYPES : tuple of type
+        AST node types considered as computational operations.
     DEFAULT_LOOP_LENGTH : int
-        Number of iterations assumed when the length of a loop is unknown.
+        Default number of iterations assumed when the loop length is unknown.
     DEFAULT_RECURSION_DEPTH : int
-        Recursion depth assumed for recursive functions.
+        Default recursion depth used for complexity estimation.
     """
 
-    OPERATIONS_PER_SECOND = 1_000_000_000
-    CPU_POWER_W = 65.0
-    CARBON_INTENSITY_GCO2E_PER_KWH = 50.0
+    def __init__(self, machine_type: MachineType = MachineType.REFERENCE):
+        self.machine_type = machine_type
 
     LOOP_TYPES = (ast.For, ast.While)
     CONDITION_TYPES = (ast.If, ast.IfExp)
@@ -200,8 +203,8 @@ class EcoService:
         if metrics["recursive_functions"]:
             operations *= input_size
 
-        runtime_seconds = operations / self.OPERATIONS_PER_SECOND
-        return self.CPU_POWER_W * runtime_seconds / 3_600_000
+        runtime_seconds = operations / self.machine_type.operations_per_second
+        return self.machine_type.cpu_power_w * runtime_seconds / 3_600_000
 
     def calculate_carbon(
         self,
@@ -232,13 +235,12 @@ class EcoService:
         if energy_kwh < 0:
             raise ValueError("Energy cannot be negative.")
         if carbon_intensity_gco2e_per_kwh is None:
-            carbon_intensity_gco2e_per_kwh = self.CARBON_INTENSITY_GCO2E_PER_KWH
+            carbon_intensity_gco2e_per_kwh = self.machine_type.carbon_intensity_gco2e_per_kwh
         if carbon_intensity_gco2e_per_kwh < 0:
             raise ValueError("Carbon intensity cannot be negative.")
         return energy_kwh * carbon_intensity_gco2e_per_kwh
 
-    @staticmethod
-    def _outest_loop(tree: ast.AST) -> list[ast.stmt]:
+    def _outest_loop(self, tree: ast.AST) -> list[ast.stmt]:
         """
         Find all the loops that are not nested in another loop.
 
@@ -252,19 +254,17 @@ class EcoService:
         list of ast.stmt
             Outermost ``for`` and ``while`` loops.
         """
-        loop_type = (ast.For, ast.While)
         loops = []
 
         for child in ast.iter_child_nodes(tree):
-            if isinstance(child, loop_type):
+            if isinstance(child, self.LOOP_TYPES):
                 loops.append(child)
             else:
                 loops.extend(EcoService._outest_loop(child))
 
         return loops
 
-    @staticmethod
-    def _loop_depth(node: ast.AST) -> int:
+    def _loop_depth(self, node: ast.AST) -> int:
         """
         Compute the loop nesting depth of a node.
 
@@ -279,14 +279,13 @@ class EcoService:
             Maximum number of nested loops under the node (the node
             included).
         """
-        loop_type = (ast.For, ast.While)
         depth = 0
         for child in ast.iter_child_nodes(node):
             child_depth = EcoService._loop_depth(child)
             if child_depth > depth:
                 depth = child_depth
 
-        return depth + isinstance(node, loop_type)
+        return depth + isinstance(node, self.LOOP_TYPES)
 
     @staticmethod
     def _is_recursive_call(call: ast.Call, function_name: str) -> bool:
@@ -421,11 +420,11 @@ class EcoService:
 
                 values = []
                 for arg in iteration.args:
-                    if isinstance(arg, ast.Constant):      # range(3)
+                    if isinstance(arg, ast.Constant):  # range(3)
                         values.append(arg.value)
-                    elif isinstance(arg, ast.Name):        # range(n)
+                    elif isinstance(arg, ast.Name):  # range(n)
                         values.append(variables.get(arg.id))
-                    else:                                  # range(n + 1), range(len(x))...
+                    else:  # range(n + 1), range(len(x))...
                         values.append(None)
 
                 if None in values:
@@ -451,8 +450,9 @@ class EcoService:
 
         return complexity
 
-    @staticmethod
-    def _count_recursive_calls(node: ast.AST, function_name: str, variables: dict | None = None) -> int:
+    def _count_recursive_calls(
+        self, node: ast.AST, function_name: str, variables: dict | None = None
+    ) -> int:
         total = 0
 
         for child in ast.iter_child_nodes(node):
@@ -461,7 +461,7 @@ class EcoService:
             if isinstance(child, ast.Call) and EcoService._is_recursive_call(child, function_name):
                 count += 1
 
-            if isinstance(child, (ast.For, ast.While)):
+            if isinstance(child, self.LOOP_TYPES):
                 count *= EcoService._loop_length(child, variables)
 
             total += count
@@ -469,9 +469,8 @@ class EcoService:
         return total
 
     @log
-    def estimate_complexity(self, codefile: CodeFile) -> float:
-        tree = ast.parse(codefile.content)
-        variables = EcoService._collect_variables(tree)          # <-- nouveau
+    def estimate_complexity(self, tree: ast.Module) -> float:
+        variables = EcoService._collect_variables(tree)
 
         complexity = 1
 
@@ -486,7 +485,9 @@ class EcoService:
             if calls == 0:
                 continue
 
-            executions = sum(calls**level for level in range(EcoService.DEFAULT_RECURSION_DEPTH + 1))
+            executions = sum(
+                calls**level for level in range(EcoService.DEFAULT_RECURSION_DEPTH + 1)
+            )
 
             one_execution = 1
             for loop in EcoService._outest_loop(function):

@@ -1,6 +1,7 @@
 from business_object.dependency import Dependency
 from business_object.file.dependencyfile import DependencyFile
 from service.file_services.json_service import JsonService
+from service.file_services.lock_service import LockService
 from service.file_services.toml_service import TomlService
 from service.file_services.txt_service import TxtService
 from service.file_services.xml_service import XmlService
@@ -71,5 +72,8 @@ class FileService:
 
         elif extension == "toml":
             return TomlService().parse_dependencies(dependencyfile.content)
+
+        elif extension == "lock":
+            return LockService().parse_dependencies(dependencyfile.content)
 
         raise ValueError(f"Type de fichier non supporté : {extension}")

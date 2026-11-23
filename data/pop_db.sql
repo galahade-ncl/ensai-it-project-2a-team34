@@ -1,22 +1,16 @@
 INSERT INTO user_table(username, password, email) VALUES
-('admin',     '0000',     'admin@project.io'   ),
-('a',         'a',        'a@ensai.fr'         ),
-('maurice',   '1234',     'maurice@ensai.fr'   ),
-('batricia',  '9876',     'bat@project.io'     ),
-('miguel',    'abcd',     'miguel@project.io'  ),
-('gilbert',   'toto',     'gilbert@project.io' ),
-('junior',    'aaaa',     'junior@project.io'  ),
-('MICHEL',    'lehcim',   'MICHEL@michel.ml'   );
+('admin',     '000000000000',     'admin@project.io'   ),
+('maurice',   '012345678910',     'maurice@ensai.fr'   ),
+('miguel',    'azertyuiopqs',     'miguel@project.io'  ),
+('madie',     '109876543210',     'madie@project.io'   ),
+('gilbert',   'totototototo',     'gilbert@project.io' ),
+('junior',    'aaaaaaaaaaaa',     'junior@project.io'  ),
+('MICHEL',    'lehcimlehcim',     'MICHEL@michel.ml'   );
 
 INSERT INTO project_table(name_project, id_user, secretHMACkey) VALUES
-('projet_info',       3,      'bGoa+V7g/yqDXvKRqq+JTFn4uQZbPiQJo4pf9RzJ'                              ),
-('MIGUEL',            5,      'VGVzdEtleUZvckhNQUNBcGlWYWxpZGF0aW9uMjAyNg=='                          ),
-('tp4',               4,      'secret-key-pour-les-tests-locaux'                                      ),
-('voiture',           8,      '000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f'      ),
-('camion',            8,      'TFn4uQa+4vcleUZV7IeyDXvKAyn4cNg=c=Zb/P'                                ),
-('test_de_projet',    6,      'fdslirgHR_rhoP3ZIJF5ruefiUREOIZPhflz568ro*àa_h5eAZEIjf'                );
-
-
-INSERT INTO audit_table(id_project, complexity, energy_comsumption, carbon_emission_gco2e, type_qualitygate, status_qualitygate) VALUES
-(1,        25,       120,         1584,      'global',      'passed'),
-(3,        10,       200,         126,      'eco',       'passed');
+('projet_info',       2,      'YHTuFQyWQDal9RaRlO029WyRMTTlFG2VeLac5IcmgbE='       ),
+('MIGUEL',            3,      '8eUBC8MkeBiyhXWnAGQKHu3Nso39vRPL5UxbaVgpQOM='       ),
+('tp4',               4,      'UsIqeMt349zkOe713ly84nSgh0bl+kEBbR+owAhLg7Q='       ),
+('voiture',           7,      'eOhgRd+DWeVidli+gjHz5nFYXT8OacmId3GJSBJmwl4='       ),
+('camion',            7,      '0Sk8xJz7BnvEHLPo5EA4URriBDKi3RfMwlPTISvxD/M='       ),
+('test_de_projet',    5,      '1MLyYFNLayXr6Z8+fYwPgfAx18A5ZFu0lzUMOW1UCZ8='       );

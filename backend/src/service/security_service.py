@@ -12,6 +12,7 @@ class SecurityService:
     Service that finds the vulnerabilities and the licences of the
     dependencies of a project.
     """
+
     @log
     def detect_ecosystem(self, dependencyfile: DependencyFile) -> str:
         """
@@ -36,12 +37,15 @@ class SecurityService:
 
         SUPPORTED_FILES = {
             "requirements.txt": "PyPI",
+            "pipfile.lock": "PyPI",
+            "poetry.lock": "PyPI",
+            "pyproject.toml": "PyPI",
             "package.json": "npm",
             "pom.xml": "Maven",
-            "Cargo.toml": "crates.io",
+            "cargo.toml": "crates.io",
         }
 
-        filename = FileService().get_filename(dependencyfile)
+        filename = FileService().get_filename(dependencyfile).lower()
 
         if filename not in SUPPORTED_FILES:
             raise ValueError(

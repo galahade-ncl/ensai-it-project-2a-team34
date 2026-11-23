@@ -1,10 +1,8 @@
 import os
 from pathlib import Path
 
-# from unittest import mock
 import dotenv
 
-# from dao.project_dao import ProjectDao
 from dao.db_connection import DBConnection
 from dao.user_dao import UserDao
 from utils.log_utils import get_logger, log
@@ -51,10 +49,6 @@ class ResetDatabase(metaclass=Singleton):
         Exception
             If an SQL query fails.
         """
-        # if test_dao:
-        #     mock.patch.dict(os.environ, {"POSTGRES_SCHEMA": "project_test_dao"}).start()
-        #     pop_data_path = self.base_path / "data" / "pop_db_test.sql"
-        # else:
         pop_data_path = self.base_path / "data" / "pop_db.sql"
 
         init_db_path = self.base_path / "data" / "init_db.sql"

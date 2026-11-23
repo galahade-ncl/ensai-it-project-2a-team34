@@ -154,21 +154,6 @@ class API_OSV:
             None,
         )
 
-        # classes = {
-        #     "LOW": LowVulnerability,
-        #     "MEDIUM": MediumVulnerability,
-        #     "HIGH": HighVulnerability,
-        #     "CRITICAL": CriticalVulnerability,
-        # }
-
-        # return classes[severity](
-        #     id_vulnerability=None,
-        #     osv_id=osv_vuln["id"],
-        #     cve_id=cve_id,
-        #     package=dependency.name,
-        #     version_package=dependency.version,
-        # )
-
         return Severity[severity].value(
             id_vulnerability=None,
             osv_id=osv_vuln["id"],
