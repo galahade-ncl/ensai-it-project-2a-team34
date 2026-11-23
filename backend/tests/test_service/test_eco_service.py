@@ -63,7 +63,7 @@ def test_outest_loop(source, expected_lines):
     tree = ast.parse(source)
 
     # WHEN
-    res = EcoService._outest_loop(tree)
+    res = EcoService()._outest_loop(tree)
 
     # THEN
     assert [loop.lineno for loop in res] == expected_lines
@@ -119,7 +119,7 @@ def test_loop_depth(source, expected_depth):
     node = ast.parse(source).body[0]
 
     # WHEN
-    res = EcoService._loop_depth(node)
+    res = EcoService()._loop_depth(node)
 
     # THEN
     assert res == expected_depth
@@ -437,7 +437,7 @@ def test_count_recursive_calls(source, expected):
     function = ast.parse(source).body[0]
 
     # WHEN
-    res = EcoService._count_recursive_calls(function, function.name)
+    res = EcoService()._count_recursive_calls(function, function.name)
 
     # THEN
     assert res == expected
@@ -450,7 +450,7 @@ def test_count_recursive_calls_with_variables():
     function = ast.parse("def f(n):\n    for i in range(k):\n        f(n - 1)").body[0]
 
     # WHEN
-    res = EcoService._count_recursive_calls(function, function.name, {"k": 4})
+    res = EcoService()._count_recursive_calls(function, function.name, {"k": 4})
 
     # THEN
     assert res == 4
@@ -506,10 +506,10 @@ def test_estimate_complexity(source, expected):
     """Estimate the complexity of a code according to its loops, variables and recursions"""
 
     # GIVEN
-    codefile = code_file(source)
+    tree = EcoService.parse(code_file(source))
 
     # WHEN
-    res = EcoService().estimate_complexity(codefile)
+    res = EcoService().estimate_complexity(tree)
 
     # THEN
     assert res == expected
@@ -519,10 +519,10 @@ def test_estimate_complexity_returns_a_float():
     """The complexity is returned as a float"""
 
     # GIVEN
-    codefile = code_file("for i in range(3):\n    pass")
+    tree = EcoService.parse(code_file("for i in range(3):\n    pass"))
 
     # WHEN
-    res = EcoService().estimate_complexity(codefile)
+    res = EcoService().estimate_complexity(tree)
 
     # THEN
     assert isinstance(res, float)
@@ -532,10 +532,10 @@ def test_estimate_complexity_with_bytes_content():
     """Estimate the complexity of a code stored as bytes"""
 
     # GIVEN
-    codefile = code_file(b"for i in range(3):\n    pass")
+    tree = EcoService.parse(code_file(b"for i in range(3):\n    pass"))
 
     # WHEN
-    res = EcoService().estimate_complexity(codefile)
+    res = EcoService().estimate_complexity(tree)
 
     # THEN
     assert res == 1 + 3
