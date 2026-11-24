@@ -162,3 +162,55 @@ def test_delete_raises_on_db_error(cursor):
     cursor.execute.side_effect = Exception("boom")
     with pytest.raises(Exception, match="boom"):
         ProjectDao().delete(MagicMock(id_project=10))
+
+
+def test_find_by_id_and_user_found(cursor):
+    cursor.fetchone.return_value = {
+        "id_project": 10,
+        "name_project": "My project",
+        "id_user": 1,
+        "secrethmackey": b"secret123",
+    }
+
+    project = ProjectDao().find_by_id_and_user(10, 1)
+
+    assert isinstance(project, Project)
+    assert project.id_project == 10
+    assert project.name_project == "My project"
+    assert project.secretHMACkey == b"secret123"
+    assert cursor.execute.call_args.args[1] == {"id_project": 10, "id_user": 1}
+
+
+def test_find_by_id_and_user_not_owned(cursor):
+    cursor.fetchone.return_value = None
+    assert ProjectDao().find_by_id_and_user(10, 2) is None
+
+
+def test_find_by_id_and_user_raises_on_db_error(cursor):
+    cursor.execute.side_effect = Exception("boom")
+    with pytest.raises(Exception, match="boom"):
+        ProjectDao().find_by_id_and_user(10, 1)
+
+
+def test_update_secret_key_success(cursor):
+    cursor.rowcount = 1
+    project = MagicMock(id_project=10, secretHMACkey=b"new_secret")
+
+    assert ProjectDao().update_secret_key(project) is True
+    assert cursor.execute.call_args.args[1] == {
+        "secret_key": b"new_secret",
+        "id_project": 10,
+    }
+
+
+def test_update_secret_key_project_not_found(cursor):
+    cursor.rowcount = 0
+    project = MagicMock(id_project=999, secretHMACkey=b"new_secret")
+    assert ProjectDao().update_secret_key(project) is False
+
+
+def test_update_secret_key_raises_on_db_error(cursor):
+    cursor.execute.side_effect = Exception("boom")
+    project = MagicMock(id_project=10, secretHMACkey=b"new_secret")
+    with pytest.raises(Exception, match="boom"):
+        ProjectDao().update_secret_key(project)

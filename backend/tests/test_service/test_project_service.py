@@ -1,5 +1,6 @@
+import base64
 from datetime import datetime
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -10,6 +11,7 @@ from business_object.user import User
 from dao.project_dao import ProjectDao
 from service.project_service import ProjectService
 from service.user_service import UserService
+from utils.security import generate_signature
 
 
 @pytest.fixture(autouse=True)
@@ -220,30 +222,23 @@ def test_update_successful():
     """Successfully update the name of an existing Project"""
 
     # GIVEN
-    project = project_list[3]
-
-    updated_name = "new_impressions"
-    project.name_project = updated_name
-
-    ProjectDao().update = MagicMock(return_value=project)
+    project = Project(id_project=20, name_project="new_impressions", secretHMACkey=b"key")
+    ProjectDao().update = MagicMock(return_value=True)
 
     # WHEN
     updated_project = ProjectService().update(project)
 
     # THEN
-    assert updated_project.name_project == updated_name
+    assert updated_project is project
+    ProjectDao().update.assert_called_once_with(project)
 
 
 def test_update_failed():
-    """Fail to update the name of an existing Project because ProjectDao().update returns None"""
+    """Fail to update an existing Project because ProjectDao().update returns False"""
 
     # GIVEN
-    project = project_list[4]
-
-    updated_name = "project_numero_0"
-    project.name_project = updated_name
-
-    ProjectDao().update = MagicMock(return_value=None)
+    project = Project(id_project=21, name_project="project_numero_0", secretHMACkey=b"key")
+    ProjectDao().update = MagicMock(return_value=False)
 
     # WHEN
     updated_project = ProjectService().update(project)
@@ -278,3 +273,167 @@ def test_delete_failed():
 
     # THEN
     assert not result
+
+
+def test_find_by_id_and_user_successful():
+    """Successfully found the Project owned by the user"""
+
+    # GIVEN
+    project = project_list[0]
+    ProjectDao().find_by_id_and_user = MagicMock(return_value=project)
+
+    # WHEN
+    project_found = ProjectService().find_by_id_and_user(project.id_project, 1)
+
+    # THEN
+    assert project_found is project
+    ProjectDao().find_by_id_and_user.assert_called_once_with(project.id_project, 1)
+
+
+def test_find_by_id_and_user_failed():
+    """Fail to find the Project because the user does not own it"""
+
+    # GIVEN
+    ProjectDao().find_by_id_and_user = MagicMock(return_value=None)
+
+    # WHEN
+    project_found = ProjectService().find_by_id_and_user(4, 99)
+
+    # THEN
+    assert project_found is None
+
+
+def test_verify_signature_valid():
+    """The signature computed with the right key, id and files is accepted"""
+
+    # GIVEN
+    project = project_list[0]
+    signature = generate_signature(
+        project.secretHMACkey,
+        str(project.id_project).encode("utf-8"),
+        project.codefile.content,
+        project.dependencyfile.content,
+    )
+
+    # WHEN
+    result = ProjectService.verify_signature(project, signature)
+
+    # THEN
+    assert result
+
+
+def test_verify_signature_wrong_signature():
+    """A random signature is rejected"""
+
+    # GIVEN
+    project = project_list[0]
+
+    # WHEN
+    result = ProjectService.verify_signature(project, b"wrong_signature")
+
+    # THEN
+    assert not result
+
+
+def test_verify_signature_other_project_id():
+    """A signature computed for another project id is rejected"""
+
+    # GIVEN
+    project = project_list[0]
+    signature = generate_signature(
+        project.secretHMACkey,
+        str(project.id_project + 1).encode("utf-8"),
+        project.codefile.content,
+        project.dependencyfile.content,
+    )
+
+    # WHEN
+    result = ProjectService.verify_signature(project, signature)
+
+    # THEN
+    assert not result
+
+
+def test_verify_signature_modified_file():
+    """A signature is rejected if the code file was modified after signing"""
+
+    # GIVEN
+    project = project_list[1]
+    signature = generate_signature(
+        project.secretHMACkey,
+        str(project.id_project).encode("utf-8"),
+        b"another content",
+        project.dependencyfile.content,
+    )
+
+    # WHEN
+    result = ProjectService.verify_signature(project, signature)
+
+    # THEN
+    assert not result
+
+
+def test_list_all_audit_successful():
+    """List all the audits of an existing Project"""
+
+    # GIVEN
+    project = project_list[0]
+    audits = [MagicMock(), MagicMock()]
+    ProjectDao().find_by_id = MagicMock(return_value=project)
+
+    with patch("service.project_service.AuditDao") as mock_audit_dao:
+        mock_audit_dao.return_value.list_all_audit.return_value = audits
+
+        # WHEN
+        res = ProjectService().list_all_audit(project.id_project)
+
+    # THEN
+    assert res == audits
+    mock_audit_dao.return_value.list_all_audit.assert_called_once_with(project)
+
+
+def test_list_all_audit_project_not_found():
+    """Return None because the Project does not exist"""
+
+    # GIVEN
+    ProjectDao().find_by_id = MagicMock(return_value=None)
+
+    with patch("service.project_service.AuditDao") as mock_audit_dao:
+        # WHEN
+        res = ProjectService().list_all_audit(999)
+
+    # THEN
+    assert res is None
+    mock_audit_dao.return_value.list_all_audit.assert_not_called()
+
+
+def test_regenerate_secret_key_successful():
+    """Successfully regenerate the secret key of a Project"""
+
+    # GIVEN
+    old_key = b"old_key"
+    project = Project(id_project=30, name_project="rotation", secretHMACkey=old_key)
+    ProjectDao().update_secret_key = MagicMock(return_value=True)
+
+    # WHEN
+    new_key = ProjectService().regenerate_secret_key(project)
+
+    # THEN
+    assert new_key is not None
+    assert base64.b64decode(new_key) == project.secretHMACkey
+    assert project.secretHMACkey != old_key
+    assert len(project.secretHMACkey) == 32
+
+
+def test_regenerate_secret_key_failed():
+    """Return None because ProjectDao().update_secret_key returns False"""
+
+    # GIVEN
+    project = Project(id_project=31, name_project="rotation_ratee", secretHMACkey=b"old_key")
+    ProjectDao().update_secret_key = MagicMock(return_value=False)
+
+    # WHEN
+    new_key = ProjectService().regenerate_secret_key(project)
+
+    # THEN
+    assert new_key is None

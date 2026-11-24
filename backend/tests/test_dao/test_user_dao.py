@@ -23,6 +23,65 @@ def test_create_success():
     assert user.id_user == 42
 
 
+def test_create_returns_false_when_no_row(cursor):
+    """
+    Tests create when the database returns no id
+    """
+    cursor.fetchone.return_value = None
+    user = MagicMock(username="alice", password="pw", email="a@a.fr")
+
+    result = UserDao().create(user)
+
+    assert result is False
+
+
+def test_create_raises_on_db_error(cursor):
+    """
+    Tests if the error is raised on when the insertion fails
+    """
+    cursor.execute.side_effect = Exception("boom")
+    user = MagicMock(username="alice", password="pw", email="a@a.fr")
+
+    with pytest.raises(Exception, match="boom"):
+        UserDao().create(user)
+
+
+# - TESTS OF HASH_PW / VERIFY_PW ----------------------
+
+
+def test_hash_pw_does_not_store_plain_password():
+    """
+    The hash is different from the password and is accepted by verify_pw
+    """
+    hashed = UserDao.hash_pw("my_password")
+
+    assert hashed != "my_password"
+    assert UserDao.verify_pw("my_password", hashed) is True
+
+
+def test_hash_pw_uses_a_salt():
+    """
+    Two hashes of the same password are different
+    """
+    assert UserDao.hash_pw("my_password") != UserDao.hash_pw("my_password")
+
+
+def test_verify_pw_wrong_password():
+    """
+    A wrong password is rejected
+    """
+    hashed = UserDao.hash_pw("my_password")
+
+    assert UserDao.verify_pw("wrong_password", hashed) is False
+
+
+def test_verify_pw_malformed_hash():
+    """
+    A malformed hash returns False instead of raising
+    """
+    assert UserDao.verify_pw("my_password", "not_a_bcrypt_hash") is False
+
+
 # - TESTS OF FIND_BY_ID ----------------------
 
 
@@ -169,6 +228,25 @@ def test_update_access_token_success(cursor):
     assert cursor.execute.call_args[0][1] == {"access_token": "token123", "id_user": 1}
 
 
+def test_update_access_token_user_not_found(cursor):
+    """
+    Tests update_access_token when the user does not exist
+    """
+    cursor.rowcount = 0
+
+    assert UserDao().update_access_token(999, "token123") is False
+
+
+def test_update_access_token_raises_on_db_error(cursor):
+    """
+    Tests if the error is raised on when the update fails
+    """
+    cursor.execute.side_effect = Exception("boom")
+
+    with pytest.raises(Exception, match="boom"):
+        UserDao().update_access_token(1, "token123")
+
+
 def test_update_user_not_found(cursor):
     """
     Tests update when it must fail
@@ -192,7 +270,16 @@ def test_update_raises_on_db_error(cursor):
     Tests update when it must raise on an exception error
     """
     cursor.execute.side_effect = Exception("boom")
-    user = MagicMock(id_user=1, password="pw")
+    user = MagicMock(
+        id_user=1,
+        username="alice",
+        password="pw",
+        email="alice@email.com",
+        access_token=None,
+    )
+
+    with pytest.raises(Exception, match="boom"):
+        UserDao().update(user)
 
 
 # - TESTS OF DELETE ----------------------
@@ -354,3 +441,46 @@ def test_find_by_token_raises_on_db_error(cursor):
 
     with pytest.raises(Exception, match="boom"):
         UserDao().find_by_token("token123")
+
+
+# - TESTS OF FIND_BY_USERNAME ----------------------
+
+
+def test_find_by_username_found(cursor):
+    """
+    Tests when the username exists
+    """
+    cursor.fetchone.return_value = {
+        "id_user": 1,
+        "username": "alice",
+        "password": "hashed_pw",
+        "email": "alice@example.com",
+    }
+
+    user = UserDao().find_by_username("alice")
+
+    assert isinstance(user, User)
+    assert user.id_user == 1
+    assert user.username == "alice"
+    assert user.email == "alice@example.com"
+    # The second argument of execute() contains the request parameters
+    assert cursor.execute.call_args[0][1] == {"username": "alice"}
+
+
+def test_find_by_username_not_found(cursor):
+    """
+    Tests when the username doesn't exist
+    """
+    cursor.fetchone.return_value = None
+
+    assert UserDao().find_by_username("nobody") is None
+
+
+def test_find_by_username_raises_on_db_error(cursor):
+    """
+    Tests if the error is raised on
+    """
+    cursor.execute.side_effect = Exception("boom")
+
+    with pytest.raises(Exception, match="boom"):
+        UserDao().find_by_username("alice")
