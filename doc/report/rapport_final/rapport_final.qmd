@@ -97,7 +97,7 @@ Afin de détailler les interactions entre l'utilisateur et la plateforme CleanOp
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{img/diagramme_de_cas_utilisation.png}
+    \includegraphics[width=\textwidth]{img/image_manque.jpg}
     \caption{Diagramme de cas d'utilisation}
     \label{fig:diagcas}
 \end{figure}
@@ -187,98 +187,91 @@ Enfin, des réunions se sont tenues en complément du suivi hebdomadaire avec le
 
 Les deux premières semaines ont été menées collectivement, le temps que chacune s'approprie le sujet. Le travail a ensuite été réparti par couche, puis affiné classe par classe au fil des réunions. Le tableau ci-dessous résume cette répartition.
 
+{{< pagebreak >}}
 
-
-\begin{table}[ht]
-\centering
-\renewcommand{\arraystretch}{1.5}
-
-\definecolor{headercolor}{RGB}{222,222,170}
-\definecolor{graycell}{RGB}{200,200,200}
-
-\begin{tabularx}{\textwidth}{
-|>{\columncolor{graycell}\raggedright\arraybackslash}p{3.5cm}
-|>{\raggedright\arraybackslash}p{3cm}
-|>{\raggedright\arraybackslash}X|}
+\begingroup
+\small
+\renewcommand{\arraystretch}{1.3}
+\begin{longtable}{|>{\columncolor{graycell}\raggedright\arraybackslash}p{0.2\textwidth}|p{0.22\textwidth}|p{0.46\textwidth}|}
 \hline
-
 \rowcolor{headercolor}
 \textbf{Couche} & \textbf{Membres} & \textbf{Contenu} \\
 \hline
+\endfirsthead
 
-\textcolor{white}{\textit{\textbf{API (controller et schema)}}}
-& Anaelle et Galahade
-& UserController, LoginController, ProjectController,
-AuditController et les modèles Pydantic associés \\
 \hline
+\rowcolor{headercolor}
+\textbf{Couche} & \textbf{Membres} & \textbf{Contenu} \\
+\hline
+\endhead
 
-\multirow[c]{5}{3.5cm}{\raggedright
-\textcolor{white}{\textit{\textbf{Service}}}}
-& Anaelle
-& SBOMService \\
+API (controller et schema) & Anaelle & UserController, LoginController \\
 \cline{2-3}
-
-& Annabelle
-& UserService
-
-EcoService (anti-patterns et complexité) \\
+ & Galahade & ProjectController, AuditController, HmacController \\
 \cline{2-3}
+ & Madie & CertificateController \\
+\hline
 
-& Annabelle et Galahade
-& AuditService \\
+Service & Anaelle & SBOMService \\
 \cline{2-3}
-
-& Madie
-& ProjectService, FileService, SecurityService,
-CertificateService, QualityGateService \\
+ & Annabelle & UserService \\
 \cline{2-3}
-
-& Thomas et Sarah
-& EcoService (énergie et carbone) \\
+ & Annabelle & EcoService (anti-patterns et complexité) \\
+\cline{2-3}
+ & Annabelle et Galahade & AuditService \\
+\cline{2-3}
+ & Madie & ProjectService, FileService, SecurityService, CertificateService, QualityGateService \\
+\cline{2-3}
+ & Thomas et Sarah & EcoService (énergie et carbone) \\
 \hline
 
-\textcolor{white}{\textit{\textbf{DAO}}}
-& Thomas, Sarah
-& UserDao, ProjectDao, AuditDao, connexion à la
-base et script de réinitialisation \\
+DAO & Thomas, Sarah & UserDao, ProjectDao, AuditDao, connexion à la base \\
+\cline{2-3}
+ & Madie & FileDao : supprimé par la suite \\
 \hline
 
-\textcolor{white}{\textit{\textbf{Clients d'API externe}}}
-& Madie
-& OSV (vulnérabilités), deps.dev (licences) \\
+Clients d'API externe & Madie & OSV (vulnérabilités), deps.dev (licences) \\
 \hline
 
-\textcolor{white}{\textit{\textbf{Objets métier}}}
-& Toute l'équipe
-& Chaque membre a implémenté les classes qui
-sont utiles à la suite \\
+Objets métier & Toute l'équipe & Une première répartition équitable de ces classes a été créée au début de la conception du projet. Par la suite, chaque membre a modifié les classes qui lui sont utiles si besoin. \\
 \hline
 
-\textcolor{white}{\textit{\textbf{Test unitaires}}}
-& Toute l'équipe
-& Les tests des classes qu'il a lui-même
-implémentées. \\
+Fonctions utilitaires (dossier utils) & Madie & Adaptation des fonctions utilitaires du template, et création de nouvelles (script de réinitialisation, générer la clé secrète\ldots) \\
 \hline
 
-\end{tabularx}
-\end{table}
+Interface utilisateur & Madie et Sarah & Application Streamlit à sept pages : accueil, projets, nouvel audit, résultat de l'audit, audits, clé publique, vérification de certificat \\
+\hline
 
+Tests unitaires & Toute l'équipe & Les tests des classes qu'ils ont eux-mêmes implémentées. \\
+\hline
+\end{longtable}
+\endgroup
 
-Chaque membre a écrit les tests unitaires des classes qu'il avait implémentées. Ce choix a l'avantage de la rapidité, mais il a une limite que nous assumons : les tests reproduisent parfois les hypothèses de l'auteur du code au lieu de les mettre à l'épreuve.
+Chaque membre a écrit les tests des classes qu'il avait implémentées. Cette méthode est rapide, mais elle limite la portée des tests : ils reflètent souvent les hypothèses de leur auteur au lieu de les remettre en question. Ce biais a toutefois été atténué par des relectures croisées : plusieurs membres ont relu une partie des tests écrits par d'autres, ce qui a apporté un regard extérieur là où le temps le permettait.
 
 ### Planning prévu et planning réel
 
 Le diagramme de Gantt du dossier d'analyse prévoyait une phase d'analyse de trois semaines, suivie d'une phase de développement en deux temps notamment les classes métier et DAO d'abord, services et API ensuite; puis d'un mois de rédaction du rapport final à partir de la mi-octobre. 
 
-DIAGRAMME DE GANTT ANCIEN
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{img/diagramme_de_gantt.png}
+    \caption{Diagramme de Gantt (dossier d'analyse)}
+    \label{fig:diagcas}
+\end{figure}
 
-La phase d'analyse s'est déroulée comme prévu et s'est achevée dans les délais notamment le 17 septembre. Le développement, lui, a pris environ deux semaines de retard sur le prévisionnel, pour trois raisons que le suivi hebdomadaire permet d'identifier précisément. Les classes métier, prévues pour être bouclées en semaine 4, ne l'ont été qu'en semaine 6. La couche DAO, dont dépendent tous les tests, n'a été terminée qu'en semaine 8. Enfin, le retour du tuteur de la mi-octobre a entraîné une réécriture partielle, une suppression de la table des fichiers, de la FileDao et de deux routes de soumission, qui a coûté une semaine supplémentaire.
+La phase d'analyse s'est déroulée comme prévu et s'est achevée dans les délais notamment le 17 septembre. Le développement, lui, a pris environ deux semaines de retard sur le prévisionnel, pour trois raisons que le suivi hebdomadaire permet d'identifier précisément. Les classes métier, prévues pour être bouclées en semaine 4, ne l'ont été qu'en semaine 6. La couche DAO, dont dépendent tous les tests, n'a été terminée qu'en semaine 8. Enfin, des retours du tuteur de la mi-octobre a entraîné une réécriture partielle, une suppression de la table des fichiers, de la FileDao et de deux routes de soumission, qui a coûté une semaine supplémentaire.
 
-Ce retard a eu une conséquence directe sur le calendrier de rédaction : prévue à partir du 23 octobre, la rédaction du rapport final n'a réellement commencé qu'en semaine 10, avec l'établissement de son plan. En contrepartie, la décision de renoncer aux fonctionnalités optionnelles a évité que l'écart ne se creuse davantage.
+Ce retard a eu une conséquence directe sur le calendrier de rédaction : prévue à partir du 23 octobre, la rédaction du rapport final n'a réellement commencé qu'en semaine 10, avec l'établissement de son plan. En contrepartie, la décision de renoncer aux fonctionnalités optionnelles à éviter que l'écart ne se creuse davantage.
 
 Le diagramme de Gantt mis à jour, présenté ci-dessous, matérialise ces décalages : les tâches de développement y sont décalées d'environ deux semaines vers la droite, et la fenêtre de rédaction du rapport s'en trouve resserrée.
 
-DIAGRAMME DE GANTT NOUVEAU
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{img/diagramme_de_gantt_rapport_final.png}
+    \caption{Diagramme de Gantt}
+    \label{fig:diagcas}
+\end{figure}
 
 ### Conception et évolutions depuis le dossier d'analyse
 
@@ -292,17 +285,85 @@ Deux modules transverses complètent cet ensemble, notamment les clients d'API e
 
 Le tuteur avait relevé que le dossier d'analyse ne montrait pas comment ces couches s'articulaient réellement car le diagramme de classes, à lui seul, ne le laissait pas voir. Un diagramme d'architecture a donc été ajouté. Il fait apparaître le client (développeur ou pipeline CI/CD), le backend et ses modules, la base PostgreSQL et les systèmes externes, en distinguant par un trait discontinu les éléments optionnels.
 
-DIAGRAMME D'ARCHITECTURE
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{img/image_manque.jpg}
+    \caption{Diagramme d'architecture}
+    \label{fig:diagcas}
+\end{figure}
 
 #### Évolutions du modèle physique des données
 
-Le modèle d'analyse comportait quatre tables  incluant User, Project, File et Audit. A ce jour, la table File a été supprimée. Ainsi, il n'en reste que trois. En effet, le dossier d'analyse prévoyait d'enregistrer les fichiers soumis, sans que la question du stockage des fichiers bruts ait été tranchée.  Elle est d'ailleurs restée ouverte plusieurs semaines dans nos pistes de réflexion. Finalement, le tuteur a tranché à la mi-octobre en appuyant que conserver le code source soumis par un utilisateur n'apporte rien à l'audit et crée un risque inutile. Ainsi, les fichiers sont désormais transmis dans la requête, analysés en mémoire, puis oubliés; seuls les résultats de l'audit sont conservés. La suppression de la table a entraîné celle de la FileDao et de deux routes de soumission de fichiers. La table Audit a par ailleurs été alignée sur ce qui est réellement calculé : elle conserve la date, la complexité, la consommation énergétique, les émissions carbone, ainsi que le type et le statut de la Quality Gate. La table Project, elle, stocke la clé secrète HMAC au format binaire.
+Le modèle d'analyse comportait quatre tables incluant User, Project, File et Audit. A ce jour, la table File a été supprimée. Ainsi, il n'en reste que trois. En effet, le dossier d'analyse prévoyait d'enregistrer les fichiers soumis, sans que la question du stockage des fichiers bruts ait été tranchée.  Elle est d'ailleurs restée ouverte plusieurs semaines dans nos pistes de réflexion. Finalement, le tuteur a tranché à la mi-octobre en appuyant que conserver le code source soumis par un utilisateur n'apporte rien à l'audit et crée un risque inutile. Ainsi, les fichiers sont désormais transmis dans la requête, analysés en mémoire, puis oubliés; seuls les résultats de l'audit sont conservés. La suppression de la table a entraîné celle de la FileDao et de deux routes de soumission de fichiers. La table Audit a par ailleurs été alignée sur ce qui est réellement calculé : elle conserve la date, la complexité, la consommation énergétique, les émissions carbone, ainsi que le type et le statut de la Quality Gate. La table Project, elle, stocke la clé secrète HMAC au format binaire.
 
-DIAGRAMME DE MODELE PHYSIQUE DES DONNEES
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.25\textwidth]{img/diagramme_phys_donnees.png}
+    \caption{Diagramme physique des données}
+    \label{fig:diagcas}
+\end{figure}
+
+{{< pagebreak >}}
+
+##### Table User {.unnumbered}
+
+Elle contient les données liées aux utilisateurs de l'application.
+
+| Attribut | Type | Contrainte | Description |
+|:---------|:-----|:-----------|:------------|
+| id_user | INTEGER | Clé primaire | Identifiant unique de l'utilisateur |
+| username | VARCHAR(50) | Non nul | Nom de l'utilisateur (50 caractères maximum) |
+| password | VARCHAR(100) | Non nul | Mot de passe de l'utilisateur (100 caractères maximum) |
+| email | VARCHAR(100) | Non nul | Adresse mail de l'utilisateur |
+| access_token | VARCHAR(255) | | |
+
+: Table User {tbl-colwidths="[22,18,25,35]"}
+
+Un utilisateur possède 0, 1 ou plusieurs projets. Il en possède 0 lorsqu'il vient de créer son compte sans avoir importé de projet, ou lorsqu'il a supprimé tous ceux qu'il avait importés.
+
+##### Table Project {.unnumbered}
+
+Elle représente un projet soumis à l'audit par un utilisateur.
+
+| Attribut | Type | Contrainte | Description |
+|:---------|:-----|:-----------|:------------|
+| id_project | INTEGER | Clé primaire | Identifiant unique du projet |
+| name_project | VARCHAR(100) | Non nul | Nom du projet |
+| id_user | INTEGER | Clé étrangère vers User(id_user), non nul | Utilisateur qui a soumis le projet |
+| secretHMACkey | VARCHAR(100) | Non nul | Clé HMAC garantissant la provenance et l'intégrité du projet |
+
+: Table Project {tbl-colwidths="[22,18,30,30]"}
+
+Un projet est soumis par un seul utilisateur.
+
+{{< pagebreak >}}
+
+##### Table Audit {.unnumbered}
+
+Elle représente le résultat d'un audit effectué sur un projet.
+
+| Attribut | Type | Contrainte | Description |
+|:---------|:-----|:-----------|:------------|
+| id_audit | INTEGER | Clé primaire | Identifiant unique de l'audit |
+| id_project | INTEGER | Clé étrangère vers Project(id_project), non nul | Projet audité |
+| date | DATE | Non nul | Date de réalisation de l'audit |
+| complexity | FLOAT | | Indicateur de complexité du code analysé |
+| energy_consumption_kwh | FLOAT | | Estimation de la consommation énergétique du code (kWh) |
+| carbon_emission_gco2e | FLOAT | | Estimation des émissions carbone associées (gCO2e) |
+| type_qualitygate | VARCHAR | | Liste des vulnérabilités détectées dans le code ou les dépendances |
+| status_qualitygate | VARCHAR | | Liste des composants et dépendances du projet (packages, versions, licences, etc.) |
+| certificate_pdf | BYTEA | | Certificat de l'audit |
+| certificate_signed | JSONB | | |
+| certificate_id | TEXT UNIQUE | | Identifiant du certificat |
+| sbom_content | BYTEA | | Contenu du SBOM |
+
+: Table Audit {tbl-colwidths="[24,14,27,35]"}
+
+Un audit est obligatoirement lié à un projet.
 
 #### Évolutions du diagramme de classes
 
-Le diagramme de classes du dossier d'analyse n'a pas survécu intact à l'implémentation. En effet,  trois retours du tuteur et quelques décisions internes l'ont fait évoluer. Ces changements traduisent une compréhension du sujet affinée au contact du code. 
+Le diagramme de classes du dossier d'analyse a évolué pendant l'implémentation. Trois retours du tuteur et quelques décisions internes nous ont conduits à le modifier. Ces changements reflètent une compréhension du sujet qui s'est affinée au contact du code.
 
 \begin{table}[ht]
 \centering
@@ -337,7 +398,8 @@ dans leurs propres paquets \\
 & Interne
 & Un analyseur par format :
 \textit{TxtService}, \textit{JsonService},
-\textit{XmlService}, \textit{TomlService} \\
+\textit{XmlService}, \textit{TomlService},
+\textit{LockService} \\
 \hline
 
 \textit{QualityGate} à plusieurs types
@@ -349,45 +411,69 @@ dans leurs propres paquets \\
 \textit{Certificate} devient \textit{CertificateFile}
 & Interne
 & \textit{generate\_certificate} passe de
-\textit{QualityGateService} à un
+\textit{QualityGateService} à
 \textit{CertificateService} \\
 \hline
 
 \textit{Project} perd son attribut \textit{user}
-& Interne
+& Tuteur
 & Le lien d’appartenance ne vit plus que
 dans la base de données \\
-\hline
-
-Ajout de la couche \textit{schema} et de
-\textit{LoginController}
-& Tuteur et interne
-& Les modèles \textit{Pydantic} et l’authentification
-apparaissent dans la documentation \\
 \hline
 
 \end{tabular}
 \caption{Évolutions de l'architecture du projet}
 \end{table}
 
-Trois de ces évolutions méritent d'être commentées.
+Trois de ces modifications sont détaillées ci-dessous.
 
-D’abord, la plus profonde est l'abandon du fichier File persisté. La raison est la suivante: le modèle initial traitait un fichier comme une entité durable, dotée d'un identifiant et d'un chemin sur le disque. Or, un fichier soumis à l'audit n'a en réalité pas vocation à être conservé car il est analysé, puis oublié. File est ainsi devenue une classe abstraite légère, et l'application a cessé de stocker le code source de ses utilisateurs. Ce qui est aussi préférable du point de vue de la confidentialité.
+D’abord, la plus impactante est l'abandon du fichier File persisté. La raison est la suivante: le modèle initial traitait un fichier comme une entité durable, dotée d'un identifiant et d'un chemin sur le disque. Or, un fichier soumis à l'audit n'a en réalité pas vocation à être conservé. File est ainsi devenue une classe abstraite légère, et l'application a cessé de stocker le code source de ses utilisateurs. Ce qui est aussi préférable en matière de la confidentialité.
 
 Ensuite, la gravité d'une vulnérabilité est passée d'un attribut à un type. Compter les vulnérabilités critiques dans la Quality Gate s'écrit désormais par un test d'instance, sans comparaison de chaînes de caractères, donc sans risque de faute de frappe silencieuse.
 
 Enfin, les appels aux API externes n'apparaissaient pas du tout dans le diagramme initial. En effet, l'accès au réseau était implicitement contenu dans SecurityService. Deux classes dédiées, API_OSV et API_DEPSDEV, l'en ont extrait. Le service ne manipule plus que des objets Vulnerability et Licence, ce qui permet de le tester sans appel réseau.
 
-DIAGRAMME DE CLASSE
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{img/image_manque.jpg}
+    \caption{Diagramme de classe}
+    \label{fig:diagcas}
+\end{figure}
 
 #### Les patrons de conception retenus
 
-PARTIE MANQUANTE
+Trois patrons de conception structurent le code (avec deux emplois du Strategy Pattern).
+
+Le premier usage concerne les Quality Gates. Une classe mère abstraite `QualityGate` définit la méthode `evaluate(audit)`, que trois classes filles spécialisent :
+
+* `EcoQualityGate` vérifie que la consommation énergétique et les émissions de carbone respectent les seuils fixés ;
+* `SecurityQualityGate` vérifie que le nombre de vulnérabilités détectées ne dépasse pas le seuil autorisé ;
+* `GlobalQualityGate` combine l'ensemble des critères : l'audit n'est validé que s'ils sont tous respectés.
+
+L'utilisateur choisit le type de Quality Gate au lancement de l'audit, et le service d'audit appelle `evaluate` sans savoir quelle classe il manipule. Ajouter un nouveau type de contrôle ne demande donc aucune modification du code existant.
+
+Le deuxième patron est une fabrique, `QualityGateFactory`. Elle centralise la création de ces objets à partir d'une chaîne de caractères (« eco », « security » ou « global ») transmise dans la requête d'audit. C'est le seul endroit du code qui connaît la correspondance entre ce mot-clé et la classe à instancier, et toute autre valeur y lève une erreur explicite. Le diagramme ci-dessous montre l'articulation de ces deux patrons.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{img/image_manque.jpg}
+    \caption{Diagramme de Strategy Pattern de QualityGate}
+    \label{fig:diagcas}
+\end{figure}
+
+Le second usage de *Strategy* concerne l'analyse des fichiers de dépendances. `TxtService`, `JsonService`, `XmlService` et `TomlService` exposent tous la même méthode `parse_dependencies(content)`, chacun avec sa propre façon de lire son format. `FileService` choisit l'un d'eux selon l'extension du fichier soumis. Prendre en charge un nouveau gestionnaire de dépendances revient donc à écrire une classe de plus.
+
+Le troisième patron est le *Singleton*. La connexion à la base de données et les quatre classes de la couche DAO partagent une métaclasse `Singleton` : quel que soit le nombre d'appels à `DBConnection()`, une seule connexion est ouverte pour toute l'application.
+
+Ces patrons reposent sur des classes abstraites, c'est-à-dire des classes mères qui déclarent des méthodes que leurs classes filles doivent écrire elles-mêmes. Par exemple, `File` déclare `get_duty()`, que ses quatre filles `DependencyFile`, `SBOMFile`, `CertificateFile` et `CodeFile` implémentent chacune à leur manière. `Vulnerability` déclare `__str__` pour ses quatre niveaux de gravité, et `QualityGate` déclare `evaluate()` et `get_type()`. Si une classe fille oublie l'une de ces méthodes, Python refuse de créer l'objet et l'erreur apparaît immédiatement.
+
 
 {{< pagebreak >}}
 
 ## Implémentation des fonctionnalités
 \vspace{-0.1cm}
+
+Les cinq fonctionnalités du cahier des charges sont présentées ici dans l'ordre où elles interviennent au cours d'un audit : l'API reçoit la demande, la signature du fichier est vérifiée, les analyses de sécurité puis d'éco-conception sont lancées, le SBOM est généré, puis les résultats de l’audit sont évalués selon le type de QualityGate choisi et les seuils définis dans notre application. Enfin, l’application renvoie les résultats.
 
 ### L'API REST et l'authentification
 
