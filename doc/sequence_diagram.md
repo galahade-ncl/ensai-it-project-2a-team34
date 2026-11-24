@@ -45,17 +45,17 @@ sequenceDiagram
         Utilisateur->>API: Dépose les informations de l'utilisateur<br/>(username, password, email)
         API->>DAO: Vérifier si le nom existe
         DAO->>BDD: Recherche un utilisateut par le username
-        BDD-->DAO: Résultat de la recherche
+        BDD-->>DAO: Résultat de la recherche
 
         alt Nom déjà utilisé
             DAO-->>API: Nom existant
             API-->>Utilisateur: Erreur : Nom déjà utilisé
         else Nom disponible
-            API->>API: Hashe le mot de passe
             DAO-->>API: Nom disponible
+            API->>API: Hashe le mot de passe
             API->>DAO: Crée l'utilisateur
             DAO->>BDD: Enregistre les informations de l'utilisateur
-            BDD-->DAO: Utilisateur enregistré
+            BDD-->>DAO: Utilisateur enregistré
             DAO-->>API: Utilisateur créé
             API-->>Utilisateur: Confirmation de la création du compte
         end
@@ -67,11 +67,11 @@ sequenceDiagram
         Utilisateur->>API: Dépose un projet
         API->>API: Génère la clé secrète HMAC du projet
 
-        API->DAO: Crée le projet
-        DAO->BDD: Enregistre le projet et sa clé
-        BDD-->DAO: Projet enregistré
-        DAO-->API: Projet créé
-        API-->Utilisateur: Confirmation de l'importation du projet + <br/>donne la clé secrète HMAC
+        API->>DAO: Crée le projet
+        DAO->>BDD: Enregistre le projet et sa clé
+        BDD-->>DAO: Projet enregistré
+        DAO-->>API: Projet créé
+        API-->>Utilisateur: Confirmation de l'importation du projet + <br/>donne la clé secrète HMAC
 
     end
 
