@@ -67,8 +67,7 @@ format:
 
 ### Contexte et objectifs
 
-
-Les applications actuelles reposent massivement sur des bibliothèques open source, ce qui expose les projets à des vulnérabilités connues (appelées CVE), des licences juridiquement contraignantes ou des dépendances abandonnées. De plus, la manière dont un programme est conçu a un impact direct sur sa consommation énergétique : certains anti-patterns, comme les boucles imbriquées ou récursives mal maîtrisées, augmentent inutilement la charge de calcul et donc l'empreinte carbone associée à son exécution.
+Les applications actuelles reposent massivement sur des bibliothèques open source, ce qui les expose à des vulnérabilités connues (appelées CVE), des licences juridiquement contraignantes ou des dépendances abandonnées. De plus, la consommation énergétique d’une application dépend presque entièrement de la conception du programme informatique : certains anti-patterns, comme les boucles imbriquées ou récursives mal maîtrisées, augmentent inutilement la charge de calcul et donc l'empreinte carbone associée à son exécution.
 \vspace{0.2cm}
 
 L’objectif de notre application CleanOps est de concevoir une API REST capable d'auditer automatiquement un code source Python ainsi que ses fichiers de dépendances, à chaque soumission. Concrètement, CleanOps doit permettre de :
@@ -80,11 +79,11 @@ L’objectif de notre application CleanOps est de concevoir une API REST capable
   * historiser les audits et statuer, via une Quality Gate, sur la conformité d'un projet aux critères de sécurité et d'impact environnemental fixés
 \vspace{0.2cm}
 
-CleanOps se positionne ainsi comme un outil qui aide les équipes de développement à intégrer des critères de sécurité et d'éco-responsabilité directement dans leur cycle de développement, notamment via les pipelines CI/CD.
+CleanOps se positionne ainsi comme un outil qui aide des équipes de développement à intégrer des critères de sécurité et d'éco-responsabilité directement dans leur cycle de développement, notamment via les pipelines CI/CD.
 
-Deux constats résument l'enjeu. D'une part, une application Python moderne n'embarque presque jamais moins de plusieurs dizaines de dépendances transitives, dont aucune n'a été relue par l'équipe qui les installe : une bonne partie de la surface d'attaque est importée, pas écrite. D'autre part, le coût énergétique d'un programme n'apparaît nulle part dans son code source ; il faut l'estimer. CleanOps se place exactement à cette intersection, en rendant visibles à chaque soumission deux risques que les tests fonctionnels classiques ne détectent jamais.
+Deux constats résument l'enjeu. D’une part, les applications Python modernes s’appuient sur un écosystème de dépendances souvent conséquent, incluant de nombreuses dépendances transitives dont les composants sont rarement examinés individuellement par l’équipe qui les installe. Or, ces dernières peuvent présenter des risques significatifs pour la sécurité du code. D'autre part, le coût énergétique d'un programme n’est pas directement observable à la lecture de son code source. Estimer ce coût permettrait aux équipes responsables du programme de mieux appréhender son impact énergétique et d’en tenir compte dès les phases de développement. C’est dans ce contexte que CleanOps intervient, rendant visibles ces deux enjeux aux yeux des concepteurs de programme.
 
-À la date de ce rapport, les cinq fonctionnalités principales sont implémentées côté backend et accessibles depuis l'API : signature HMAC, audit de sécurité des dépendances via l'API OSV, analyse éco-énergétique par AST, génération du SBOM au format CycloneDX et Quality Gate avec émission d'un certificat. Les quatre fonctionnalités optionnelles, en revanche, n'ont pas été traitées : le dossier frontend existe dans l'arborescence mais ses fichiers sont vides, et l'intégration CI/CD, le sandboxing du parser et l'assistant de refactorisation sont restés à l'état de pistes. Ce périmètre est assumé : nous avons préféré livrer le socle des cinq fonctionnalités dans une version testée plutôt que d'ouvrir des chantiers supplémentaires.
+À ce jour, cinq fonctionnalités principales de l’application sont implémentées côté backend, accessibles depuis l’API. Ces dernières sont explicitées dans le cahier des charges.
 
 ### Cahier des charges
 
@@ -93,7 +92,8 @@ PARTIE MANQUANTE
 
 #### Diagramme de cas d'utilisation
 
-Afin de clarifier les interactions entre l'utilisateur et la plateforme CleanOps, le diagramme de cas d'utilisation ci-dessous modélise les fonctionnalités principales accessibles depuis l'interface. L'utilisateur commence par s'authentifier auprès du système, étape préalable à toute action ultérieure. Une fois connecté il peut d'une part gérer ses projets (création, modification, ajout de composants et suppression), une opération qui repose systématiquement sur la génération d'une clé HMAC garantissant l'intégrité et l'authenticité de chaque soumission et d'autre part consulter l'historique des audits déjà réalisés.
+Afin de détailler les interactions entre l'utilisateur et la plateforme CleanOps, le diagramme de cas d'utilisation ci-dessous modélise les fonctionnalités principales accessibles depuis l'interface. L'utilisateur commence par s'authentifier auprès du système, étape préalable à la majorité des actions de l’application. Une fois connecté, l’utilisateur peut, dans un premier temps, gérer ses projets (création, modification, ajout de composants et suppression). La création d’un projet entraîne la génération d’une clé HMAC, qui peut également être renouvelée ultérieurement. Cette clé permet de garantir l’intégrité et l’authenticité des soumissions associées au projet. Dans un second temps, l’utilisateur peut lancer des audits de ses projets et consulter les résultats obtenus et les éventuels fichiers générés par l’audit. Une autre fonctionnalité, accessible à tous sans nécessiter de connexion, permet de vérifier l’authenticité d’un certificat à l’aide d’une signature cryptographique asymétrique.
+
 
 \begin{figure}[H]
     \centering
@@ -121,13 +121,61 @@ L’ensemble du développement s’est fait sur Onyxia, la plateforme de service
   * un service VS Code, qui nous a donné à tous le même éditeur, le même interpréteur Python et les mêmes extensions
   * un service PostgreSQL , qui héberge la base de données de l’application.
 
-Ce choix nous a épargné la difficulté classique des projets à plusieurs notamment “de chez moi, ça marche et pourquoi ça ne marche pas chez toi?”, puisque personne n’avait à installer quoi que ce soit localement et il suffisait d’ouvrir son service pour retrouver un environnement identique à celui des autres. 
+Ce choix nous a évité une difficulté classique des projets menés à plusieurs : le fameux « chez moi, ça marche, mais pourquoi ça ne marche pas chez toi ? ». En effet, personne n’avait besoin d’installer quoi que ce soit localement : il suffisait d’ouvrir le service pour retrouver un environnement similaire à celui des autres membres de l’équipe.
 
 #### Un fichier de suivi hebdomadaire 
 Un fichier de suivi hebdomadaire, versionné dans doc/tracking, est renseigné chaque jeudi. Il liste, membre par membre, les tâches réalisées dans la semaine, puis un backlog séparé en tâches prioritaires et secondaires. Enfin, une rubrique « pistes de réflexion » consigne les questions encore ouvertes. Cette dernière rubrique s'est révélée l'un des outils les plus utiles du projet car elle permet d’enregistrer les tâches à réaliser jusqu'au moment de les prendre en compte, au lieu de se perdre dans une discussion.
 
 #### Un document Google Docs
 Le document Google Docs partagé a servi d'espace de rédaction collaborative  afin d’y insérer les consignes, diagrammes, inventaire des classes et des méthodes à coder couche par couche, les retours du tuteur, puis la rédaction des rapports. La mise en page finale en Quarto, qui produit la version PDF, n'intervient qu'une fois le texte stabilisé.
+
+#### Répartition des rôles au sein de l’équipe
+
+Pour aider à la bonne gestion du projet, des rôles ont été attribués à certains membres de l’équipe :
+
+\begin{table}[ht]
+\centering
+\renewcommand{\arraystretch}{1.5}
+
+\definecolor{headergreen}{RGB}{210,240,205}
+\definecolor{lightblue}{RGB}{240,250,253}
+\definecolor{lightpink}{RGB}{255,240,235}
+\definecolor{lightpurple}{RGB}{250,243,252}
+
+\begin{tabularx}{\textwidth}{
+|>{\raggedright\arraybackslash}p{3.2cm}
+|>{\raggedright\arraybackslash}p{3.5cm}
+|>{\raggedright\arraybackslash}X|}
+\hline
+
+\rowcolor{headergreen}
+\textbf{Rôles} & \textbf{Membre} & \textbf{Description} \\
+\hline
+
+\cellcolor{lightblue}
+Chef de projet
+& Annabelle Zhu
+& Coordonne l’équipe, organise les réunions, répartit le
+travail et assure le suivi régulier de l’avancement du projet \\
+\hline
+
+\cellcolor{lightpink}
+Tech Lead
+& Madie Perrin-Beau
+& Principal développeur, référent technique de
+l’application et responsable des outils de
+développement (Git, VS Code, Quarto...) \\
+\hline
+
+\cellcolor{lightpurple}
+Rédacteur Technique
+& Sarah Nadin
+& Rédaction et structuration de la documentation
+technique du projet. \\
+\hline
+
+\end{tabularx}
+\end{table}
 
 #### Un groupe Whatsapp
 Le groupe Whatsapp avec tous les membres a permis d’assurer une communication instantanée et fluide, pour organiser les réunions, ou prévenir un changement d'emploi du temps ou un imprévu.
