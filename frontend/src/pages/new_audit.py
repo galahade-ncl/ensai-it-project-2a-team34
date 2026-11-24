@@ -46,6 +46,7 @@ if st.button("Run audit"):
 
     if res["status_code"] == 200:
         st.session_state["last_audit"] = res["data"]
+        st.switch_page("pages/audit_result.py")
     else:
         st.session_state.pop("last_audit", None)
         detail = res["data"].get("detail") if isinstance(res["data"], dict) else res["data"]

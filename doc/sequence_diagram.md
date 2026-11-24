@@ -39,7 +39,7 @@ sequenceDiagram
     participant DAO
     participant BDD@{ "type" : "database" }
 
-    rect rgb(254, 239, 226)
+    rect rgb(225, 245, 255)
         Note over Utilisateur,BDD: Créer un user
 
         Utilisateur->>API: Dépose les informations de l'utilisateur<br/>(username, password, email)
@@ -75,7 +75,7 @@ sequenceDiagram
 
     end
 
-    rect rgb(225, 255, 255)
+    rect rgb(254, 239, 226)
         Note over Utilisateur,BDD: Demander une signature HMAC
 
         Utilisateur->>API: Envoie le code et le fichier de dépendances <br/>+ clé secrète HMAC
@@ -84,7 +84,7 @@ sequenceDiagram
 
     end
 
-    rect rgb(225, 245, 255)
+    rect rgb(254, 238, 255)
         Note over Utilisateur,BDD: Demander un audit
 
         Utilisateur->>API: Envoie le code et le fichier de dépendances <br/>+ signature HMAC
