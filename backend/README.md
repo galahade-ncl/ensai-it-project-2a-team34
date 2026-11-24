@@ -1245,8 +1245,6 @@ The backend contains several configuration files:
 
 | File | Description |
 |---|---|
-| `.env` | Local environment variables and secrets |
-| `.env.example` | Example environment configuration without secrets |
 | `logging_config.yml` | Structured logging configuration |
 | `pyproject.toml` | Project metadata and dependency definitions |
 | `uv.lock` | Lockfile ensuring reproducible environments |
