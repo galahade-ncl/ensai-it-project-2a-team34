@@ -49,6 +49,7 @@ sequenceDiagram
         DAO-->>API: Nom existant
         API-->>Utilisateur: Erreur : nom déjà utilisé
     else Nom disponible
+        DAO-->>API: Nom disponible
         API->>API: Hashe le mot de passe
         API->>DAO: Crée l'utilisateur
         DAO->>BDD: Enregistre les informations de l'utilisateur
@@ -111,7 +112,7 @@ sequenceDiagram
     DAO->>BDD: Enregistre le projet et sa clé
     BDD-->>DAO: Projet enregistré
     DAO-->>API: Projet créé
-    API-->>Utilisateur: Confirmation de l'importation du projet<br/>+ clé secrète HMAC
+    API-->>Utilisateur: Confirmation de l'importation du projet<br/>+ renvoie la clé secrète HMAC
     end
 
     rect rgb(254, 239, 226)
@@ -215,13 +216,13 @@ sequenceDiagram
     rect rgb(254, 238, 255)
     Note over Utilisateur,BDD: Récupérer la clé publique
     Utilisateur->>API: GET /.well-known/public-key
-    API-->>Utilisateur: Clé publique, kid, algorithme Ed25519
+    API-->>Utilisateur: Clé publique, identifiant, algorithme de signature Ed25519
     end
 
     rect rgb(225, 245, 255)
     Note over Utilisateur,BDD: Vérifier un certificat
     Utilisateur->>API: POST /certificate/verify<br/>Envoie le certificat
-    API->>API: Vérifie la signature Ed25519 et la validité
+    API->>API: Vérifie la signature et la validité
     API-->>Utilisateur: Certificat authentique ou invalide
     end
 
