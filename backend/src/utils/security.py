@@ -39,9 +39,6 @@ def hash_password(password: str, salt: str = "") -> str:
     return hash_object.hexdigest()
 
 
-# fonction hashage clé HMAC <-> signature -> à faire
-
-
 def verify_token(x_auth_token=Header(None)) -> UserDao:
     """
     Verify the authenticity of a user via the provided auth token.
