@@ -365,11 +365,22 @@ class EcoService:
     @staticmethod
     def _collect_variables(tree: ast.AST) -> dict:
         """
-        Collect the variables assigned with a literal value
-        Args:
-            tree (ast.AST): The AST of the code
-        Returns:
-            A dict such as {"n": 100, "my_list": [1, 2, 3]}
+        Collect the variables assigned with a literal value.
+
+        Only simple assignments such as ``n = 100`` or ``my_list = [1, 2, 3]``
+        are kept. An assignment whose value is not a literal, such as
+        ``n = int(input())``, is ignored.
+
+        Parameters
+        ----------
+        tree : ast.AST
+            The AST of the code.
+
+        Returns
+        -------
+        dict
+            The variables and their values, such as
+            ``{"n": 100, "my_list": [1, 2, 3]}``.
         """
         variables = {}
 
@@ -385,12 +396,26 @@ class EcoService:
     @staticmethod
     def _loop_length(node: ast.stmt, variables: dict | None = None) -> int:
         """
-        Calculate the length of a loop
-        Args:
-            node (ast.stmt): A for or while loop
-            variables (dict): The variables of the code, {"n": 100, "my_list": [1, 2, 3]}
-        Returns:
-            int: The length of the loop, or DEFAULT_LOOP_LENGTH if it cannot be known
+        Calculate the number of iterations of a loop.
+
+        The length is found for a ``for`` loop over a list, a tuple, a set,
+        a string, a variable whose value is known, or a ``range`` whose
+        arguments are integers or known variables.
+
+        Parameters
+        ----------
+        node : ast.stmt
+            A ``for`` or ``while`` loop.
+        variables : dict or None, default None
+            The variables of the code, such as
+            ``{"n": 100, "my_list": [1, 2, 3]}``.
+
+        Returns
+        -------
+        int
+            The number of iterations of the loop, or ``DEFAULT_LOOP_LENGTH``
+            if it cannot be known (``while`` loop, unknown variable,
+            ``range(n + 1)``...).
         """
         variables = variables or {}
 
@@ -442,6 +467,26 @@ class EcoService:
 
     @staticmethod
     def _loop_complexity(node: ast.stmt, variables: dict | None = None) -> int:
+        """
+        Calculate the complexity of a loop.
+
+        The complexity of a loop is its length. When other loops are nested in
+        it, its length is multiplied by the sum of the complexities of the
+        loops it directly contains.
+
+        Parameters
+        ----------
+        node : ast.stmt
+            A ``for`` or ``while`` loop.
+        variables : dict or None, default None
+            The variables of the code, such as
+            ``{"n": 100, "my_list": [1, 2, 3]}``.
+
+        Returns
+        -------
+        int
+            The complexity of the loop.
+        """
         complexity = EcoService._loop_length(node, variables)
 
         if EcoService()._loop_depth(node) >= 2:
@@ -455,6 +500,26 @@ class EcoService:
     def _count_recursive_calls(
         self, node: ast.AST, function_name: str, variables: dict | None = None
     ) -> int:
+        """
+        Count the recursive calls made by one execution of a function.
+
+        A call inside a loop is counted once per iteration of the loop.
+
+        Parameters
+        ----------
+        node : ast.AST
+            The function to analyse, or one of its nodes.
+        function_name : str
+            The name of the function.
+        variables : dict or None, default None
+            The variables of the code, used to find the length of the loops,
+            such as ``{"n": 100, "my_list": [1, 2, 3]}``.
+
+        Returns
+        -------
+        int
+            The number of recursive calls.
+        """
         total = 0
 
         for child in ast.iter_child_nodes(node):
@@ -472,6 +537,22 @@ class EcoService:
 
     @log
     def estimate_complexity(self, tree: ast.Module) -> float:
+        """
+        Estimate the complexity of a Python code.
+
+        The complexity is the sum of a base cost of 1, the complexity of all
+        the loops, and the additional cost of the recursive functions.
+
+        Parameters
+        ----------
+        tree : ast.Module
+            The AST of the code to estimate.
+
+        Returns
+        -------
+        float
+            The estimated complexity of the code.
+        """
         variables = EcoService._collect_variables(tree)
 
         complexity = 1
