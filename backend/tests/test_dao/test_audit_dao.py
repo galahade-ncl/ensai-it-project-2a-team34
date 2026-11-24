@@ -125,6 +125,34 @@ def test_row_to_audit_with_json_string_certificate():
     assert result.certificate.signed_data == signed_data
 
 
+def test_row_to_audit_with_sbom_content():
+    """Rebuild the SBOM file when sbom_content is stored."""
+    row = db_row(sbom_content=b'{"bomFormat": "CycloneDX"}')
+
+    result = AuditDao._row_to_audit(row)
+
+    assert result.sbom.content == b'{"bomFormat": "CycloneDX"}'
+    assert result.sbom.name == "sbom_5.json"
+
+
+# -------------------- _get_quality_gate_data --------------------
+
+
+def test_get_quality_gate_data_none():
+    """Return no type and no status when there is no quality gate."""
+    assert AuditDao._get_quality_gate_data(None) == (None, None)
+
+
+def test_get_quality_gate_data_string():
+    """A plain string is used as the status, without type."""
+    assert AuditDao._get_quality_gate_data("PASSED") == (None, "PASSED")
+
+
+def test_get_quality_gate_data_object(audit):
+    """Return the type and the status of a QualityGate object."""
+    assert AuditDao._get_quality_gate_data(audit.quality_gate) == ("global", "PASSED")
+
+
 # -------------------- create --------------------
 
 
@@ -366,3 +394,45 @@ def test_create_with_none_vulnerabilities(dao, audit, mock_db):
     # Vulnerability totals are not columns in the current audit_table schema.
     assert "total_vulnerability" not in params
     assert "total_critical_vulnerability" not in params
+
+
+# -------------------- list_all_audit --------------------
+
+
+def test_list_all_audit_success(dao, mock_db):
+    """Return the audits of the given project."""
+    db, cursor = mock_db
+    cursor.fetchall.return_value = [
+        db_row(id_audit=1),
+        db_row(id_audit=2, status_qualitygate="FAILED"),
+    ]
+    project = MagicMock(id_project=12)
+
+    with patch("dao.audit_dao.DBConnection", return_value=db):
+        result = dao.list_all_audit(project)
+
+    assert len(result) == 2
+    assert all(isinstance(item, Audit) for item in result)
+    assert [item.id_audit for item in result] == [1, 2]
+    assert cursor.execute.call_args.args[1] == {"id_project": 12}
+
+
+def test_list_all_audit_empty(dao, mock_db):
+    """Return an empty list when the project has no audit."""
+    db, cursor = mock_db
+    cursor.fetchall.return_value = []
+
+    with patch("dao.audit_dao.DBConnection", return_value=db):
+        result = dao.list_all_audit(MagicMock(id_project=12))
+
+    assert result == []
+
+
+def test_list_all_audit_database_error_is_reraised(dao):
+    """Re-raise database errors."""
+    with patch(
+        "dao.audit_dao.DBConnection",
+        side_effect=RuntimeError("db down"),
+    ):
+        with pytest.raises(RuntimeError, match="db down"):
+            dao.list_all_audit(MagicMock(id_project=12))
