@@ -35,7 +35,9 @@ if logged_in:
         "My space": [
             st.Page("pages/projects.py", title="Projects", icon="📁", url_path="projects"),
             st.Page("pages/new_audit.py", title="New audit", icon="🚀", url_path="new-audit"),
-            st.Page("pages/audit_result.py", title="Audit result", icon="📊", url_path="audit-result"),
+            st.Page(
+                "pages/audit_result.py", title="Audit result", icon="📊", url_path="audit-result"
+            ),
             st.Page("pages/audits.py", title="Audits", icon="📋", url_path="audits"),
         ],
         "Public tools": [public_key, verify],

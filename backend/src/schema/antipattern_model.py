@@ -36,6 +36,7 @@ class AntiPatternBase(BaseModel):
     description : str
         Description of the antipattern.
     """
+
     model_config = ConfigDict(from_attributes=True)
 
     id_antipattern: int | None = None
@@ -54,6 +55,7 @@ class NestedLoopModel(AntiPatternBase):
     depth : int
         Nesting depth of the loop.
     """
+
     type: Literal["NestedLoop"] = "NestedLoop"
     depth: int
 
@@ -69,6 +71,7 @@ class RecursiveCallModel(AntiPatternBase):
     function_name : str
         Name of the function that calls itself.
     """
+
     type: Literal["RecursiveCall"] = "RecursiveCall"
     function_name: str
 

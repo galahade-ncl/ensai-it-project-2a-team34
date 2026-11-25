@@ -72,6 +72,7 @@ class UserResponseModel(BaseModel):
     email : EmailStr
         Email of the user.
     """
+
     id_user: int
     username: str
     password: str
@@ -94,6 +95,7 @@ class UserReadModel(BaseModel):
     access_token : str or None
         Access token of the user.
     """
+
     id_user: int
     username: str
     email: EmailStr
@@ -111,5 +113,6 @@ class UserLoginModel(BaseModel):
     password : str
         Password of the user.
     """
+
     username: str
     password: str

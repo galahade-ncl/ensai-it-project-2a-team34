@@ -49,7 +49,7 @@ class Audit:
         sbom,
         quality_gate,
         certificate=None,
-        id_audit=None
+        id_audit=None,
     ) -> None:
         self.id_audit = id_audit
         self.id_project = id_project

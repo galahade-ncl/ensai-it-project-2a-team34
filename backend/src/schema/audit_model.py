@@ -33,6 +33,7 @@ class AuditReadModel(BaseModel):
     quality_gate : QualityGateModel
         Quality gate of the audit.
     """
+
     id_audit: int
     id_project: int
     date: datetime
@@ -72,6 +73,7 @@ class AuditResponseModel(BaseModel):
     certificate : CertificateModel or None
         Certificate issued if the quality gate is respected.
     """
+
     id_audit: int
     id_project: int
     date: datetime
@@ -99,6 +101,7 @@ class AuditCreateModel(BaseModel):
     hmac_signature : str
         HMAC signature of the request, encoded in Base64.
     """
+
     project: ProjectCompletedModel
     qualitygate_type: Literal["eco", "security", "global"]
     hmac_signature: str

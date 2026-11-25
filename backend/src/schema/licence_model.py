@@ -14,6 +14,7 @@ class LicenceModel(BaseModel):
     risk_level : str
         Risk level associated with the licence.
     """
+
     model_config = ConfigDict(from_attributes=True)
 
     id_licence: int | None = None
