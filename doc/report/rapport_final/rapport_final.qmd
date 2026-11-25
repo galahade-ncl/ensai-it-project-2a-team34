@@ -296,7 +296,7 @@ Le tuteur avait relevé que le dossier d'analyse ne montrait pas comment ces cou
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.6\textwidth]{img/image_manque.jpg}
+    \includegraphics[width=1.0\textwidth]{img/diagramme_architecture.png}
     \caption{Diagramme d'architecture}
     \label{fig:diagcas}
 \end{figure}
