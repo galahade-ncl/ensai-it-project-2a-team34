@@ -8,7 +8,7 @@ authors:
   - "PERRIN-BEAU Madie"
   - "VILARRUPLA Thomas"
   - "ZHU Annabelle"
-date: "17 Septembre 2026"
+date: "25 Novembre 2026"
 keywords :
   - "LACAILLE Adrien"
 
@@ -27,6 +27,7 @@ format:
     number-sections: true
 
   pdf:
+    latex-min-runs: 3
     filters:
       - code_break.lua
     template: template_ensai_bis.tex
