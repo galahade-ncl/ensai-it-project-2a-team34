@@ -1031,11 +1031,9 @@ Malgré ces difficultés, le projet m'a permis de mettre en pratique la programm
 
 Si c'était à refaire, je conseillerais de :
 
-- Distinguer clairement les rôles de tech lead et de cheffe de projet.
-- Fixer des échéances intermédiaires, avec un responsable pour chaque tâche.
-- Alerter le tuteur dès les premiers signes de déséquilibre.
-
-**Mon ressenti**
+  * Distinguer clairement les rôles de tech lead et de cheffe de projet.
+  * Fixer des échéances intermédiaires, avec un responsable pour chaque tâche.
+  * Alerter le tuteur dès les premiers signes de déséquilibre.
 
 Je termine ce projet déçue et avec une grande quantité de stresse. Malgré le temps et l'énergie investis, je regrette que nous n'ayons pas obtenu un résultat aussi complet que souhaité ni créé une vraie dynamique collective. J'aurais préféré consacrer plus de temps aux aspects techniques, qui m'intéressaient particulièrement, qu'à la coordination du groupe.
 
