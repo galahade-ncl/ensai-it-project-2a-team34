@@ -1,59 +1,39 @@
 ```mermaid
 flowchart LR
-    Client["👤 Développeur / Pipeline CI/CD"]
+    Client["👤 Utilisateur"]
 
-    subgraph Front["Frontend"]
+    subgraph Front["Frontend<br/>(Streamlit)"]
         Web["Interface web"]
     end
 
-    subgraph Backend["Backend CleanOps"]
-        API["API REST"]
-        OIDC["Auth OIDC"]
-        HMAC["Vérification HMAC"]
-
-        subgraph Sandbox["Sandbox"]
-            Deps["Audit des dépendances"]
-            Eco["Analyse éco-énergétique"]
+    subgraph Backend["Backend CleanOps (FastAPI)"]
+        direction TB
+        subgraph Access["Contrôle d'accès"]
+            direction LR
+            API["API REST"] --> Auth["Authentification<br/>par token"] --> HMAC["Vérification<br/>HMAC"]
+            API --> Verify["Vérification<br/>de certificat"]
         end
+        subgraph Audit["Audit"]
+            direction LR
+            Deps["Audit des<br/>dépendances"] --> SBOM["Génération<br/>SBOM"] --> Gate["Quality Gate"]
+            Eco["Analyse<br/>éco-énergétique"] --> Gate
+            Gate -- "si validée" --> Cert["Certificat signé<br/>(Ed25519)"]
+        end
+        Access --> Audit
+    end
 
-        SBOM["Génération SBOM"]
-        Gate["Quality Gate"]
-        Webhook["Webhook MR "]
-        Refactor["Assistant refactorisation"]
+    subgraph External["Systèmes externes"]
+        direction TB
+        OSV["API OSV"]
+        DepsDev["API deps.dev"]
     end
 
     subgraph Data["Données"]
         DB[("PostgreSQL")]
     end
 
-    subgraph External["Systèmes externes"]
-        OSV["API OSV"]
-        LLM["LLM"]
-        Git["GitLab / GitHub"]
-    end
-
-    Client --> API
-    Client -.-> Web
-    Web -.-> API
-    Client -.-> OIDC
-    OIDC -.-> API
-
-    API --> HMAC
-    HMAC --> Deps
-    HMAC --> Eco
-
-    Deps --> OSV
-    Deps --> SBOM
-    SBOM --> Gate
-    Eco --> Gate
-
-    Eco -.-> Refactor
-    Refactor -.-> LLM
-
-    Gate --> DB
-    Gate -.-> Webhook
-    Webhook -.-> Git
-
-    classDef optional stroke-dasharray: 5 5
-    class Web,OIDC,Webhook,Refactor,LLM,Git optional
+    Client --> Front
+    Front --> Backend
+    Backend --> External
+    Backend --> Data
 ```
