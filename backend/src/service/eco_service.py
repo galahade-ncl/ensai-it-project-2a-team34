@@ -219,8 +219,7 @@ class EcoService:
         energy_kwh : float
             Energy consumption (kWh).
         carbon_intensity_gco2e_per_kwh : float or None, optional
-            Carbon intensity of electricity (gCO2e/kWh). Uses
-            ``CARBON_INTENSITY_GCO2E_PER_KWH`` if None.
+            Carbon intensity of electricity (gCO2e/kWh)
 
         Returns
         -------
@@ -261,7 +260,7 @@ class EcoService:
             if isinstance(child, self.LOOP_TYPES):
                 loops.append(child)
             else:
-                loops.extend(EcoService()._outest_loop(child))
+                loops.extend(self._outest_loop(child))
 
         return loops
 
@@ -283,7 +282,7 @@ class EcoService:
         """
         depth = 0
         for child in ast.iter_child_nodes(node):
-            child_depth = EcoService()._loop_depth(child)
+            child_depth = self._loop_depth(child)
             if child_depth > depth:
                 depth = child_depth
 
@@ -330,8 +329,8 @@ class EcoService:
         antipatterns = []
 
         # Nested loop
-        for loop in EcoService()._outest_loop(tree):
-            depth = EcoService()._loop_depth(loop)
+        for loop in self._outest_loop(tree):
+            depth = self._loop_depth(loop)
             if depth >= 2:
                 antipatterns.append(
                     NestedLoop(
@@ -346,7 +345,7 @@ class EcoService:
         for func in ast.walk(tree):
             if isinstance(func, ast.FunctionDef):
                 for node in ast.walk(func):
-                    if isinstance(node, ast.Call) and EcoService._is_recursive_call(
+                    if isinstance(node, ast.Call) and self._is_recursive_call(
                         node, func.name
                     ):
                         antipatterns.append(
@@ -553,28 +552,28 @@ class EcoService:
         float
             The estimated complexity of the code.
         """
-        variables = EcoService._collect_variables(tree)
+        variables = self._collect_variables(tree)
 
         complexity = 1
 
-        for loop in EcoService()._outest_loop(tree):
-            complexity += EcoService._loop_complexity(loop, variables)
+        for loop in self._outest_loop(tree):
+            complexity += self._loop_complexity(loop, variables)
 
         for function in ast.walk(tree):
             if not isinstance(function, ast.FunctionDef):
                 continue
 
-            calls = EcoService()._count_recursive_calls(function, function.name, variables)
+            calls = self._count_recursive_calls(function, function.name, variables)
             if calls == 0:
                 continue
 
             executions = sum(
-                calls**level for level in range(EcoService.DEFAULT_RECURSION_DEPTH + 1)
+                calls**level for level in range(self.DEFAULT_RECURSION_DEPTH + 1)
             )
 
             one_execution = 1
-            for loop in EcoService()._outest_loop(function):
-                one_execution += EcoService._loop_complexity(loop, variables)
+            for loop in self._outest_loop(function):
+                one_execution += self._loop_complexity(loop, variables)
 
             complexity += one_execution * (executions - 1)
 

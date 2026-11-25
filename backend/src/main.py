@@ -20,7 +20,6 @@ from controller import (
 )
 from utils.env_variables import display_values, load_environment_variables
 from utils.log_utils import LogMiddleware, get_logger, initialize_logs
-from utils.reset_database import ResetDatabase
 from utils.security import load_signing_key
 
 load_environment_variables()
@@ -74,21 +73,6 @@ async def redirect_to_docs():
     """Redirect to the API documentation"""
     return RedirectResponse(url="/docs")
 
-
-@app.get("/hello/{name}", tags=["Misc"])
-async def hello_name(name: str):
-    """Display Hello"""
-    logger.info("Display Hello")
-    return {"message": f"Hello {name}"}
-
-
-@app.get("/reset_database", tags=["Misc"])
-async def reset_database():
-    """Reset the database"""
-    logger.info("Database reset")
-    success = ResetDatabase().run()
-
-    return {"message": f"Database re-initialization - {'SUCCESS' if success else 'FAILURE'}"}
 
 
 # Run the FastAPI application
