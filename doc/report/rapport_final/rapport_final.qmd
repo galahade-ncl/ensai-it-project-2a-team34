@@ -865,7 +865,7 @@ Comme l'API traite des fichiers venant de l'extérieur, la sécurité a été in
 
 Ce projet nous a permis de mettre en pratique, sur un cas concret, les enseignements de première et de deuxième année. L'architecture en couches, qui sépare l'API, la couche service, les DAO et la base de données, a rendu le code plus lisible, plus facile à modifier et plus simple à tester. Nous avons également manipulé des mécanismes de sécurité réels : authentification et signatures symétriques.
 
-Le travail en groupe a aussi joué un rôle important dans l'avancement du projet. Chacun de nous avait un niveau différent en programmation, et cette hétérogénéité n'a pas facilité la répartition des tâches. Au début, la communication manquait : chacun travaillait de son côté sans avoir le réflexe d'informer les autres. Une discussion interne a réglé ce problème, et les échanges et les questions entre les membres sont ensuite devenus beaucoup plus fréquents.
+Le travail en groupe a aussi joué un rôle important dans l'avancement du projet. Chacun de nous avait un niveau différent en programmation, et cette hétérogénéité n'a pas facilité la répartition des tâches. Au début, la communication manquait : chacun travaillait de son côté sans avoir le réflexe d'informer les autres. Après une discussion au sein du groupe, les échanges et les questions entre les membres sont devenus plus fréquents. Cette amélioration est toutefois restée partielle : l'implication est demeurée inégale jusqu'à la fin du projet.
 
 CleanOps reste perfectionnable. Les estimations de complexité et de consommation reposent sur des hypothèses simplificatrices, et plusieurs fonctionnalités optionnelles du sujet n'ont pas été développées. Les perspectives présentées en partie VII indiquent comment aller plus loin.
 
@@ -1062,26 +1062,31 @@ Avec du recul je pense que j'aurais pu mieux anticiper certaines difficultés te
 #### Mon rôle et ma participation {.unnumbered}
 
 La composition du groupe étant imposée, j'ai travaillé avec des personnes que je connaissais peu, dont les niveaux et les méthodes de travail étaient différents. Cette diversité a enrichi le projet, mais elle a demandé un vrai effort d'organisation.
-En tant que chef de projet, j'ai organisé les réunions, réparti le travail avec Madie, notre tech lead, et suivi l'avancement du projet. Pour garder une vision d'ensemble sur le projet, j'ai essayé de m'impliquer dans diverses tâches qui va de la programmation à la gestion d'équipe à la rédaction.
+
+J'ai accepté le rôle de chef de projet parce que personne d'autre ne s'était proposé, tout en sachant qu'il ne me correspondait pas forcément. J'ai plutôt l'habitude de suivre des consignes que d'en donner, et je ne m'impose pas naturellement, alors que c'est une qualité utile pour ce rôle. J'ai donc eu du mal à m'y installer, et Madie, notre tech lead, en a assuré une partie le temps que je trouve ma place.
+
+Une fois plus à l'aise, j'ai organisé les réunions, réparti le travail avec Madie et suivi l'avancement du projet. Pour garder une vision globale, je me suis impliquée dans des tâches variées, de la programmation à la rédaction en passant par la gestion d'équipe. Côté code, j'ai notamment implémenté `UserService` et la détection des anti-patterns dans `EcoService`.
 
 #### Le travail en groupe {.unnumbered}
 
 Le début du projet a été difficile. Lors de la répartition des tâches, peu de membres prenaient la parole et le groupe WhatsApp restait très calme. Malgré des réunions presque hebdomadaires, tout le monde n'était pas toujours présent ni impliqué, et c'était souvent Madie qui s'exprimait, alors que ces réunions devaient être des moments d'échange. J'en porte une part de responsabilité : au départ, je n'ai pas su faire participer chacun.
 
-Après le dossier d'analyse, nous avons parlé ouvertement de ce manque de communication. À partir de là, j'ai pris davantage d'initiatives : informer l'équipe des décisions, relancer les membres, préparer la répartition des tâches avec Madie. Les échanges sont ensuite devenus beaucoup plus fréquents.
+Après le dossier d'analyse, nous avons parlé ouvertement de ce manque de communication. À partir de là, j'ai pris davantage d'initiatives : informer l'équipe des décisions, relancer les membres, préparer la répartition des tâches avec Madie. Les échanges sont
+devenus plus fréquents, mais pas avec tout le monde.
 
+L'investissement et la motivation sont en effet restés inégaux au sein du groupe. C'était particulièrement visible à l'approche de la remise du rapport final : malgré l'échéance, certains membres ne répondaient toujours pas aux messages et ne réalisaient pas les tâches qui leur avaient été confiées.
 
 #### Ce que j'en retiens {.unnumbered}
 
 Ce projet m'a permis de mettre en pratique la programmation orientée objet, le SQL et l'architecture en couches vus en première et en deuxième année. J'ai particulièrement aimé travailler avec le module `ast` pour analyser l'arbre syntaxique du code : il a été difficile à prendre en main, mais c'est la partie qui m'a le plus appris.
-Le sujet m'a aussi fait découvrir des questions que je ne me posais pas : l'impact énergétique et écologique d'un programme et les licences des bibliothèques utilisées. J'y ferai davantage attention dans mes prochains projets et dans ma vie professionnelle.
+
+Le sujet m'a aussi fait découvrir des questions que je ne me posais pas : l'impact énergétique d'un programme et les licences des bibliothèques utilisées. J'y ferai davantage attention dans mes prochains projets et dans ma vie professionnelle.
+
+Je retiens surtout ce qu'implique le rôle de chef de projet. Si la situation se reproduisait, je n'hésiterais pas à exprimer dès le départ mes doutes sur ce rôle, et à le confier à quelqu'un dont le profil s'y prête davantage.
 
 #### Mes conseils à nos successeurs {.unnumbered}
 
+- **Choisir le chef de projet par envie, pas par défaut** : ce rôle demande de relancer et de trancher ; mieux vaut qu'il revienne à quelqu'un qui en a envie.
 - **Faire parler tout le monde dès la première semaine** : un tour de table en début de réunion, où chacun dit ce qu'il a fait et ce qui le bloque, évite que seules une ou deux personnes s'expriment.
 - **Trancher vite les questions de conception** : chez nous, la question du stockage des fichiers est restée ouverte plus d'un mois et nous a obligés à supprimer une table, une classe DAO et deux routes déjà écrites.
 - **Travailler sur des branches dès le départ** : nous ne l'avons fait qu'à partir de la sixième semaine, après de nombreux conflits sur la branche principale.
-
-#### Utilisation de l'IA {.unnumbered}
-
-Enfin, je souhaite détailler 
