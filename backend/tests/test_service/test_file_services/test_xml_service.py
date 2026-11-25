@@ -1,3 +1,5 @@
+import xml.etree.ElementTree as ET
+
 import pytest
 
 # from datetime import datetime
@@ -36,5 +38,5 @@ def test_xml_invalid_raises():
     content = b"<project>"
 
     # THEN
-    with pytest.raises(Exception):  # ruff: ignore[assert-raises-exception]
-        XmlService.parse_dependencies(content)
+    with pytest.raises(ET.ParseError):
+        XmlService().parse_dependencies(content)
