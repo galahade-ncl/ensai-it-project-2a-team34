@@ -174,7 +174,7 @@ travail et assure le suivi régulier de l’avancement du projet \\
 Tech Lead
 & Madie Perrin-Beau
 & Principal développeur, référent technique de
-l’application et responsable des outils de
+l’ application et responsable des outils de
 développement (Git, VS Code, Quarto...) \\
 \hline
 
@@ -444,7 +444,7 @@ Enfin, les appels aux API externes n'apparaissaient pas du tout dans le diagramm
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.6\textwidth]{img/image_manque.jpg}
+    \includegraphics[width=\textwidth]{img/diagramme_classes_2.png}
     \caption{Diagramme de classe}
     \label{fig:diagcas}
 \end{figure}
