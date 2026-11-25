@@ -954,6 +954,17 @@ https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-218.pdf
 
 ### MANAMBIRAVAKA Anaëlle {.unnumbered}
 
+Je suis arrivée à l'école après la rentrée officielle, donc après le lancement du projet. Quand j'ai rejoint l'équipe, le sujet avait déjà été exploré, le groupe constitué et les premières décisions prises. Il a fallu comprendre en quelques jours ce que les autres avaient construit en deux semaines, puis trouver ma place dans une répartition du travail déjà esquissée.
+
+J'en retiens deux choses. La première est qu'un retard de calendrier se rattrape bien plus vite qu'un retard de compréhension cat j'ai passé mes premiers jours à lire ce qui avait été décidé plutôt qu'à produire, et c'est précisément ce qui m'a permis d'avancer ensuite. La seconde est que je dois beaucoup à l'équipe, qui a pris le temps de m'expliquer ce que j'avais manqué plutôt que de me confier ce qu'il restait à faire.
+
+Ce que je retiens d'abord de CleanOps, c'est l'écart entre ce que l'on imagine en analyse et ce que l'on découvre en écrivant le code. J'ai dessiné le modèle physique des données en septembre avec Annabelle, avant d'avoir écrit une seule ligne de Python. Deux mois plus tard, une table avait disparu, une classe s'était scindée en quatre, et un attribut qui me semblait évident n'existait plus. J'ai compris qu'un dossier d'analyse n'est pas un contrat que l'on exécute, mais une hypothèse que l'on corrige.
+
+Mon travail m'a fait traverser presque toutes les couches de l'application. J'ai commencé par des classes métier, puis j'ai implémenté les contrôleurs d'utilisateur et d'authentification avec les modèles de validation associés, avant de prendre en charge la génération du SBOM qui était une tâche assez fastidieuse. C'est cette dernière partie qui m'a le plus appris. Je croyais produire un simple fichier listant des dépendances alors que j'ai découvert une norme internationale, deux API publiques à interroger, et des conventions de nommage qu'il faut respecter à la lettre sous peine de ne rien trouver. Un détail aussi mince que la manière d'écrire le nom d'un paquet décide qu'une vulnérabilité sera détectée ou passera inaperçue.
+
+Écrire les tests de mon propre code a été le second apprentissage marquant car j'ai constaté qu'un code difficile à tester est presque toujours un code mal découpé. Les tests m'ont fait revenir sur mes propres classes plus souvent que l'inverse.
+
+Enfin, ce que je garde de CleanOps tient finalement moins au code qu'à une découverte simple car j'ai été jugée sur ce que j'apportais, pas sur le moment où j'étais arrivée. C'est une leçon que j'emporterai bien au-delà de ce projet.
 
 {{< pagebreak >}}
 
