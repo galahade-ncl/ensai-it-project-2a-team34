@@ -973,6 +973,19 @@ Enfin, ce que je garde de CleanOps tient finalement moins au code qu'à une déc
 
 ### NADIN Sarah {.unnumbered}
 
+#### Mon rôle
+Durant ce projet, j’ai endossé le rôle de rédactrice technique. J’étais donc responsable de tout ce qui concerne la documentation du code et du rapport.
+
+#### Organisation en équipe
+Au cours de ce travail, j’ai ressenti que l’implication de chacun des membres du groupe n’était pas équitable. Moi-même, pour des raisons de santé, je n’ai pas réussi à m’impliquer autant que je l’aurais souhaité. 
+Cependant, je pense que les tâches auraient pu être mieux réparties si on avait changé certaines choses simples : certains membres du projet ne répondaient pas assez aux messages. Cela a poussé notre tech leader et notre cheffe de projet à reprendre leurs tâches et/ou à les redistribuer aux autres membres du groupe. Cette non réponse a instauré un climat défavorable. En effet, certains faisaient le travail d’autres par peur qu’ils ne le fassent pas puis ne confiaient plus de tâche importantes à ces dits membres. De plus, il n’y a eu que très peu de réunions où tous les membres du groupe ont été présents ce qui n’a pas permis d’avoir une répartition des tâches claire. 
+J’ai pour ma part réalisé beaucoup de documentation (en temps que rédactrice technique) et de tests mais j’aurais également aimé pouvoir m’impliquer d’avantage dans le code pur du projet, notamment au niveau du frontend qui était déjà presque fini au moment où j’ai voulu m’y pencher. 
+Toutefois, je pense que réaliser un projet en groupe de six est quelque chose de difficile et bien que la part de travail a été inégale, chacun a réussi à s’intégrer au projet et à apporter son point de vu. 
+
+#### Mon implication dans ce projet et points d’amélioration
+La tâche de documentation était essentielle pour ce projet. En effet, certains codes au début du projet étaient très mal documentés ce qui ne permettait pas de les reprendre aisément. Les diagrammes qui constituent une ligne conductrice pour notre travail ont dû être souvent mis à jour car nous avons été amenés à changer certains aspects du projet. 
+Je pense que pour les projets à venir (durant ma troisième année à l’ENSAI ou lors de mon futur travail), j’essaierai de prendre d’avantage d’initiatives par moi-même pour décharger mes camarades/collègues et choisir d’avantage sur quoi je travaillerai. Ce manque d’initiative à la suite de ma maladie a conduit notamment notre tech leader à faire le frontend dans la précipitation (sûrement par manque de certitude) alors que j’aurais réellement aimé m’y impliquer d’avantage.
+
 
 {{< pagebreak >}}
 
@@ -1025,13 +1038,18 @@ Le début du projet a été difficile. Lors de la répartition des tâches, peu 
 
 Après le dossier d'analyse, nous avons parlé ouvertement de ce manque de communication. À partir de là, j'ai pris davantage d'initiatives : informer l'équipe des décisions, relancer les membres, préparer la répartition des tâches avec Madie. Les échanges sont ensuite devenus beaucoup plus fréquents.
 
+
 #### Ce que j'en retiens {.unnumbered}
 
 Ce projet m'a permis de mettre en pratique la programmation orientée objet, le SQL et l'architecture en couches vus en première et en deuxième année. J'ai particulièrement aimé travailler avec le module `ast` pour analyser l'arbre syntaxique du code : il a été difficile à prendre en main, mais c'est la partie qui m'a le plus appris.
-Le sujet m'a aussi fait découvrir des questions que je ne me posais pas : l'impact énergétique d'un programme et les licences des bibliothèques utilisées. J'y ferai davantage attention dans mes prochains projets et dans ma vie professionnelle.
+Le sujet m'a aussi fait découvrir des questions que je ne me posais pas : l'impact énergétique et écologique d'un programme et les licences des bibliothèques utilisées. J'y ferai davantage attention dans mes prochains projets et dans ma vie professionnelle.
 
 #### Mes conseils à nos successeurs {.unnumbered}
 
 - **Faire parler tout le monde dès la première semaine** : un tour de table en début de réunion, où chacun dit ce qu'il a fait et ce qui le bloque, évite que seules une ou deux personnes s'expriment.
 - **Trancher vite les questions de conception** : chez nous, la question du stockage des fichiers est restée ouverte plus d'un mois et nous a obligés à supprimer une table, une classe DAO et deux routes déjà écrites.
 - **Travailler sur des branches dès le départ** : nous ne l'avons fait qu'à partir de la sixième semaine, après de nombreux conflits sur la branche principale.
+
+#### Utilisation de l'IA {.unnumbered}
+
+Enfin, je souhaite détailler 
