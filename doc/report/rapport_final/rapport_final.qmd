@@ -465,7 +465,7 @@ Le deuxième patron est une fabrique, `QualityGateFactory`. Elle centralise la c
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.6\textwidth]{img/image_manque.jpg}
+    \includegraphics[width=0.8\textwidth]{img/diagramme_pattern.png}
     \caption{Diagramme de Strategy Pattern de QualityGate}
     \label{fig:diagcas}
 \end{figure}
@@ -616,7 +616,7 @@ Enfin, la classe `SecurityService` centralise et supervise les appels aux deux A
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.6\textwidth]{img/image_manque.jpg}
+    \includegraphics[width=0.8\textwidth]{img/diagramme_security_service.png}
     \caption{Diagramme de classe : logique `SecurityService`}
     \label{fig:diagcas}
 \end{figure}
