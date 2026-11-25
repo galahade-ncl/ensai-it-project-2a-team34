@@ -974,6 +974,34 @@ https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-218.pdf
 
 ### PERRIN-BEAU Madie {.unnumbered}
 
+**Ma participation au projet**
+
+Dès le début du projet, je me suis orientée vers le rôle de tech lead, en prenant une place importante dans les décisions techniques. Ma motivation était notamment liée au fait que je n'avais pas eu l'occasion de réaliser de projet l'année précédente.
+
+L'investissement initial du groupe étant inégal, j'ai également pris en charge certaines responsabilités de cheffe de projet : organisation des réunions, suivi des tâches et relances. Malgré une redéfinition des rôles à la fin du dossier d'analyse, j'ai continué à assumer ces missions. J'ai signalé les difficultés de communication au groupe avant les vacances de la Toussaint, mais la situation ne s'est pas durablement améliorée. J'ai finalement pris du recul pour laisser davantage de place aux autres membres, ce qui a notamment conduit à l'abandon de certaines fonctionnalités envisagées, comme la prise en charge d'autres langages que Python.
+
+Côté développement, j'ai travaillé sur différentes couches de l'application, particulièrement sur les services et les interactions avec les API externes. Je me suis également chargée de la mise en forme des dossiers sur Quarto.
+
+**Ce qui a bien fonctionné**
+
+La répartition initiale des tâches a été réalisée collectivement, en tenant compte des avis de chacun. Elle nous a donné une première organisation claire pour démarrer le projet.
+
+**Les difficultés rencontrées**
+
+La principale difficulté a été le manque de régularité dans la participation de certains membres, entraînant un déséquilibre dans la charge de travail. Malgré mes relances et l'envoi d'une liste des éléments restant à développer, plusieurs tâches n'ont pas été réalisées dans les délais. La rédaction du rapport a également été compliquée : certaines parties ont dû être terminées le jour du rendu, faute d'avancement suffisant.
+
+Le cumul des responsabilités techniques et de coordination a ainsi été une importante source de stress, me donnant parfois le sentiment de porter une grande partie du projet.
+
+**Ce que j'en retiens**
+
+Malgré ces difficultés organisationnelles, le projet m'a permis de mettre en pratique des notions comme la programmation orientée objet et d'approfondir ma compréhension des API.
+
+Si c'était à refaire, je conseillerais de distinguer clairement les rôles de tech lead et de cheffe de projet, fixer des échéances intermédiaires avec un responsable pour chaque tâche, alerter le tuteur dès les premiers signes de déséquilibre.
+
+**Mon ressenti**
+
+Je termine ce projet avec de la déception et de la tristesse. Malgré le temps et l'énergie investis, je regrette que nous n'ayons pas réussi à produire un résultat aussi complet que souhaité ni à instaurer une véritable dynamique collective. J'aurais préféré consacrer davantage de temps aux aspects techniques, qui m'intéressaient particulièrement, plutôt qu'à la coordination du groupe.
+
 {{< pagebreak >}}
 
 ### VILARRUPLA Thomas {.unnumbered}
