@@ -22,7 +22,7 @@ The frontend follows a modular structure to separate UI components from API inte
 - **Access guard** (`utils/auth_guard.py`) : Redirects to the home page when no access token is stored in the session (the token itself is validated by the backend)
 - **Utilities** (`utils/`) : Helpers for logging and environment variables
 
-Here is the architecture of the code:
+Here is the structure of the code:
 
 ```
 frontend/
