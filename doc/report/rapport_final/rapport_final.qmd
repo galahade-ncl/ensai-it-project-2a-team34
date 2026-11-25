@@ -764,6 +764,11 @@ Lorsque les critères sont respectés, un certificat est émis.
 
 #### Certification
 
+Lorsqu’un utilisateur réalise un audit qui passe le QualityGate, il peut générer un certificat. Ce certificat peut être téléchargé au format pdf et atteste de la qualité du projet selon les critères de CleanOps et le type de QualityGate choisi. 
+
+L’application permet également de vérifier l’authenticité d’un tel certificat. Pour cela, le certificat affiche un QR code contenant les informations du projet telles que le contenu du code, du fichier de dépendance et les résultats de l’audit . En fournissant ces éléments à l’application accompagnés d’une clé public, on peut s’assurer que le certificat provient bien de l’application CleanOps. Le système de clé asymétrique permet à n’importe qui de vérifier l’authenticité d’un certificat, tout en garantissant que seul l’application peut délivrer un certificat valide. 
+
+
 {{< pagebreak >}}
 
 ## Tests et qualité du code
