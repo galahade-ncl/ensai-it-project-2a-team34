@@ -22,11 +22,7 @@ class Licence:
         to be used in a set or as dict keys.
     """
 
-    def __init__(
-        self,
-        name,
-        risk_level,
-        id_licence=None) -> None:
+    def __init__(self, name, risk_level, id_licence=None) -> None:
         self.id_licence = id_licence
         self.name = name
         self.risk_level = risk_level

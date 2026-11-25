@@ -18,6 +18,7 @@ class SignedCertificateModel(BaseModel):
     signature : str
         Signature of the payload.
     """
+
     payload: dict
     kid: str
     alg: str
@@ -39,6 +40,7 @@ class CertificateModel(BaseModel):
     signed_data : SignedCertificateModel or None
         Signed data of the certificate.
     """
+
     name: str
     type_file: str
     date: datetime
@@ -58,6 +60,7 @@ class CertificateVerifyResponseModel(BaseModel):
     reason : str or None
         Reason of the failure if not valid.
     """
+
     valid: bool
     payload: dict | None = None
     reason: str | None = None

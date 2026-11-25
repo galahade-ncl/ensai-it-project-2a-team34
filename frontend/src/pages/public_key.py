@@ -5,9 +5,7 @@ from utils.api_client import api_client
 PUBLIC_KEY_PATH = "/.well-known/public-key"  # check the exact path in your Swagger
 
 st.title("CleanOps public key")
-st.write(
-    "Certificates are signed with a private key that never leaves the server."
-)
+st.write("Certificates are signed with a private key that never leaves the server.")
 
 res = api_client.get(PUBLIC_KEY_PATH)
 data = res["data"] if isinstance(res["data"], dict) else {}

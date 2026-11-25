@@ -51,7 +51,5 @@ async def create_hmac_signature(body: HmacSignatureRequest, user=Depends(verify_
     except (binascii.Error, ValueError):
         raise HTTPException(status_code=400, detail="Invalid Base64 content.") from None
 
-    signature = generate_signature(
-        secret, str(body.project_id).encode("utf-8"), code, dependency
-    )
+    signature = generate_signature(secret, str(body.project_id).encode("utf-8"), code, dependency)
     return {"signature": base64.b64encode(signature).decode("ascii")}

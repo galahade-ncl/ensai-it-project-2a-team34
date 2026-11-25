@@ -21,6 +21,7 @@ class SecurityQualityGate:
     get_type()
         Return the type of the quality gate, always ``'security'``.
     """
+
     def __init__(self, max_vulnerabilities, max_critical_vulnerabilities, status) -> None:
         self.max_vulnerabilities = max_vulnerabilities
         self.max_critical_vulnerabilities = max_critical_vulnerabilities

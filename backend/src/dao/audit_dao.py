@@ -139,7 +139,7 @@ class AuditDao(metaclass=Singleton):
         Exception
             If an error occurs during database insertion.
         """
-        type_qualitygate, status_qualitygate = (self._get_quality_gate_data(audit.quality_gate))
+        type_qualitygate, status_qualitygate = self._get_quality_gate_data(audit.quality_gate)
         try:
             with DBConnection().connection as connection:
                 with connection.cursor() as cursor:
@@ -297,7 +297,7 @@ class AuditDao(metaclass=Singleton):
         Exception
             If an error occurs during database update.
         """
-        type_qualitygate, status_qualitygate = (self._get_quality_gate_data(audit.quality_gate))
+        type_qualitygate, status_qualitygate = self._get_quality_gate_data(audit.quality_gate)
         try:
             signed = getattr(audit.certificate, "signed_data", None)
 

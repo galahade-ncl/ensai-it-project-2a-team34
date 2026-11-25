@@ -11,6 +11,7 @@ class UserService:
     """
     Service that handles business logic related to a user
     """
+
     @log
     def create(self, username: str, password: str, email: str) -> User | None:
         """
@@ -31,11 +32,8 @@ class UserService:
             The created user, or None if the creation failed.
         """
         new_user = User(
-            username=username,
-            password=UserDao.hash_pw(password),
-            email=email,
-            access_token=None
-            )
+            username=username, password=UserDao.hash_pw(password), email=email, access_token=None
+        )
         return new_user if UserDao().create(new_user) else None
 
     @log
@@ -135,7 +133,7 @@ class UserService:
         bool
             True if the username is already used, False otherwise.
         """
-        return (UserDao().find_by_username(username) is not None)
+        return UserDao().find_by_username(username) is not None
 
     @log
     def list_all_project(self, id_user: int) -> list[Project] | None:

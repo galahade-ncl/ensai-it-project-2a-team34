@@ -25,10 +25,7 @@ def code_file(source):
 @pytest.mark.parametrize(
     "source, expected_lines",
     [
-        pytest.param(
-            """x = 1""",
-            [],
-            id="no_loop"),
+        pytest.param("""x = 1""", [], id="no_loop"),
         pytest.param("for a in x:\n    pass", [1], id="one_loop"),
         pytest.param(
             "for a in x:\n    for b in y:\n        pass",
@@ -351,9 +348,7 @@ def test_loop_length(source, expected):
     "source, variables, expected",
     [
         pytest.param("for i in range(n):\n    pass", {"n": 100}, 100, id="range_with_variable"),
-        pytest.param(
-            "for x in my_list:\n    pass", {"my_list": [1, 2, 3]}, 3, id="list_variable"
-        ),
+        pytest.param("for x in my_list:\n    pass", {"my_list": [1, 2, 3]}, 3, id="list_variable"),
         pytest.param(
             "for x in n:\n    pass", {"n": 100}, DEFAULT_LENGTH, id="variable_not_a_collection"
         ),
@@ -420,8 +415,7 @@ def test_loop_complexity(source, expected):
             "def fib(n):\n    return fib(n - 1) + fib(n - 2)", 2, id="two_recursive_calls"
         ),
         pytest.param(
-            "def f(n):\n    for i in range(2):\n        for j in range(3):\n"
-            "            f(n - 1)",
+            "def f(n):\n    for i in range(2):\n        for j in range(3):\n            f(n - 1)",
             6,
             id="recursive_call_in_nested_loops",
         ),
@@ -473,9 +467,7 @@ def test_count_recursive_calls_with_variables():
             id="sequential_loops",
         ),
         # Variables du code
-        pytest.param(
-            "n = 100\nfor i in range(n):\n    pass", 1 + 100, id="range_with_variable"
-        ),
+        pytest.param("n = 100\nfor i in range(n):\n    pass", 1 + 100, id="range_with_variable"),
         pytest.param(
             "n = 4\nfor i in range(n):\n    for j in range(n):\n        pass",
             1 + 16,
@@ -597,9 +589,7 @@ def test_init_with_machine(machine):
         pytest.param(metrics(operations=2, function_calls=3, ast_nodes=5), 1000, 10, id="no_loop"),
         pytest.param(metrics(ast_nodes=10, depth=1), 1000, 10 * 1000, id="one_loop"),
         pytest.param(metrics(ast_nodes=10, depth=2), 1000, 10 * 1000**2, id="nested_loops"),
-        pytest.param(
-            metrics(ast_nodes=10, recursive={"f"}), 1000, 10 * 1000, id="recursion"
-        ),
+        pytest.param(metrics(ast_nodes=10, recursive={"f"}), 1000, 10 * 1000, id="recursion"),
         pytest.param(
             metrics(ast_nodes=10, depth=1, recursive={"f"}),
             10,

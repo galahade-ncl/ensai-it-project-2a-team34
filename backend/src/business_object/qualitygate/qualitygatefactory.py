@@ -16,12 +16,14 @@ class QualityGateFactory:
     """
 
     @staticmethod
-    def get_qualitygate(type_qualitygate: str,
+    def get_qualitygate(
+        type_qualitygate: str,
         max_vulnerabilities: int,
         max_critical_vulnerabilities: int,
         max_carbon_emission: float,
         max_energy_consumption: float,
-        status: str) -> QualityGate:
+        status: str,
+    ) -> QualityGate:
         """
         Return an instance of the requested type of quality gate.
 

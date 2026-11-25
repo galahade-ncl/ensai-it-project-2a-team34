@@ -74,7 +74,6 @@ async def redirect_to_docs():
     return RedirectResponse(url="/docs")
 
 
-
 # Run the FastAPI application
 if __name__ == "__main__":
     import os
