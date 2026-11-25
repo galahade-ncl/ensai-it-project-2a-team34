@@ -672,6 +672,21 @@ Contrairement au calcul énergétique, cette estimation prend en compte le nombr
 
 #### Estimation de la consommation énergétique
 
+La consommation énergétique est calculée par la méthode calculate_energy() de la classe `EcoService`. Elle repose sur une estimation du nombre d'opérations réalisées par le programme, à partir des métriques extraites de son arbre syntaxique abstrait (AST). Le nombre d'opérations de base est obtenu en additionnant trois métriques extraites précédemment comme ceci : N = operations + function_calls + ast_nodes. Ce nombre est ensuite ajusté en fonction des structures du programme détectées lors de l'analyse. Lorsqu'une ou plusieurs boucles sont présentes, le nombre d'opérations est multiplié par la taille d'entrée estimée, élevée à la puissance de la profondeur maximale des boucles imbriquées. La taille d'entrée est fixée par défaut à 1 000. En présence d'au moins une fonction récursive, le résultat est également multiplié par la taille d'entrée estimée. Le nombre d'opérations obtenu permet ensuite d'estimer le temps d'exécution théorique, en fonction de la vitesse de traitement de la machine sélectionnée : t (s) = opérations_totale / opérations_par_secondes = N/10^9
+
+Enfin, la consommation énergétique est calculée à partir de la puissance du processeur : E (kWh) = P(W) * t(s) / 3 600 000. Par défaut, le programme utilise la configuration MachineType.REFERENCE qui considère une vitesse de traitement d'un milliard d'opérations par seconde et une puissance CPU de 65 W. Le calcul repose sur des hypothèses simplificatrices concernant la vitesse de traitement, la puissance consommée et le nombre d'opérations effectivement réalisées. La consommation estimée dépend également de la configuration matérielle sélectionnée.
+
+#### Estimation des émissions carbone
+
+Une fois la consommation énergétique obtenue, CleanOps estime les émissions de gaz à effet de serre associées à cette consommation. Le calcul repose sur l'intensité carbone de l'électricité, fixée par défaut à 50 gCO₂e/kWh, une valeur choisie pour représenter approximativement le mix électrique français. La formule utilisée est C (gCO₂e) = E (kWh) × I (gCO₂e/kWh) où I représente l'intensité carbone de l'électricité. Cette intensité peut être modifiée en passant un autre paramètre à la méthode calculate_carbon(). Il est donc possible d'adapter l'estimation à un contexte énergétique différent, par exemple celui d'un autre pays.
+
+#### Intégration à l'audit et à la Quality Gate
+
+Les résultats de l'analyse éco-énergétique sont ensuite transmis à `AuditService`, qui les associe aux autres résultats de l'audit du projet. Trois informations principales sont conservées : la liste des anti-patterns détectés, la complexité estimée, ainsi que la consommation énergétique et les émissions carbone calculées. Ces valeurs sont enregistrées dans l'objet Audit puis comparées aux seuils définis lors de la création de la Quality Gate.
+
+Pour le contrôle écologique, deux seuils sont actuellement fixés: une consommation énergétique maximale de 0,001 kWh et des émissions carbone maximales de 1 gCO₂e. La classe `EcoQualityGate` vérifie que les deux conditions sont simultanément respectées. Si elles le sont, le contrôle écologique est validé et dans le cas contraire il échoue. Cette fonctionnalité permet ainsi de faire de l'impact environnemental un critère de validation du projet, au même titre que les critères de sécurité. Les résultats sont également conservés dans l'historique des audits, ce qui permet de suivre leur évolution au fil des soumissions.
+
+
 ### Génération du SBOM
 
 Le SBOM (Software Bill of Materials) est l'inventaire des composants d'un projet et contient notamment la liste exhaustive des bibliothèques que ce dernier embarque, avec leurs versions. C’est ainsi l’équivalent d’une liste d’ingrédients car elle permet à n’importe quel outil, ou à n’importe quel auditeur, de savoir ce qui tourne réellement dans l’application. 
@@ -771,19 +786,19 @@ Le projet compte à ce jour 384 tests automatisés au total qui sont répartis p
 \hline
 \textbf{Couche} & \textbf{Nombre de tests} & \textbf{Ce qu'elles vérifient} \\
 \hline
-\textbf{Services} & 186 & Logique métier, DAO simulée, exécution sans la base de données \\
+\textbf{Services} & 211 & Logique métier, DAO simulée, exécution sans la base de données \\
 \hline
-\textbf{DAO} & 58 & Requêtes SQL sur un schéma de test dédié \\
+\textbf{DAO} & 82 & Requêtes SQL sur un schéma de test dédié \\
 \hline
-\textbf{API externes} & 37 & Appels OSV et deps.dev, conversion CVSS, construction des objets \\
+\textbf{API externes} & 73 & Appels OSV et deps.dev, conversion CVSS, construction des objets \\
 \hline
 \textbf{Utilitaires de sécurité} & 36 & Hachage, génération de clé, signature et vérification \\
 \hline
 \textbf{Analyseurs de fichiers} & 16 & Lecture des formats TXT, JSON, XML et TOML \\
 \hline
-\textbf{Objets métier} & 7 & Fabrique de Quality Gates \\
+\textbf{Objets métier} & 29 & Fabrique de Quality Gates \\
 \hline
-\textbf{Total} & \textbf{384} & - \\
+\textbf{Total} & \textbf{449} & - \\
 \hline
 \end{tabular}
 \caption{Répartition des tests par couche applicative.}
@@ -872,8 +887,6 @@ https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-218.pdf
 
 ## Annexes {.unnumbered}
 
-[À placer ici : le diagramme de classes complet, le diagramme de séquence, le diagramme d'activité (ou alors rajouter partie), le modèle physique des données à jour, les deux diagrammes de Gantt, une capture de la documentation Swagger et un exemple de SBOM généré. À décider également : des bilans personnels par membre, comme dans les rapports des années précédentes.]
-
 ### Fichiers de dépendances pris en charge {.unnumbered}
 
 \appendix
@@ -903,6 +916,16 @@ https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-218.pdf
 \label{tab:fichiers-ecosystemes}
 \end{table}
 
+### Diagramme de séquence {.unnumbered}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{img/sequence_diagramme.png}
+    \caption{Diagramme de séquence de l'application (version courte)}
+    \label{fig:diagramme-sequence}
+\end{figure}
+
 ```{=latex}
 \newgeometry{margin=1cm}
 \begin{landscape}
@@ -923,47 +946,33 @@ https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-218.pdf
 \restoregeometry
 ```
 
-### Diagramme de séquence {.unnumbered}
-
-
-```{=latex}
-\begin{figure}[H]
-\centering
-\includegraphics[width=\linewidth, height=0.78\textheight, keepaspectratio]{img/sequence_diagramme.png}
-\caption{Diagramme de séquence de l'application (version courte)}
-\label{fig:diagramme-sequence}
-\end{figure}
-\end{landscape}
-\restoregeometry
-```
-
 
 {{< pagebreak >}}
 
 ## Note individuelle {.unnumbered}
 
-### MANAMBIRAVAKA Anaëlle
+### MANAMBIRAVAKA Anaëlle {.unnumbered}
 
 
 {{< pagebreak >}}
 
-### NADIN Sarah"
+### NADIN Sarah {.unnumbered}
 
 
 {{< pagebreak >}}
 
-### NICOLIE Galahade
+### NICOLIE Galahade {.unnumbered}
 
 
 {{< pagebreak >}}
 
-### PERRIN-BEAU Madie
+### PERRIN-BEAU Madie {.unnumbered}
 
 {{< pagebreak >}}
 
-### VILARRUPLA Thomas
+### VILARRUPLA Thomas {.unnumbered}
 
 {{< pagebreak >}}
 
 
-### ZHU Annabelle
+### ZHU Annabelle {.unnumbered}
