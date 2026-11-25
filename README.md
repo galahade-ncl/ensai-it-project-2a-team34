@@ -70,7 +70,6 @@ Open two terminals:
 - Backend FastApi: `uv run --project backend python backend/src/main.py`
 - Frontend Streamlit: `cd frontend` and `uv run --project . streamlit run src/app.py`
 
-:bulb: First Launch: Click on **Reset Database** to initialize it.
 
 :warning: **After launching, do not click on the link in the pop-up!**
 
