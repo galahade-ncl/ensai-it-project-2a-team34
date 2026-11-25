@@ -973,16 +973,17 @@ Enfin, ce que je garde de CleanOps tient finalement moins au code qu'à une déc
 
 ### NADIN Sarah {.unnumbered}
 
-#### Mon rôle
+#### Mon rôle {.unnumbered}
 Durant ce projet, j’ai endossé le rôle de rédactrice technique. J’étais donc responsable de tout ce qui concerne la documentation du code et du rapport.
 
-#### Organisation en équipe
+#### Organisation en équipe {.unnumbered}
 Au cours de ce travail, j’ai ressenti que l’implication de chacun des membres du groupe n’était pas équitable. Moi-même, pour des raisons de santé, je n’ai pas réussi à m’impliquer autant que je l’aurais souhaité. 
 Cependant, je pense que les tâches auraient pu être mieux réparties si on avait changé certaines choses simples : certains membres du projet ne répondaient pas assez aux messages. Cela a poussé notre tech leader et notre cheffe de projet à reprendre leurs tâches et/ou à les redistribuer aux autres membres du groupe. Cette non réponse a instauré un climat défavorable. En effet, certains faisaient le travail d’autres par peur qu’ils ne le fassent pas puis ne confiaient plus de tâche importantes à ces dits membres. De plus, il n’y a eu que très peu de réunions où tous les membres du groupe ont été présents ce qui n’a pas permis d’avoir une répartition des tâches claire. 
 J’ai pour ma part réalisé beaucoup de documentation (en temps que rédactrice technique) et de tests mais j’aurais également aimé pouvoir m’impliquer d’avantage dans le code pur du projet, notamment au niveau du frontend qui était déjà presque fini au moment où j’ai voulu m’y pencher. 
 Toutefois, je pense que réaliser un projet en groupe de six est quelque chose de difficile et bien que la part de travail a été inégale, chacun a réussi à s’intégrer au projet et à apporter son point de vu. 
 
-#### Mon implication dans ce projet et points d’amélioration
+#### Mon implication dans ce projet et points d’amélioration {.unnumbered}
+
 La tâche de documentation était essentielle pour ce projet. En effet, certains codes au début du projet étaient très mal documentés ce qui ne permettait pas de les reprendre aisément. Les diagrammes qui constituent une ligne conductrice pour notre travail ont dû être souvent mis à jour car nous avons été amenés à changer certains aspects du projet. 
 Je pense que pour les projets à venir (durant ma troisième année à l’ENSAI ou lors de mon futur travail), j’essaierai de prendre d’avantage d’initiatives par moi-même pour décharger mes camarades/collègues et choisir d’avantage sur quoi je travaillerai. Ce manque d’initiative à la suite de ma maladie a conduit notamment notre tech leader à faire le frontend dans la précipitation (sûrement par manque de certitude) alors que j’aurais réellement aimé m’y impliquer d’avantage.
 
@@ -1059,32 +1060,28 @@ Avec du recul je pense que j'aurais pu mieux anticiper certaines difficultés te
 
 #### Mon rôle et ma participation {.unnumbered}
 
-La composition du groupe étant imposée, j'ai travaillé avec des personnes que je connaissais peu, dont les niveaux et les méthodes de travail étaient différents. Cette diversité a enrichi le projet, mais elle a demandé un vrai effort d'organisation.
+La composition du groupe étant imposée, j'ai travaillé avec des personnes que je connaissais peu, aux niveaux et aux méthodes de travail différents.
 
-J'ai accepté le rôle de chef de projet parce que personne d'autre ne s'était proposé, tout en sachant qu'il ne me correspondait pas forcément. J'ai plutôt l'habitude de suivre des consignes que d'en donner, et je ne m'impose pas naturellement, alors que c'est une qualité utile pour ce rôle. J'ai donc eu du mal à m'y installer, et Madie, notre tech lead, en a assuré une partie le temps que je trouve ma place.
-
-Une fois plus à l'aise, j'ai organisé les réunions, réparti le travail avec Madie et suivi l'avancement du projet. Pour garder une vision globale, je me suis impliquée dans des tâches variées, de la programmation à la rédaction en passant par la gestion d'équipe. Côté code, j'ai notamment implémenté `UserService` et la détection des anti-patterns dans `EcoService`.
+J'ai accepté le rôle de cheffe de projet parce que personne d'autre ne s'était proposé, tout en sachant qu'il ne me correspondait pas forcément : je ne m'impose pas naturellement. Madie, notre tech lead, en a donc assuré une partie le temps que je trouve ma place. J'ai ensuite organisé les réunions, réparti le travail avec elle et suivi l'avancement du projet. Côté code, j'ai notamment implémenté `UserService` et la
+détection des anti-patterns dans `EcoService`. J'ai aussi utilisé l'IA, notamment pour comprendre pourquoi certains tests échouaient.
 
 #### Le travail en groupe {.unnumbered}
 
-Le début du projet a été difficile. Lors de la répartition des tâches, peu de membres prenaient la parole et le groupe WhatsApp restait très calme. Malgré des réunions presque hebdomadaires, tout le monde n'était pas toujours présent ni impliqué, et c'était souvent Madie qui s'exprimait, alors que ces réunions devaient être des moments d'échange. J'en porte une part de responsabilité : au départ, je n'ai pas su faire participer chacun.
+Le début du projet a été difficile : peu de membres prenaient la parole lors de la répartition des tâches, et c'était souvent Madie qui s'exprimait en réunion. J'en porte une part de responsabilité, car je n'ai pas su faire participer chacun.
 
-Après le dossier d'analyse, nous avons parlé ouvertement de ce manque de communication. À partir de là, j'ai pris davantage d'initiatives : informer l'équipe des décisions, relancer les membres, préparer la répartition des tâches avec Madie. Les échanges sont
-devenus plus fréquents, mais pas avec tout le monde.
-
-L'investissement et la motivation sont en effet restés inégaux au sein du groupe. C'était particulièrement visible à l'approche de la remise du rapport final : malgré l'échéance, certains membres ne répondaient toujours pas aux messages et ne réalisaient pas les tâches qui leur avaient été confiées.
+Après le dossier d'analyse, nous avons parlé ouvertement de ce manque de communication, et j'ai pris davantage d'initiatives : informer l'équipe, relancer les membres, préparer la répartition des tâches. Les échanges sont devenus plus fréquents, mais l'investissement est resté inégal : à l'approche du rendu final, certains membres ne répondaient toujours pas aux messages et ne réalisaient pas leurs tâches.
 
 #### Ce que j'en retiens {.unnumbered}
 
-Ce projet m'a permis de mettre en pratique la programmation orientée objet, le SQL et l'architecture en couches vus en première et en deuxième année. J'ai particulièrement aimé travailler avec le module `ast` pour analyser l'arbre syntaxique du code : il a été difficile à prendre en main, mais c'est la partie qui m'a le plus appris.
+J'ai mis en pratique la programmation orientée objet, le SQL et l'architecture en couches. J'ai particulièrement aimé travailler avec le module `ast` : difficile à prendre en main mais c'était la partie qui m'a le plus appris. Le sujet m'a aussi sensibilisée à l'impact énergétique du code et aux licences des bibliothèques, qui étaient des problématiques dont je ne m'en préoccupais pas avant.
 
-Le sujet m'a aussi fait découvrir des questions que je ne me posais pas : l'impact énergétique d'un programme et les licences des bibliothèques utilisées. J'y ferai davantage attention dans mes prochains projets et dans ma vie professionnelle.
-
-Je retiens surtout ce qu'implique le rôle de chef de projet. Si la situation se reproduisait, je n'hésiterais pas à exprimer dès le départ mes doutes sur ce rôle, et à le confier à quelqu'un dont le profil s'y prête davantage.
+Je retiens surtout ce qu'implique le rôle de chef de projet : si la situation se reproduisait, j'exprimerais mes doutes dès le départ et je confierais ce rôle à quelqu'un dont le profil s'y prête davantage.
 
 #### Mes conseils à nos successeurs {.unnumbered}
 
-- **Choisir le chef de projet par envie, pas par défaut** : ce rôle demande de relancer et de trancher ; mieux vaut qu'il revienne à quelqu'un qui en a envie.
-- **Faire parler tout le monde dès la première semaine** : un tour de table en début de réunion, où chacun dit ce qu'il a fait et ce qui le bloque, évite que seules une ou deux personnes s'expriment.
-- **Trancher vite les questions de conception** : chez nous, la question du stockage des fichiers est restée ouverte plus d'un mois et nous a obligés à supprimer une table, une classe DAO et deux routes déjà écrites.
-- **Travailler sur des branches dès le départ** : nous ne l'avons fait qu'à partir de la sixième semaine, après de nombreux conflits sur la branche principale.
+- **Choisir le chef de projet par envie**, et non par défaut.
+- **Faire un tour de table à chaque réunion**, pour que tout le monde s'exprime.
+- **Trancher vite les questions de conception** : le stockage des fichiers, resté en suspens plus d'un mois, nous a coûté une table, une classe DAO et deux routes.
+- **Travailler sur des branches dès le départ.**
+
+Finalement, les fonctionnalités principales ont été implémentées, même s'il est regrettable de ne pas avoir pu aller plus loin et d'avoir passer du temps sur la gestion du groupe.
