@@ -808,6 +808,16 @@ Sur le plan technique, la mise au point de la signature HMAC a été la plus co�
 
 ## Perspectives et pistes d'amélioration
 
+Plusieurs chantiers se dégagent, du plus structurant au plus ponctuel.
+
+Le premier est l'élargissement du périmètre d'analyse, aujourd'hui doublement restreint. Un projet ne peut porter qu'un seul fichier de code et un seul fichier de dépendances, là où un projet réel en compte des dizaines. Ainsi, accepter une arborescence entière, ou une archive, est la suite naturelle. Surtout, l'application souffre d'une asymétrie : l'audit de sécurité reconnaît quatre écosystèmes qui sont notamment PyPI, npm, Maven et crates.io, mais l'analyse du code lui-même ne sait lire que du Python. Un projet Java ou JavaScript n'obtient donc qu'un audit à moitié rempli. L'intention de lever cette limite figure déjà dans le code, sous la forme des classes PyService, JsService et JavaService, laissées vides faute de temps : chacune aurait accueilli l'analyseur syntaxique de son langage.
+
+Le deuxième viserait la finesse de l'estimation énergétique. Le calcul repose sur trois constantes figées dans EcoService: un milliard d'opérations par seconde, un processeur de 65 watts et une intensité carbone de 50 gCO2e par kWh. Ces valeurs décrivent une machine de référence, pas celle de l'utilisateur. Une classe MachineType, envisagée puis écartée, aurait permis de choisir un profil matériel et un mix électrique faute de quoi les chiffres produits valent surtout comme ordre de grandeur et comme base de comparaison entre deux audits du même projet.
+
+Enfin, côté tests,deux manques sont identifiés : les méthodes des objets métier ne sont pas couvertes, et les tests du client OSV comme ceux de SecurityService restent incomplets.
+
+
+{{< pagebreak >}}
 
 ## Conclusion {.unnumbered}
 

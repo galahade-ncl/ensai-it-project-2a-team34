@@ -8,7 +8,7 @@
 
 <meta name="keywords" content="LACAILLE Adrien">
 
-<title>Dossier d’Analyse</title>
+<title>Rapport Final</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -40,11 +40,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="rapport_final_files/libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="rapport_final_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="rapport_final_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<<<<<<< HEAD
-<link href="rapport_final_files/libs/bootstrap/bootstrap-dc4f74d98e60dc58001c1af744715ae9.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
-=======
 <link href="rapport_final_files/libs/bootstrap/bootstrap-247ebf7f51b9e70f793fab8232d43f88.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
->>>>>>> 5029299ab40337ed5761901c046ce8b60ffe385e
 
 
 <link rel="stylesheet" href="style2.scss">
@@ -68,6 +64,7 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
   <li><a href="#bibliographie" id="toc-bibliographie" class="nav-link" data-scroll-target="#bibliographie">Bibliographie</a></li>
   <li><a href="#annexes" id="toc-annexes" class="nav-link" data-scroll-target="#annexes">Annexes</a></li>
+  <li><a href="#note-individuelle" id="toc-note-individuelle" class="nav-link" data-scroll-target="#note-individuelle">Note individuelle</a></li>
   </ul>
 <div class="quarto-alternate-formats"><h2>Autres formats</h2><ul><li><a href="rapport_final.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
 </div>
@@ -75,7 +72,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Dossier d’Analyse</h1>
+<h1 class="title">Rapport Final</h1>
 <p class="subtitle lead">Projet Informatique de 2ème année : <strong>⚙️CleanOps⚙️</strong></p>
 </div>
 
@@ -145,13 +142,9 @@ ul.task-list li input[type="checkbox"] {
 <h3 data-number="1.2" class="anchored" data-anchor-id="cahier-des-charges"><span class="header-section-number">1.2</span> Cahier des charges</h3>
 <section id="description-des-fonctionnalités" class="level4" data-number="1.2.1">
 <h4 data-number="1.2.1" class="anchored" data-anchor-id="description-des-fonctionnalités"><span class="header-section-number">1.2.1</span> Description des fonctionnalités</h4>
-<<<<<<< HEAD
-<p>PARTIE MANQUANTE</p>
-=======
 <p>L’application repose sur cinq fonctionnalités principales. L’API reçoit du code écrit par un tiers, donc rien ne doit être analysé avant d’avoir vérifié d’où il vient et s’il a été modifié. C’est le rôle de la signature HMAC (F1), contrôlée avant tout traitement. Nous avons retenu un mécanisme symétrique dont la justification sera faite dans la suite du rapport. Une fois la soumission acceptée, l’audit des dépendances (F2) répond au risque le plus courant : une bibliothèque tierce peut contenir une faille connue ou une licence incompatible avec l’usage du projet. Nous nous appuyons sur OSV, une base publique et à jour des vulnérabilités, plutôt que de maintenir une liste nous-mêmes, ce qui garantit des résultats fiables sans effort de maintenance. L’analyse éco-énergétique (F3) porte sur le code lui-même. Mesurer la consommation réelle demanderait d’exécuter le code, ce qui est coûteux et dangereux avec du code inconnu. Nous analysons donc son arbre syntaxique, sans l’exécuter, pour estimer sa complexité et repérer les anti-patterns énergivores, puis nous convertissons cette estimation en kWh et en gCO2e pour une machine type. Le résultat n’est pas une mesure exacte, mais un indicateur comparable d’un code à l’autre. Le SBOM (F4) est l’inventaire des composants du code : savoir précisément de quoi est fait un projet est la condition pour pouvoir ensuite contrôler ses composants. L’API l’exporte au format CycloneDX 1.5, un standard. Il décrit notamment les bibliothèques et leurs versions. Enfin, l’enregistrement des audits et la Quality Gate (F5) transforment les résultats des analyses en un verdict. Sans seuils, l’utilisateur reçoit des chiffres sans savoir s’ils sont acceptables. Avec eux, l’audit débouche sur un verdict clair, et un certificat d’attestation n’est délivré que si le projet respecte les critères.</p>
 <p>Nous avons implémenté l’interface graphique (FO4), car elle rend les résultats plus lisibles pour un utilisateur qui n’est pas à l’aise avec une réponse brute d’API. Nous avons laissé de côté les trois autres fonctionnalités, par manque de temps et pour nous concentrer sur la solidité des fonctionnalités principales. L’intégration CI/CD (FO1) aurait permis de lancer l’audit automatiquement dès qu’un développeur soumet du code, sans action manuelle, mais elle suppose de s’interfacer avec des plateformes extérieures. L’isolation du parser (FO2), qui consiste à exécuter l’analyse dans un environnement isolé pour qu’un code malveillant n’affecte pas l’application, est moins urgente tant que le code est seulement analysé et jamais exécuté. Enfin, l’assistant basé sur l’IA (FO3), qui proposerait des améliorations du code sans en changer le comportement, s’éloignait de l’objectif principal d’audit et n’a pas pu être traité dans le temps imparti.</p>
 <p>Nous avons décidé d’ajouter des fonctionnalités qui n’étaient pas proposées par le sujet car on avait jugé cela pertinent. En effet, un certificat n’a de valeur que si quelqu’un d’autre peut s’y fier. Nous l’avons donc signé avec une signature asymétrique (Ed25519) et ajouté une route de vérification : n’importe quel tiers peut contrôler son authenticité avec la clé publique exposée par l’API, sans connaître aucun secret. C’est ce qui justifie ici un mécanisme asymétrique, contrairement à la signature des soumissions. Nous avons aussi ajouté une route de création de signature HMAC, pour que l’utilisateur n’ait pas à implémenter lui-même le calcul, qui est un frein à l’utilisation de l’API.</p>
->>>>>>> 5029299ab40337ed5761901c046ce8b60ffe385e
 </section>
 <section id="diagramme-de-cas-dutilisation" class="level4" data-number="1.2.2">
 <h4 data-number="1.2.2" class="anchored" data-anchor-id="diagramme-de-cas-dutilisation"><span class="header-section-number">1.2.2</span> Diagramme de cas d’utilisation</h4>
@@ -176,11 +169,11 @@ ul.task-list li input[type="checkbox"] {
 <li>un service VS Code, qui nous a donné à tous le même éditeur, le même interpréteur Python et les mêmes extensions</li>
 <li>un service PostgreSQL , qui héberge la base de données de l’application.</li>
 </ul>
-<p>Ce choix nous a évité une difficulté classique des projets menés à plusieurs : le fameux « chez moi, ça marche, mais pourquoi ça ne marche pas chez toi ? ». En effet, personne n’avait besoin d’installer quoi que ce soit localement : il suffisait d’ouvrir le service pour retrouver un environnement similaire à celui des autres membres de l’équipe.</p>
+<p>Ce choix nous a évité une difficulté classique des projets menés à plusieurs : le fameux “chez moi, ça marche, mais pourquoi ça ne marche pas chez toi ?”“. En effet, personne n’avait besoin d’installer quoi que ce soit localement : il suffisait d’ouvrir le service pour retrouver un environnement similaire à celui des autres membres de l’équipe.</p>
 </section>
 <section id="un-fichier-de-suivi-hebdomadaire" class="level4" data-number="2.1.3">
 <h4 data-number="2.1.3" class="anchored" data-anchor-id="un-fichier-de-suivi-hebdomadaire"><span class="header-section-number">2.1.3</span> Un fichier de suivi hebdomadaire</h4>
-<p>Un fichier de suivi hebdomadaire, versionné dans doc/tracking, est renseigné chaque jeudi. Il liste, membre par membre, les tâches réalisées dans la semaine, puis un backlog séparé en tâches prioritaires et secondaires. Enfin, une rubrique « pistes de réflexion » consigne les questions encore ouvertes. Cette dernière rubrique s’est révélée l’un des outils les plus utiles du projet car elle permet d’enregistrer les tâches à réaliser jusqu’au moment de les prendre en compte, au lieu de se perdre dans une discussion.</p>
+<p>Un fichier de suivi hebdomadaire, versionné dans <code>doc/tracking</code>, est renseigné chaque jeudi. Il liste, membre par membre, les tâches réalisées dans la semaine, puis un backlog séparé en tâches prioritaires et secondaires. Enfin, une rubrique « pistes de réflexion » consigne les questions encore ouvertes. Cette dernière rubrique s’est révélée l’un des outils les plus utiles du projet car elle permet d’enregistrer les tâches à réaliser jusqu’au moment de les prendre en compte, au lieu de se perdre dans une discussion.</p>
 </section>
 <section id="un-document-google-docs" class="level4" data-number="2.1.4">
 <h4 data-number="2.1.4" class="anchored" data-anchor-id="un-document-google-docs"><span class="header-section-number">2.1.4</span> Un document Google Docs</h4>
@@ -208,7 +201,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="planning-prévu-et-planning-réel" class="level3" data-number="2.3">
 <h3 data-number="2.3" class="anchored" data-anchor-id="planning-prévu-et-planning-réel"><span class="header-section-number">2.3</span> Planning prévu et planning réel</h3>
 <p>Le diagramme de Gantt du dossier d’analyse prévoyait une phase d’analyse de trois semaines, suivie d’une phase de développement en deux temps notamment les classes métier et DAO d’abord, services et API ensuite; puis d’un mois de rédaction du rapport final à partir de la mi-octobre.</p>
-<p>La phase d’analyse s’est déroulée comme prévu et s’est achevée dans les délais notamment le 17 septembre. Le développement, lui, a pris environ deux semaines de retard sur le prévisionnel, pour trois raisons que le suivi hebdomadaire permet d’identifier précisément. Les classes métier, prévues pour être bouclées en semaine 4, ne l’ont été qu’en semaine 6. La couche DAO, dont dépendent tous les tests, n’a été terminée qu’en semaine 8. Enfin, des retours du tuteur de la mi-octobre a entraîné une réécriture partielle, une suppression de la table des fichiers, de la FileDao et de deux routes de soumission, qui a coûté une semaine supplémentaire.</p>
+<p>La phase d’analyse s’est déroulée comme prévu et s’est achevée dans les délais notamment le 17 septembre. Le développement, lui, a pris environ deux semaines de retard sur le prévisionnel, pour trois raisons que le suivi hebdomadaire permet d’identifier précisément. Les classes métier, prévues pour être bouclées en semaine 4, ne l’ont été qu’en semaine 6. La couche DAO, dont dépendent tous les tests, n’a été terminée qu’en semaine 8. Enfin, des retours du tuteur de la mi-octobre a entraîné une réécriture partielle, une suppression de la table des fichiers, de la <code>FileDao</code> et de deux routes de soumission, qui a coûté une semaine supplémentaire.</p>
 <p>Ce retard a eu une conséquence directe sur le calendrier de rédaction : prévue à partir du 23 octobre, la rédaction du rapport final n’a réellement commencé qu’en semaine 10, avec l’établissement de son plan. En contrepartie, la décision de renoncer aux fonctionnalités optionnelles à éviter que l’écart ne se creuse davantage.</p>
 <p>Le diagramme de Gantt mis à jour, présenté ci-dessous, matérialise ces décalages : les tâches de développement y sont décalées d’environ deux semaines vers la droite, et la fenêtre de rédaction du rapport s’en trouve resserrée.</p>
 </section>
@@ -223,13 +216,13 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="évolutions-du-modèle-physique-des-données" class="level4" data-number="2.4.2">
 <h4 data-number="2.4.2" class="anchored" data-anchor-id="évolutions-du-modèle-physique-des-données"><span class="header-section-number">2.4.2</span> Évolutions du modèle physique des données</h4>
-<p>Le modèle d’analyse comportait quatre tables incluant User, Project, File et Audit. A ce jour, la table File a été supprimée. Ainsi, il n’en reste que trois. En effet, le dossier d’analyse prévoyait d’enregistrer les fichiers soumis, sans que la question du stockage des fichiers bruts ait été tranchée. Elle est d’ailleurs restée ouverte plusieurs semaines dans nos pistes de réflexion. Finalement, le tuteur a tranché à la mi-octobre en appuyant que conserver le code source soumis par un utilisateur n’apporte rien à l’audit et crée un risque inutile. Ainsi, les fichiers sont désormais transmis dans la requête, analysés en mémoire, puis oubliés; seuls les résultats de l’audit sont conservés. La suppression de la table a entraîné celle de la FileDao et de deux routes de soumission de fichiers. La table Audit a par ailleurs été alignée sur ce qui est réellement calculé : elle conserve la date, la complexité, la consommation énergétique, les émissions carbone, ainsi que le type et le statut de la Quality Gate. La table Project, elle, stocke la clé secrète HMAC au format binaire.</p>
+<p>Le modèle d’analyse comportait quatre tables incluant <code>User</code>, <code>Project</code>, <code>File</code> et <code>Audit</code>. A ce jour, la table <code>File</code> a été supprimée. Ainsi, il n’en reste que trois. En effet, le dossier d’analyse prévoyait d’enregistrer les fichiers soumis, sans que la question du stockage des fichiers bruts ait été tranchée. Elle est d’ailleurs restée ouverte plusieurs semaines dans nos pistes de réflexion. Finalement, le tuteur a tranché à la mi-octobre en appuyant que conserver le code source soumis par un utilisateur n’apporte rien à l’audit et crée un risque inutile. Ainsi, les fichiers sont désormais transmis dans la requête, analysés en mémoire, puis oubliés; seuls les résultats de l’audit sont conservés. La suppression de la table a entraîné celle de la <code>FileDao</code> et de deux routes de soumission de fichiers. La table <code>Audit</code> a par ailleurs été alignée sur ce qui est réellement calculé : elle conserve la date, la complexité, la consommation énergétique, les émissions carbone, ainsi que le type et le statut de la Quality Gate. La table <code>Project</code>, elle, stocke la clé secrète HMAC au format binaire.</p>
 <div style="page-break-after: always;"></div>
 <section id="table-user" class="level5 unnumbered">
-<h5 class="unnumbered anchored" data-anchor-id="table-user">Table User</h5>
+<h5 class="unnumbered anchored" data-anchor-id="table-user">Table <code>User</code></h5>
 <p>Elle contient les données liées aux utilisateurs de l’application.</p>
 <table class="caption-top table">
-<caption>Table User</caption>
+<caption>Table <code>User</code></caption>
 <colgroup>
 <col style="width: 22%">
 <col style="width: 18%">
@@ -246,32 +239,32 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">id_user</td>
-<td style="text-align: left;">INTEGER</td>
+<td style="text-align: left;"><code>id_user</code></td>
+<td style="text-align: left;"><code>INTEGER</code></td>
 <td style="text-align: left;">Clé primaire</td>
 <td style="text-align: left;">Identifiant unique de l’utilisateur</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">username</td>
-<td style="text-align: left;">VARCHAR(50)</td>
+<td style="text-align: left;"><code>username</code></td>
+<td style="text-align: left;"><code>VARCHAR(50)</code></td>
 <td style="text-align: left;">Non nul</td>
 <td style="text-align: left;">Nom de l’utilisateur (50 caractères maximum)</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">password</td>
-<td style="text-align: left;">VARCHAR(100)</td>
+<td style="text-align: left;"><code>password</code></td>
+<td style="text-align: left;"><code>VARCHAR(100)</code></td>
 <td style="text-align: left;">Non nul</td>
 <td style="text-align: left;">Mot de passe de l’utilisateur (100 caractères maximum)</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">email</td>
-<td style="text-align: left;">VARCHAR(100)</td>
+<td style="text-align: left;"><code>email</code></td>
+<td style="text-align: left;"><code>VARCHAR(100)</code></td>
 <td style="text-align: left;">Non nul</td>
 <td style="text-align: left;">Adresse mail de l’utilisateur</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">access_token</td>
-<td style="text-align: left;">VARCHAR(255)</td>
+<td style="text-align: left;"><code>access_token</code></td>
+<td style="text-align: left;"><code>VARCHAR(255)</code></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
 </tr>
@@ -280,10 +273,10 @@ ul.task-list li input[type="checkbox"] {
 <p>Un utilisateur possède 0, 1 ou plusieurs projets. Il en possède 0 lorsqu’il vient de créer son compte sans avoir importé de projet, ou lorsqu’il a supprimé tous ceux qu’il avait importés.</p>
 </section>
 <section id="table-project" class="level5 unnumbered">
-<h5 class="unnumbered anchored" data-anchor-id="table-project">Table Project</h5>
+<h5 class="unnumbered anchored" data-anchor-id="table-project">Table <code>Project</code></h5>
 <p>Elle représente un projet soumis à l’audit par un utilisateur.</p>
 <table class="caption-top table">
-<caption>Table Project</caption>
+<caption>Table <code>Project</code></caption>
 <colgroup>
 <col style="width: 22%">
 <col style="width: 18%">
@@ -300,26 +293,26 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">id_project</td>
-<td style="text-align: left;">INTEGER</td>
+<td style="text-align: left;"><code>id_project</code></td>
+<td style="text-align: left;"><code>INTEGER</code></td>
 <td style="text-align: left;">Clé primaire</td>
 <td style="text-align: left;">Identifiant unique du projet</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">name_project</td>
-<td style="text-align: left;">VARCHAR(100)</td>
+<td style="text-align: left;"><code>name_project</code></td>
+<td style="text-align: left;"><code>VARCHAR(100)</code></td>
 <td style="text-align: left;">Non nul</td>
 <td style="text-align: left;">Nom du projet</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">id_user</td>
-<td style="text-align: left;">INTEGER</td>
-<td style="text-align: left;">Clé étrangère vers User(id_user), non nul</td>
+<td style="text-align: left;"><code>id_user</code></td>
+<td style="text-align: left;"><code>INTEGER</code></td>
+<td style="text-align: left;">Clé étrangère vers <code>User</code>(id_user), non nul</td>
 <td style="text-align: left;">Utilisateur qui a soumis le projet</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">secretHMACkey</td>
-<td style="text-align: left;">VARCHAR(100)</td>
+<td style="text-align: left;"><code>secretHMACkey</code></td>
+<td style="text-align: left;"><code>VARCHAR(100)</code></td>
 <td style="text-align: left;">Non nul</td>
 <td style="text-align: left;">Clé HMAC garantissant la provenance et l’intégrité du projet</td>
 </tr>
@@ -329,15 +322,15 @@ ul.task-list li input[type="checkbox"] {
 <div style="page-break-after: always;"></div>
 </section>
 <section id="table-audit" class="level5 unnumbered">
-<h5 class="unnumbered anchored" data-anchor-id="table-audit">Table Audit</h5>
+<h5 class="unnumbered anchored" data-anchor-id="table-audit">Table <code>Audit</code></h5>
 <p>Elle représente le résultat d’un audit effectué sur un projet.</p>
 <table class="caption-top table">
-<caption>Table Audit</caption>
+<caption>Table <code>Audit</code></caption>
 <colgroup>
-<col style="width: 24%">
+<col style="width: 28%">
 <col style="width: 14%">
-<col style="width: 27%">
-<col style="width: 35%">
+<col style="width: 26%">
+<col style="width: 32%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -349,74 +342,74 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">id_audit</td>
-<td style="text-align: left;">INTEGER</td>
+<td style="text-align: left;"><code>id_audit</code></td>
+<td style="text-align: left;"><code>INTEGER</code></td>
 <td style="text-align: left;">Clé primaire</td>
 <td style="text-align: left;">Identifiant unique de l’audit</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">id_project</td>
-<td style="text-align: left;">INTEGER</td>
-<td style="text-align: left;">Clé étrangère vers Project(id_project), non nul</td>
+<td style="text-align: left;"><code>id_project</code></td>
+<td style="text-align: left;"><code>INTEGER</code></td>
+<td style="text-align: left;">Clé étrangère vers <code>Project</code>(<code>id_project</code>), non nul</td>
 <td style="text-align: left;">Projet audité</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">date</td>
-<td style="text-align: left;">DATE</td>
+<td style="text-align: left;"><code>date</code></td>
+<td style="text-align: left;"><code>DATE</code></td>
 <td style="text-align: left;">Non nul</td>
 <td style="text-align: left;">Date de réalisation de l’audit</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">complexity</td>
-<td style="text-align: left;">FLOAT</td>
+<td style="text-align: left;"><code>complexity</code></td>
+<td style="text-align: left;"><code>FLOAT</code></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;">Indicateur de complexité du code analysé</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">energy_consumption_kwh</td>
-<td style="text-align: left;">FLOAT</td>
+<td style="text-align: left;"><code>energy_consumption_kwh</code></td>
+<td style="text-align: left;"><code>FLOAT</code></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;">Estimation de la consommation énergétique du code (kWh)</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">carbon_emission_gco2e</td>
-<td style="text-align: left;">FLOAT</td>
+<td style="text-align: left;"><code>carbon_emission_gco2e</code></td>
+<td style="text-align: left;"><code>FLOAT</code></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;">Estimation des émissions carbone associées (gCO2e)</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">type_qualitygate</td>
-<td style="text-align: left;">VARCHAR</td>
+<td style="text-align: left;"><code>type_qualitygate</code></td>
+<td style="text-align: left;"><code>VARCHAR</code></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;">Liste des vulnérabilités détectées dans le code ou les dépendances</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">status_qualitygate</td>
-<td style="text-align: left;">VARCHAR</td>
+<td style="text-align: left;"><code>status_qualitygate</code></td>
+<td style="text-align: left;"><code>VARCHAR</code></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;">Liste des composants et dépendances du projet (packages, versions, licences, etc.)</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">certificate_pdf</td>
-<td style="text-align: left;">BYTEA</td>
+<td style="text-align: left;"><code>certificate_pdf</code></td>
+<td style="text-align: left;"><code>BYTEA</code></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;">Certificat de l’audit</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">certificate_signed</td>
-<td style="text-align: left;">JSONB</td>
+<td style="text-align: left;"><code>certificate_signed</code></td>
+<td style="text-align: left;"><code>JSONB</code></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">certificate_id</td>
-<td style="text-align: left;">TEXT UNIQUE</td>
+<td style="text-align: left;"><code>certificate_id</code></td>
+<td style="text-align: left;"><code>TEXT UNIQUE</code></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;">Identifiant du certificat</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">sbom_content</td>
-<td style="text-align: left;">BYTEA</td>
+<td style="text-align: left;"><code>sbom_content</code></td>
+<td style="text-align: left;"><code>BYTEA</code></td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;">Contenu du SBOM</td>
 </tr>
@@ -429,9 +422,9 @@ ul.task-list li input[type="checkbox"] {
 <h4 data-number="2.4.3" class="anchored" data-anchor-id="évolutions-du-diagramme-de-classes"><span class="header-section-number">2.4.3</span> Évolutions du diagramme de classes</h4>
 <p>Le diagramme de classes du dossier d’analyse a évolué pendant l’implémentation. Trois retours du tuteur et quelques décisions internes nous ont conduits à le modifier. Ces changements reflètent une compréhension du sujet qui s’est affinée au contact du code.</p>
 <p>Trois de ces modifications sont détaillées ci-dessous.</p>
-<p>D’abord, la plus impactante est l’abandon du fichier File persisté. La raison est la suivante: le modèle initial traitait un fichier comme une entité durable, dotée d’un identifiant et d’un chemin sur le disque. Or, un fichier soumis à l’audit n’a en réalité pas vocation à être conservé. File est ainsi devenue une classe abstraite légère, et l’application a cessé de stocker le code source de ses utilisateurs. Ce qui est aussi préférable en matière de la confidentialité.</p>
+<p>D’abord, la plus impactante est l’abandon du fichier <code>File</code> persisté. La raison est la suivante: le modèle initial traitait un fichier comme une entité durable, dotée d’un identifiant et d’un chemin sur le disque. Or, un fichier soumis à l’audit n’a en réalité pas vocation à être conservé. <code>File</code> est ainsi devenue une classe abstraite légère, et l’application a cessé de stocker le code source de ses utilisateurs. Ce qui est aussi préférable en matière de la confidentialité.</p>
 <p>Ensuite, la gravité d’une vulnérabilité est passée d’un attribut à un type. Compter les vulnérabilités critiques dans la Quality Gate s’écrit désormais par un test d’instance, sans comparaison de chaînes de caractères, donc sans risque de faute de frappe silencieuse.</p>
-<p>Enfin, les appels aux API externes n’apparaissaient pas du tout dans le diagramme initial. En effet, l’accès au réseau était implicitement contenu dans SecurityService. Deux classes dédiées, API_OSV et API_DEPSDEV, l’en ont extrait. Le service ne manipule plus que des objets Vulnerability et Licence, ce qui permet de le tester sans appel réseau.</p>
+<p>Enfin, les appels aux API externes n’apparaissaient pas du tout dans le diagramme initial. En effet, l’accès au réseau était implicitement contenu dans <code>SecurityService</code>. Deux classes dédiées, <code>API_OSV</code> et <code>API_DEPSDEV</code>, l’en ont extrait. Le service ne manipule plus que des objets <code>Vulnerability</code> et <code>Licence</code>, ce qui permet de le tester sans appel réseau.</p>
 </section>
 <section id="les-patrons-de-conception-retenus" class="level4" data-number="2.4.4">
 <h4 data-number="2.4.4" class="anchored" data-anchor-id="les-patrons-de-conception-retenus"><span class="header-section-number">2.4.4</span> Les patrons de conception retenus</h4>
@@ -443,7 +436,7 @@ ul.task-list li input[type="checkbox"] {
 <li><code>GlobalQualityGate</code> combine l’ensemble des critères : l’audit n’est validé que s’ils sont tous respectés.</li>
 </ul>
 <p>L’utilisateur choisit le type de Quality Gate au lancement de l’audit, et le service d’audit appelle <code>evaluate</code> sans savoir quelle classe il manipule. Ajouter un nouveau type de contrôle ne demande donc aucune modification du code existant.</p>
-<p>Le deuxième patron est une fabrique, <code>QualityGateFactory</code>. Elle centralise la création de ces objets à partir d’une chaîne de caractères (« eco », « security » ou « global ») transmise dans la requête d’audit. C’est le seul endroit du code qui connaît la correspondance entre ce mot-clé et la classe à instancier, et toute autre valeur y lève une erreur explicite. Le diagramme ci-dessous montre l’articulation de ces deux patrons.</p>
+<p>Le deuxième patron est une fabrique, <code>QualityGateFactory</code>. Elle centralise la création de ces objets à partir d’une chaîne de caractères (“eco”, “security” ou “global”) transmise dans la requête d’audit. C’est le seul endroit du code qui connaît la correspondance entre ce mot-clé et la classe à instancier, et toute autre valeur y lève une erreur explicite. Le diagramme ci-dessous montre l’articulation de ces deux patrons.</p>
 <p>Le second usage de <em>Strategy</em> concerne l’analyse des fichiers de dépendances. <code>TxtService</code>, <code>JsonService</code>, <code>XmlService</code> et <code>TomlService</code> exposent tous la même méthode <code>parse_dependencies(content)</code>, chacun avec sa propre façon de lire son format. <code>FileService</code> choisit l’un d’eux selon l’extension du fichier soumis. Prendre en charge un nouveau gestionnaire de dépendances revient donc à écrire une classe de plus.</p>
 <p>Le troisième patron est le <em>Singleton</em>. La connexion à la base de données et les quatre classes de la couche DAO partagent une métaclasse <code>Singleton</code> : quel que soit le nombre d’appels à <code>DBConnection()</code>, une seule connexion est ouverte pour toute l’application.</p>
 <p>Ces patrons reposent sur des classes abstraites, c’est-à-dire des classes mères qui déclarent des méthodes que leurs classes filles doivent écrire elles-mêmes. Par exemple, <code>File</code> déclare <code>get_duty()</code>, que ses quatre filles <code>DependencyFile</code>, <code>SBOMFile</code>, <code>CertificateFile</code> et <code>CodeFile</code> implémentent chacune à leur manière. <code>Vulnerability</code> déclare <code>__str__</code> pour ses quatre niveaux de gravité, et <code>QualityGate</code> déclare <code>evaluate()</code> et <code>get_type()</code>. Si une classe fille oublie l’une de ces méthodes, Python refuse de créer l’objet et l’erreur apparaît immédiatement.</p>
@@ -456,33 +449,33 @@ ul.task-list li input[type="checkbox"] {
 <p>Les cinq fonctionnalités du cahier des charges sont présentées ici dans l’ordre où elles interviennent au cours d’un audit : l’API reçoit la demande, la signature du fichier est vérifiée, les analyses de sécurité puis d’éco-conception sont lancées, le SBOM est généré, puis les résultats de l’audit sont évalués selon le type de QualityGate choisi et les seuils définis dans notre application. Enfin, l’application renvoie les résultats.</p>
 <section id="lapi-rest-et-lauthentification" class="level3" data-number="3.1">
 <h3 data-number="3.1" class="anchored" data-anchor-id="lapi-rest-et-lauthentification"><span class="header-section-number">3.1</span> L’API REST et l’authentification</h3>
-<p>L’API est construite avec FastAPI. Le point d’entrée main.py charge les variables d’environnement, initialise la journalisation, branche un middleware de log sur chaque requête et enregistre quatre routeurs. La racine redirige vers la documentation interactive, générée automatiquement à partir des modèles Pydantic : elle offre une interface de test de l’API sans avoir à écrire la moindre ligne de client.</p>
+<p>L’API est construite avec FastAPI. Le point d’entrée <code>main.py</code> charge les variables d’environnement, initialise la journalisation, branche un middleware de log sur chaque requête et enregistre quatre routeurs. La racine redirige vers la documentation interactive, générée automatiquement à partir des modèles Pydantic : elle offre une interface de test de l’API sans avoir à écrire la moindre ligne de client.</p>
 <p>Les routes exposées sont les suivantes.</p>
 <p>L’API expose ainsi plusieurs fonctionnalités complémentaires à la gestion des utilisateurs, des projets et des audits. Les nouvelles routes permettent notamment de générer des signatures HMAC pour sécuriser les échanges de fichiers, mais également de générer, télécharger et vérifier des certificats numériques.</p>
-<p>Toutes ces routes, à l’exception de la création de compte et de la connexion, sont protégées. L’authentification repose sur un jeton transmis dans l’en-tête X-Auth-Token et vérifié par une dépendance FastAPI, verify_token, injectée dans chaque route. Cette dépendance ne se contente pas de valider le jeton : elle renvoie l’utilisateur correspondant, ce qui permet d’appliquer systématiquement un second contrôle, celui de la propriété. Un projet n’est accessible que s’il appartient à l’utilisateur authentifié, grâce à la méthode find_by_id_and_user introduite à cet effet. Une tentative d’accès au projet d’autrui renvoie un code 404 et non un 403, afin de ne pas révéler l’existence du projet demandé. Les mots de passe, enfin, ne sont jamais conservés en clair : ils sont hachés en SHA-256 avant enregistrement en base.</p>
+<p>Toutes ces routes, à l’exception de la création de compte et de la connexion, sont protégées. L’authentification repose sur un jeton transmis dans l’en-tête <code>X-Auth-Token</code> et vérifié par une dépendance FastAPI, <code>verify_token</code>, injectée dans chaque route. Cette dépendance ne se contente pas de valider le jeton : elle renvoie l’utilisateur correspondant, ce qui permet d’appliquer systématiquement un second contrôle, celui de la propriété. Un projet n’est accessible que s’il appartient à l’utilisateur authentifié, grâce à la méthode <code>find_by_id_and_user</code> introduite à cet effet. Une tentative d’accès au projet d’autrui renvoie un code 404 et non un 403, afin de ne pas révéler l’existence du projet demandé. Les mots de passe, enfin, ne sont jamais conservés en clair : ils sont hachés en SHA-256 avant enregistrement en base.</p>
 </section>
 <section id="signature-cryptographique-hmac" class="level3" data-number="3.2">
 <h3 data-number="3.2" class="anchored" data-anchor-id="signature-cryptographique-hmac"><span class="header-section-number">3.2</span> Signature cryptographique HMAC</h3>
-<p>À la création d’un projet, le serveur (API) tire une clé secrète de 32 octets avec le module secrets de la bibliothèque standard, l’enregistre en base et la renvoie une seule fois à l’utilisateur, encodée en Base64. C’est ensuite à celui-ci de signer ses soumissions avec cette clé.</p>
+<p>À la création d’un projet, le serveur (API) tire une clé secrète de 32 octets avec le module <code>secrets</code> de la bibliothèque standard, l’enregistre en base et la renvoie une seule fois à l’utilisateur, encodée en Base64. C’est ensuite à celui-ci de signer ses soumissions avec cette clé.</p>
 <p>La signature est un HMAC-SHA256 calculé, avec la clé secrète, sur la concaténation de l’identifiant du projet, du fichier de code et du fichier de dépendances. Un détail de l’implémentation mérite d’être souligné : chaque élément est précédé de sa longueur, codée sur huit octets. Sans cette précaution, deux soumissions différentes pourraient produire la même concaténation. En effet, un octet déplacé de la fin du code vers le début du fichier de dépendances donnerait la même chaîne, donc la même signature, et permettrait de faire passer un contenu pour un autre. Le préfixe de longueur rend la concaténation non ambiguë.</p>
-<p>Lors de la vérification, l’API recalcule la signature attendue à partir de la clé secrète et du contenu reçue puis la compare avec celle envoyée par l’utilisateur. Cette comparaison utilise hmac.compare_digest dont le temps d’exécution ne dépend pas de la position du premier octet différent entre la signature envoyée par l’utilisateur et celle calculée par l’API. Elle est donc à temps constant. Une comparaison naïve s’arrête dès qu’elle trouve un octet différent, ce qui permettrait en théorie de reconstituer une signature valide octet par octet, simplement en mesurant le temps de réponse du serveur.</p>
+<p>Lors de la vérification, l’API recalcule la signature attendue à partir de la clé secrète et du contenu reçue puis la compare avec celle envoyée par l’utilisateur. Cette comparaison utilise <code>hmac.compare_digest</code> dont le temps d’exécution ne dépend pas de la position du premier octet différent entre la signature envoyée par l’utilisateur et celle calculée par l’API. Elle est donc à temps constant. Une comparaison naïve s’arrête dès qu’elle trouve un octet différent, ce qui permettrait en théorie de reconstituer une signature valide octet par octet, simplement en mesurant le temps de réponse du serveur.</p>
 <p>La vérification a lieu dans la route d’audit, avant tout traitement. De ce fait, un projet dont la signature est invalide n’est jamais analysé et la requête est rejetée avec un code 401. Cet ordre est important, puisque l’étape suivante consiste précisément à analyser du code fourni par un tiers.</p>
-<p>Nous avons choisi un mécanisme symétrique, car la vérification ne concerne que deux parties : l’utilisateur qui détient la clé, et l’API, qui la connaît aussi et qui vérifie les soumissions. Une signature asymétrique aurait été possible : l’API conserverait seulement une clé publique, ce qui rendrait une fuite de la base sans conséquence, et l’utilisateur signerait avec sa clé privée. Mais son principal atout, qui est la vérification par n’importe qui avec une clé publique, ne sert à rien ici, et elle obligerait chaque utilisateur à signer lui-même avec un outil de cryptographie. En effet, étant donné que l’API ne conserve que la clé publique et que la clé privée ne doit pas être renvoyée par l’utilisateur, la route /hmac/signature disparaîtrait. Le HMAC est plus simple : il se calcule avec la bibliothèque standard et fait gérer les clés par l’API, et seule l’API vérifie la signature. Il a toutefois une limite : la clé étant stockée en base, une fuite de celle-ci permettrait de forger des signatures.</p>
+<p>Nous avons choisi un mécanisme symétrique, car la vérification ne concerne que deux parties : l’utilisateur qui détient la clé, et l’API, qui la connaît aussi et qui vérifie les soumissions. Une signature asymétrique aurait été possible : l’API conserverait seulement une clé publique, ce qui rendrait une fuite de la base sans conséquence, et l’utilisateur signerait avec sa clé privée. Mais son principal atout, qui est la vérification par n’importe qui avec une clé publique, ne sert à rien ici, et elle obligerait chaque utilisateur à signer lui-même avec un outil de cryptographie. En effet, étant donné que l’API ne conserve que la clé publique et que la clé privée ne doit pas être renvoyée par l’utilisateur, la route <code>/hmac/signature</code> disparaîtrait. Le HMAC est plus simple : il se calcule avec la bibliothèque standard et fait gérer les clés par l’API, et seule l’API vérifie la signature. Il a toutefois une limite : la clé étant stockée en base, une fuite de celle-ci permettrait de forger des signatures.</p>
 </section>
 <section id="audit-de-sécurité-des-dépendances" class="level3" data-number="3.3">
 <h3 data-number="3.3" class="anchored" data-anchor-id="audit-de-sécurité-des-dépendances"><span class="header-section-number">3.3</span> Audit de sécurité des dépendances</h3>
 <p>La première étape de l’audit d’un projet dans notre application est l’analyse sécuritaire du fichier de dépendance du projet. Cette analyse comprend la recherche de vulnérabilités et de licences à risque dans le fichier étudié. Pour ce faire, nous faisons appel à deux API externes : l’API OSV (Open Source Vulnerabilities), qui permet d’identifier toute vulnérabilité de sécurité connues liée à un package donné, et l’API DEPS DEV, développée par Google, qui fournit des informations sur les packages, notamment les licences qui leur sont associées.</p>
 <section id="appel-à-lapi-osv" class="level4" data-number="3.3.1">
 <h4 data-number="3.3.1" class="anchored" data-anchor-id="appel-à-lapi-osv"><span class="header-section-number">3.3.1</span> Appel à l’API OSV</h4>
-<p>Pour appeler l’API, il nous faut lui fournir un json contenant le package étudié (la dépendance et son écosystème), ainsi que sa version. Notre application prend en charge quatre écosystèmes de gestion de dépendances : PyPI, npm, Maven et crates.io. Chacun est associé à son fichier de configuration respectif (requirements.txt, package.json, pom.xml et Cargo.toml). Ainsi, l’utilisation de l’application requiert un fichier de dépendances respectant l’un des formats mentionnés précédemment.</p>
+<p>Pour appeler l’API, il nous faut lui fournir un json contenant le package étudié (la dépendance et son écosystème), ainsi que sa version. Notre application prend en charge quatre écosystèmes de gestion de dépendances : PyPI, npm, Maven et crates.io. Chacun est associé à son fichier de configuration respectif (<code>requirements.txt</code>, <code>package.json</code>, <code>pom.xml</code> et <code>Cargo.toml</code>). Ainsi, l’utilisation de l’application requiert un fichier de dépendances respectant l’un des formats mentionnés précédemment.</p>
 <p>Une fois les informations transmises à l’API, celle-ci renvoie les données ainsi que les vulnérabilités détectées pour l’adresse renseignée. Chaque vulnérabilité peut ensuite être consultée et évaluée afin de déterminer son niveau de gravité.</p>
 <p>Seulement, l’API ne dispose pas d’évaluation de degré de dangerosité pour les vulnérabilités Ainsi, l’application elle-même définit des niveaux de gravité selon le vecteur CVSS fourni par OSV, comme défini ci-après.</p>
 <p>Une vulnérabilité est jugée :</p>
 <ul>
-<li>Faible (LOW) si CVSS &lt; 4</li>
-<li>Médium (MEDIUM) si CVSS &lt; 7</li>
-<li>Élevée (HIGH) si CVSS &lt; 9</li>
-<li>Critique (CRITICAL) si CVSS &gt;= 9</li>
+<li>Faible (<code>LOW</code>) si CVSS &lt; 4</li>
+<li>Médium (<code>MEDIUM</code>) si CVSS &lt; 7</li>
+<li>Élevée (<code>HIGH</code>) si CVSS &lt; 9</li>
+<li>Critique (<code>CRITICAL</code>) si CVSS &gt;= 9</li>
 </ul>
 <p>Une vulnérabilité dont le vecteur CVSS est nul ou inexistant n’est pas renvoyée par la méthode de détection de vulnérabilité, et l’identifiant CVE, lorsqu’il existe, est enregistré par la méthode.</p>
 </section>
@@ -493,35 +486,35 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="gestion-des-api-externes" class="level4" data-number="3.3.3">
 <h4 data-number="3.3.3" class="anchored" data-anchor-id="gestion-des-api-externes"><span class="header-section-number">3.3.3</span> Gestion des API externes</h4>
-<p>Enfin, la classe SecurityService centralise et supervise les appels aux deux API externes. Elle repose sur trois méthodes principales :</p>
+<p>Enfin, la classe <code>SecurityService</code> centralise et supervise les appels aux deux API externes. Elle repose sur trois méthodes principales :</p>
 <ul>
-<li>detect_ecosystem : identifie l’écosystème associé au fichier de dépendances fourni, en fonction de son nom. Elle permet ainsi de déterminer le format à utiliser lors des appels aux API.</li>
-<li>find_vulnerabilities : récupère la liste des dépendances présentes dans le fichier, puis interroge l’API OSV pour chacune d’entre elles afin d’identifier les éventuelles vulnérabilités associées.</li>
-<li>find_licences : récupère également les dépendances du fichier et interroge l’API deps.dev afin d’obtenir les licences correspondantes. Les licences obtenues sont ensuite regroupées dans une liste, en évitant les doublons.</li>
+<li><code>detect_ecosystem</code> : identifie l’écosystème associé au fichier de dépendances fourni, en fonction de son nom. Elle permet ainsi de déterminer le format à utiliser lors des appels aux API.</li>
+<li><code>find_vulnerabilities</code> : récupère la liste des dépendances présentes dans le fichier, puis interroge l’API OSV pour chacune d’entre elles afin d’identifier les éventuelles vulnérabilités associées.</li>
+<li><code>find_licences</code> : récupère également les dépendances du fichier et interroge l’API deps.dev afin d’obtenir les licences correspondantes. Les licences obtenues sont ensuite regroupées dans une liste, en évitant les doublons.</li>
 </ul>
 </section>
 </section>
 <section id="analyse-éco-énergétique-du-code" class="level3" data-number="3.4">
 <h3 data-number="3.4" class="anchored" data-anchor-id="analyse-éco-énergétique-du-code"><span class="header-section-number">3.4</span> Analyse éco-énergétique du code</h3>
-<p>L’analyse éco-énergétique repose entièrement sur l’arbre syntaxique abstrait (AST) du code soumis : le programme n’est jamais exécuté, il est seulement lu. L’AST est fourni par le module ast. Ce choix écarte tout risque lié à l’exécution d’un code inconnu, mais il impose de raisonner sur une machine théorique et d’assumer des hypothèses explicites.</p>
+<p>L’analyse éco-énergétique repose entièrement sur l’arbre syntaxique abstrait (AST) du code soumis : le programme n’est jamais exécuté, il est seulement lu. L’AST est fourni par le module <code>ast</code>. Ce choix écarte tout risque lié à l’exécution d’un code inconnu, mais il impose de raisonner sur une machine théorique et d’assumer des hypothèses explicites.</p>
 <p>Comme le code n’est pas exécuté, certaines valeurs, notamment utilisées lors des boucles, sont inconnues. De ce fait, deux constantes sont introduites pour servir de valeurs par défaut :</p>
 <ul>
-<li>DEFAULT_LOOP_LENGTH = 10 (nombre d’itérations d’une boucle inconnue)</li>
-<li>DEFAULT_RECURSION_DEPTH = 10 (profondeur d’une fonction récursive)</li>
+<li><code>DEFAULT_LOOP_LENGTH</code> = 10 (nombre d’itérations d’une boucle inconnue)</li>
+<li><code>DEFAULT_RECURSION_DEPTH</code> = 10 (profondeur d’une fonction récursive)</li>
 </ul>
 <section id="analyse-statique-du-code-avec-last" class="level4" data-number="3.4.1">
 <h4 data-number="3.4.1" class="anchored" data-anchor-id="analyse-statique-du-code-avec-last"><span class="header-section-number">3.4.1</span> Analyse statique du code avec l’AST</h4>
-<p>L’analyse est centralisée dans la classe EcoService. La méthode analyze() constitue le point d’entrée de cette fonctionnalité. Elle réalise successivement le parsing du fichier, la détection des anti-patterns, l’extraction de différentes métriques, puis l’estimation de la complexité, de la consommation énergétique et des émissions carbone.</p>
-<p>Le code est parsé une seule fois grâce à la méthode parse(). Celle-ci récupère le contenu du fichier, le décode si nécessaire lorsqu’il est fourni sous forme d’octets, puis utilise ast.parse() pour construire l’arbre syntaxique.</p>
-<p>À partir de cet arbre, la méthode _extract_metrics() effectue un parcours des nœuds avec ast.walk() afin de relever plusieurs indicateurs :</p>
+<p>L’analyse est centralisée dans la classe <code>EcoService</code>. La méthode <code>analyze</code>() constitue le point d’entrée de cette fonctionnalité. Elle réalise successivement le parsing du fichier, la détection des anti-patterns, l’extraction de différentes métriques, puis l’estimation de la complexité, de la consommation énergétique et des émissions carbone.</p>
+<p>Le code est parsé une seule fois grâce à la méthode <code>parse</code>(). Celle-ci récupère le contenu du fichier, le décode si nécessaire lorsqu’il est fourni sous forme d’octets, puis utilise <code>ast.parse</code>() pour construire l’arbre syntaxique.</p>
+<p>À partir de cet arbre, la méthode <code>_extract_metrics</code>() effectue un parcours des nœuds avec <code>ast.walk</code>() afin de relever plusieurs indicateurs :</p>
 <ul>
-<li>ast_nodes : nombre total de nœuds présents dans l’arbre syntaxique ;</li>
-<li>loops : nombre de boucles for et while ;</li>
-<li>nested_loops_depth : profondeur maximale des boucles imbriquées ;</li>
-<li>conditions : nombre de conditions if et d’expressions conditionnelles ;</li>
-<li>function_calls : nombre d’appels de fonctions ;</li>
-<li>operations : nombre d’opérations arithmétiques, logiques, de comparaison et d’affectations augmentées ;</li>
-<li>recursive_functions : ensemble des fonctions qui comportent un appel récursif direct.</li>
+<li><code>ast_nodes</code> : nombre total de nœuds présents dans l’arbre syntaxique ;</li>
+<li><code>loops</code> : nombre de boucles <code>for</code> et <code>while</code> ;</li>
+<li><code>nested_loops_depth</code> : profondeur maximale des boucles imbriquées ;</li>
+<li><code>conditions</code> : nombre de conditions <code>if</code> et d’expressions conditionnelles ;</li>
+<li><code>function_calls</code> : nombre d’appels de fonctions ;</li>
+<li><code>operations</code> : nombre d’opérations arithmétiques, logiques, de comparaison et d’affectations augmentées ;</li>
+<li><code>recursive_functions</code> : ensemble des fonctions qui comportent un appel récursif direct.</li>
 </ul>
 <p>Ces métriques permettent d’obtenir une première représentation de la structure du programme et de repérer les constructions susceptibles d’augmenter son coût de calcul.</p>
 </section>
@@ -533,7 +526,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="estimation-de-la-complexité-du-code" class="level4" data-number="3.4.3">
 <h4 data-number="3.4.3" class="anchored" data-anchor-id="estimation-de-la-complexité-du-code"><span class="header-section-number">3.4.3</span> Estimation de la complexité du code</h4>
-<p>En complément de la détection des anti-patterns, CleanOps calcule un indicateur de complexité. Cette complexité prend la forme d’un float qui évalue le nombre d’opérations élémentaires.</p>
+<p>En complément de la détection des anti-patterns, CleanOps calcule un indicateur de complexité. Cette complexité prend la forme d’un <code>float</code> qui évalue le nombre d’opérations élémentaires.</p>
 <p>L’estimation s’initialise à 1, auquel on ajoute le coût de chaque boucle for et while, en prenant en compte si elle est imbriquée ou non. Lorsque la valeur n’est pas identifiable, elle est fixée à 10 par défaut.</p>
 <p>Pour la récursivité, on compte les appels récursifs lors d’une exécution de la fonction, en tenant en compte des boucles. Dans le cas où la profondeur de la fonction récursive n’est pas identifiable, elle sera fixé à 10.</p>
 <p>Contrairement au calcul énergétique, cette estimation prend en compte le nombre d’itérations des boucles lorsque celui-ci peut être déterminé statiquement.</p>
@@ -545,8 +538,8 @@ ul.task-list li input[type="checkbox"] {
 <section id="génération-du-sbom" class="level3" data-number="3.5">
 <h3 data-number="3.5" class="anchored" data-anchor-id="génération-du-sbom"><span class="header-section-number">3.5</span> Génération du SBOM</h3>
 <p>Le SBOM (Software Bill of Materials) est l’inventaire des composants d’un projet et contient notamment la liste exhaustive des bibliothèques que ce dernier embarque, avec leurs versions. C’est ainsi l’équivalent d’une liste d’ingrédients car elle permet à n’importe quel outil, ou à n’importe quel auditeur, de savoir ce qui tourne réellement dans l’application.</p>
-<p>CleanOps le produit au format CycloneDX 1.5, en JSON, l’un des deux standards du domaine avec SPDX (Software Package Data Exchange). Chaque dépendance y devient un composant identifié par un purl qui est une écriture normalisée et qui identifie un package sans ambiguïté quel que soit le langage.</p>
-<p>Deux précautions sont prises avant d’écrire le document. D’une part, les noms des packages sont uniformisés. Par exemple, on normalise “Flask_SQLAlchemy” en “flask_sqlalchemy” pour qu’ils soient considérés comme un seul package. D’autre part, les versions sont aussi débarrassés de leurs préfixes de contrainte (^1.2.0 devient 1.2.0 ). Les doublons ainsi révélés sont supprimés.</p>
+<p>CleanOps le produit au format CycloneDX 1.5, en JSON, l’un des deux standards du domaine avec SPDX (Software Package Data Exchange). Chaque dépendance y devient un composant identifié par un <code>purl</code> qui est une écriture normalisée et qui identifie un package sans ambiguïté quel que soit le langage.</p>
+<p>Deux précautions sont prises avant d’écrire le document. D’une part, les noms des packages sont uniformisés. Par exemple, on normalise <code>Flask_SQLAlchemy</code> en <code>flask_sqlalchemy</code> pour qu’ils soient considérés comme un seul package. D’autre part, les versions sont aussi débarrassés de leurs préfixes de contrainte (<code>^1.2.0</code> devient <code>1.2.0</code> ). Les doublons ainsi révélés sont supprimés.</p>
 <p>Le document final, dont la structure sera illustrée par un tableau ultérieurement, déclare l’outil qui l’a produit, le projet audité, la liste des composants et les liens des dépendance entre eux. De plus, si l’audit a trouvé des vulnérabilités, elles y sont jointes avec leur gravité, leur source et le composant qu’elles affectent. Le fichier SBOM est alors directement exploitable par un outil tiers.</p>
 </section>
 <section id="journalisation-historique-quality-gate-et-certificat" class="level3" data-number="3.6">
@@ -558,7 +551,7 @@ ul.task-list li input[type="checkbox"] {
 <h2 data-number="4" class="anchored" data-anchor-id="tests-et-qualité-du-code"><span class="header-section-number">4</span> Tests et qualité du code</h2>
 <section id="stratégie-de-test" class="level3" data-number="4.1">
 <h3 data-number="4.1" class="anchored" data-anchor-id="stratégie-de-test"><span class="header-section-number">4.1</span> Stratégie de test</h3>
-<p>Le projet compte 246 fonctions de test, toutes exécutées par pytest. Ce sont des tests unitaires car chaque test vérifie une seule classe, isolée de ses dépendances. Un test de service ne touche jamais la base de données, et un test de DAO ne l’atteint pas davantage. Cette isolation a un coût, celui d’écrire les doublures, mais elle garantit que la campagne complète s’exécute en quelques secondes, sans serveur ni réseau, et qu’un test qui échoue désigne la classe fautive sans ambiguïté.</p>
+<p>Le projet compte 246 fonctions de test, toutes exécutées par <code>pytest</code>. Ce sont des tests unitaires car chaque test vérifie une seule classe, isolée de ses dépendances. Un test de service ne touche jamais la base de données, et un test de DAO ne l’atteint pas davantage. Cette isolation a un coût, celui d’écrire les doublures, mais elle garantit que la campagne complète s’exécute en quelques secondes, sans serveur ni réseau, et qu’un test qui échoue désigne la classe fautive sans ambiguïté.</p>
 <p>La méthode employée pour effectuer les tests unitaires est l’approche GIVEN, WHEN, THEN: un bloc GIVEN qui prépare les données, un bloc WHEN qui appelle la méthode testée, un bloc THEN qui vérifie le résultat. Chaque méthode est ainsi éprouvée dans son cas nominal et dans ses cas d’échec.</p>
 <p>D’ailleurs, le mocking, une pratique consistant à simuler le comportement de composants tiers, a été intégré à notre stratégie de tests. Il garantit que chaque test n’interagit qu’avec la fonctionnalité spécifique à tester, sans dépendre d’autres composants externes. Le Mocking contribue ainsi à la robustesse des tests en évitant les défaillances causées par des éléments externes instables ou indisponibles pendant le processus de test. C’est pourquoi la connexion à la base de données dans les tests de DAO est remplacée par un faux objet.</p>
 </section>
@@ -573,11 +566,11 @@ ul.task-list li input[type="checkbox"] {
 <h3 data-number="4.3" class="anchored" data-anchor-id="les-techniques-employées-pendant-les-tests"><span class="header-section-number">4.3</span> Les techniques employées pendant les tests</h3>
 <p>Trois mécanismes de pytest structurent la campagne.</p>
 <ul>
-<li>Les doublures (unittest.mock) remplacent ce que l’on ne veut pas exécuter. Pour les DAO, c’est l’objet DBConnection qui est substitué : le test fixe à l’avance ce que le curseur doit renvoyer, puis vérifie que la méthode en tire le bon objet métier. Pour les services, c’est la méthode du DAO qui est remplacée.</li>
-<li>Les fixtures factorisent cette préparation. La fixture cursor des tests de DAO fournit un faux curseur à tous les tests du fichier ; une fixture-usine construit à la demande un projet dont le fichier de dépendances porte le nom voulu.</li>
-<li>Le paramétrage (<span class="citation" data-cites="pytest.mark.parametrize">@pytest.mark.parametrize</span>) permet d’éprouver une même méthode sur une série de cas sans dupliquer le code notamment les quatre niveaux de gravité, les scores CVSS aux bornes des intervalles, plusieurs extraits de code source pour l’analyse énergétique. Trente-quatre fonctions de test sont paramétrées et donnent donc, à l’exécution, un nombre de cas supérieur.</li>
+<li>Les doublures (<code>unittest.mock</code>) remplacent ce que l’on ne veut pas exécuter. Pour les DAO, c’est l’objet <code>DBConnection</code> qui est substitué : le test fixe à l’avance ce que le curseur doit renvoyer, puis vérifie que la méthode en tire le bon objet métier. Pour les services, c’est la méthode du DAO qui est remplacée.</li>
+<li>Les fixtures factorisent cette préparation. La fixture <code>cursor</code> des tests de DAO fournit un faux curseur à tous les tests du fichier ; une fixture-usine construit à la demande un projet dont le fichier de dépendances porte le nom voulu.</li>
+<li>Le paramétrage (<code>@pytest.mark.parametrize</code>) permet d’éprouver une même méthode sur une série de cas sans dupliquer le code notamment les quatre niveaux de gravité, les scores CVSS aux bornes des intervalles, plusieurs extraits de code source pour l’analyse énergétique. Trente-quatre fonctions de test sont paramétrées et donnent donc, à l’exécution, un nombre de cas supérieur.</li>
 </ul>
-<p>Deux tests font exception réunis dans test_api_network.py. test_osv_real_call interroge réellement OSV sur une version de requests connue pour être vulnérable, et test_depsdev_real_call interroge deps.dev sur une version dont la licence est connue. Tous deux vérifient non pas notre code mais la stabilité des API externes.</p>
+<p>Deux tests font exception réunis dans <code>test_api_network.py</code>. <code>test_osv_real_call</code> interroge réellement OSV sur une version de requests connue pour être vulnérable, et <code>test_depsdev_real_call</code> interroge deps.dev sur une version dont la licence est connue. Tous deux vérifient non pas notre code mais la stabilité des API externes.</p>
 </section>
 <section id="les-limites-des-tests-effectués" class="level3" data-number="4.4">
 <h3 data-number="4.4" class="anchored" data-anchor-id="les-limites-des-tests-effectués"><span class="header-section-number">4.4</span> Les limites des tests effectués</h3>
@@ -588,7 +581,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="difficultés-rencontrées" class="level2" data-number="5">
 <h2 data-number="5" class="anchored" data-anchor-id="difficultés-rencontrées"><span class="header-section-number">5</span> Difficultés rencontrées</h2>
 <p>Les difficultés rencontrées se répartissent en trois familles : l’organisation, les choix de conception et la technique.</p>
-<p>Sur le plan de l’organisation, le projet a démarré à six, mais pas en même temps : une membre de l’équipe est arrivée à l’ENSAI le 7 septembre, une semaine après le lancement, ce qui a demandé une phase d’appropriation puis une redéfinition des rôles. Travailler à six sur un même dépôt a par ailleurs posé très tôt des problèmes de configuration Git concernant les adresses de courriel refusées au push, conflits sur la branche principale mais réglés par le passage au travail sur branches. Enfin, la mise en place des variables d’environnement de connexion à la base a été un point de friction récurrent : il a fallu plusieurs semaines pour que chaque poste dispose d’un fichier .env fonctionnel, et tant que ce n’était pas le cas, les tests de la couche DAO n’étaient pas exécutables par tout le monde.</p>
+<p>Sur le plan de l’organisation, le projet a démarré à six, mais pas en même temps : une membre de l’équipe est arrivée à l’ENSAI le 7 septembre, une semaine après le lancement, ce qui a demandé une phase d’appropriation puis une redéfinition des rôles. Travailler à six sur un même dépôt a par ailleurs posé très tôt des problèmes de configuration Git concernant les adresses de courriel refusées au push, conflits sur la branche principale mais réglés par le passage au travail sur branches. Enfin, la mise en place des variables d’environnement de connexion à la base a été un point de friction récurrent : il a fallu plusieurs semaines pour que chaque poste dispose d’un fichier <code>.env</code> fonctionnel, et tant que ce n’était pas le cas, les tests de la couche DAO n’étaient pas exécutables par tout le monde.</p>
 <p>Sur le plan de la conception, la principale difficulté a été de savoir quoi faire des fichiers soumis. La question est restée ouverte plus d’un mois dans nos pistes de réflexion. La question posée était: fallait-il les stocker en base, sur le disque, et comment en retrouver le chemin? Le retour du tuteur a finalement renversé le problème car il ne faut pas les conserver du tout, mais cette décision tardive a entraîné la suppression d’une table, d’une classe DAO et de deux routes déjà écrites. C’est le principal poste de travail perdu du projet, et il porte un enseignement : une question de conception non tranchée coûte plus cher chaque semaine où elle reste ouverte.</p>
 <p>Sur le plan technique, la mise au point de la signature HMAC a été la plus coûteuse. La difficulté ne venait pas de l’algorithme, mais du fait qu’un seul octet de différence entre ce que signe le client et ce que recalcule le serveur produit un rejet, sans aucune indication sur la cause. Il a fallu fixer précisément la convention d’encodage qui inclut l’ordre des éléments, les préfixes de longueur, l’encodage Base64 à l’entrée et à la sortie avant que les signatures ne concordent. Le stockage de la clé secrète, aujourd’hui conservée en clair dans la base, reste par ailleurs une faiblesse identifiée et non corrigée.</p>
 <div style="page-break-after: always;"></div>
@@ -614,7 +607,41 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="annexes" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="annexes">Annexes</h2>
-<p>[À placer ici : le diagramme de classes complet, le diagramme de séquence, le diagramme d’architecture, le modèle physique des données à jour, les deux diagrammes de Gantt, une capture de la documentation Swagger et un exemple de SBOM généré. À décider également : des bilans personnels par membre, comme dans les rapports des années précédentes.]</p>
+<p>[À placer ici : le diagramme de classes complet, le diagramme de séquence, le diagramme d’activité (ou alors rajouter partie), le modèle physique des données à jour, les deux diagrammes de Gantt, une capture de la documentation Swagger et un exemple de SBOM généré. À décider également : des bilans personnels par membre, comme dans les rapports des années précédentes.]</p>
+<section id="fichiers-de-dépendances-pris-en-charge" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="fichiers-de-dépendances-pris-en-charge">Fichiers de dépendances pris en charge</h3>
+
+</section>
+<section id="diagramme-de-classes-complet" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="diagramme-de-classes-complet">Diagramme de classes complet</h3>
+<div style="page-break-after: always;"></div>
+</section>
+</section>
+<section id="note-individuelle" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="note-individuelle">Note individuelle</h2>
+<section id="manambiravaka-anaëlle" class="level3" data-number="6.1">
+<h3 data-number="6.1" class="anchored" data-anchor-id="manambiravaka-anaëlle"><span class="header-section-number">6.1</span> MANAMBIRAVAKA Anaëlle</h3>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="nadin-sarah" class="level3" data-number="6.2">
+<h3 data-number="6.2" class="anchored" data-anchor-id="nadin-sarah"><span class="header-section-number">6.2</span> NADIN Sarah”</h3>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="nicolie-galahade" class="level3" data-number="6.3">
+<h3 data-number="6.3" class="anchored" data-anchor-id="nicolie-galahade"><span class="header-section-number">6.3</span> NICOLIE Galahade</h3>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="perrin-beau-madie" class="level3" data-number="6.4">
+<h3 data-number="6.4" class="anchored" data-anchor-id="perrin-beau-madie"><span class="header-section-number">6.4</span> PERRIN-BEAU Madie</h3>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="vilarrupla-thomas" class="level3" data-number="6.5">
+<h3 data-number="6.5" class="anchored" data-anchor-id="vilarrupla-thomas"><span class="header-section-number">6.5</span> VILARRUPLA Thomas</h3>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="zhu-annabelle" class="level3" data-number="6.6">
+<h3 data-number="6.6" class="anchored" data-anchor-id="zhu-annabelle"><span class="header-section-number">6.6</span> ZHU Annabelle</h3>
+</section>
 </section>
 
 </main>
