@@ -37,6 +37,21 @@ class AuditDao(metaclass=Singleton):
 
     @staticmethod
     def _get_quality_gate_data(quality_gate):
+        """
+        Extract the type and status of a quality gate for storage.
+
+        Parameters
+        ----------
+        quality_gate : QualityGate or str or None
+            Quality gate of the audit. A string is accepted for
+            backward compatibility and is considered as the status.
+
+        Returns
+        -------
+        tuple of (str or None, str or None)
+            Type and status of the quality gate. Both are None if
+            no quality gate is given.
+        """
         if quality_gate is None:
             return None, None
 
