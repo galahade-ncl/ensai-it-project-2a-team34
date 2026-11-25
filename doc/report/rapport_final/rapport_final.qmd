@@ -900,6 +900,16 @@ https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-218.pdf
 \label{tab:fichiers-ecosystemes}
 \end{table}
 
+### Diagramme de séquence {.unnumbered}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{img/sequence_diagramme.png}
+    \caption{Diagramme de séquence de l'application (version courte)}
+    \label{fig:diagramme-sequence}
+\end{figure}
+
 ```{=latex}
 \newgeometry{margin=1cm}
 \begin{landscape}
@@ -919,16 +929,6 @@ https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-218.pdf
 \end{landscape}
 \restoregeometry
 ```
-
-### Diagramme de séquence {.unnumbered}
-
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{img/sequence_diagramme.png}
-    \caption{Diagramme de séquence de l'application (version courte)}
-    \label{fig:diagramme-sequence}
-\end{figure}
 
 
 {{< pagebreak >}}
