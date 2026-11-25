@@ -1007,6 +1007,38 @@ Finalement, ce projet m’a permis d’en apprendre beaucoup sur le travail d’
 
 ### PERRIN-BEAU Madie {.unnumbered}
 
+**Ma participation au projet**
+
+Dès le début, je me suis orientée vers le rôle de tech lead et j'ai pris une place importante dans les décisions techniques, en partie parce que je n'avais pas pu réaliser de projet l'année précédente.
+
+Comme l'investissement du groupe était inégal, j'ai aussi assumé des tâches de cheffe de projet : organiser les réunions, suivre les tâches et relancer les membres. J'ai continué à le faire même après la redéfinition des rôles à la fin du dossier d'analyse. J'ai signalé les difficultés de communication avant la Toussaint, mais la situation ne s'est pas durablement améliorée. J'ai donc pris du recul pour laisser plus de place aux autres, ce qui a entraîné l'abandon de certaines fonctionnalités, comme la prise en charge d'autres langages que Python.
+
+Côté développement, j'ai travaillé sur plusieurs couches de l'application, surtout les services et les interactions avec les API externes, et j'ai mis en forme les dossiers sur Quarto.
+
+**Ce qui a bien fonctionné**
+
+Nous avons réparti les tâches ensemble au départ, en tenant compte de l'avis de chacun, ce qui nous a donné une organisation claire pour démarrer.
+
+**Les difficultés rencontrées**
+
+La principale difficulté a été la participation irrégulière de certains membres, qui a déséquilibré la charge de travail. Malgré mes relances et la liste des éléments restant à développer que j'ai envoyée, plusieurs tâches ont pris du retard. Le rapport aussi a été compliqué à rédiger : certaines parties ont été terminées le jour du rendu.
+
+Cumuler les responsabilités techniques et la coordination m'a beaucoup stressée, et j'ai parfois eu le sentiment de porter une trop grande partie du projet.
+
+**Ce que j'en retiens**
+
+Malgré ces difficultés, le projet m'a permis de mettre en pratique la programmation orientée objet et de mieux comprendre les API.
+
+Si c'était à refaire, je conseillerais de :
+
+- Distinguer clairement les rôles de tech lead et de cheffe de projet.
+- Fixer des échéances intermédiaires, avec un responsable pour chaque tâche.
+- Alerter le tuteur dès les premiers signes de déséquilibre.
+
+**Mon ressenti**
+
+Je termine ce projet déçue et avec une grande quantité de stresse. Malgré le temps et l'énergie investis, je regrette que nous n'ayons pas obtenu un résultat aussi complet que souhaité ni créé une vraie dynamique collective. J'aurais préféré consacrer plus de temps aux aspects techniques, qui m'intéressaient particulièrement, qu'à la coordination du groupe.
+
 {{< pagebreak >}}
 
 ### VILARRUPLA Thomas {.unnumbered}
