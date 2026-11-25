@@ -4,10 +4,12 @@ from types import SimpleNamespace
 
 import pytest
 
+from business_object.machinetype.machinetype import MachineType
 from service.eco_service import EcoService
 
 DEFAULT_LENGTH = 10
 DEFAULT_DEPTH = 10
+
 
 def code_file(source):
     """Utilitaire : faux CodeFile (seul l'attribut content est lu par EcoService)"""
@@ -539,3 +541,236 @@ def test_estimate_complexity_with_bytes_content():
 
     # THEN
     assert res == 1 + 3
+
+
+def metrics(operations=0, function_calls=0, ast_nodes=0, depth=0, recursive=None):
+    """Helper: fake metrics dictionary (keys read by calculate_energy)"""
+    return {
+        "operations": operations,
+        "function_calls": function_calls,
+        "ast_nodes": ast_nodes,
+        "nested_loops_depth": depth,
+        "recursive_functions": recursive or set(),
+    }
+
+
+def expected_energy(machine, operations):
+    """Helper: expected energy (kWh) for a number of operations on a machine"""
+    runtime_seconds = operations / machine.operations_per_second
+    return machine.cpu_power_w * runtime_seconds / 3_600_000
+
+
+# =============================================================================
+# __init__
+# =============================================================================
+
+
+def test_init_default_machine():
+    """The default machine is REFERENCE"""
+
+    # GIVEN / WHEN
+    service = EcoService()
+
+    # THEN
+    assert service.machine_type is MachineType.REFERENCE
+
+
+@pytest.mark.parametrize("machine", list(MachineType), ids=lambda m: m.name.lower())
+def test_init_with_machine(machine):
+    """The machine given to the constructor is kept"""
+
+    # GIVEN / WHEN
+    service = EcoService(machine)
+
+    # THEN
+    assert service.machine_type is machine
+
+
+# =============================================================================
+# calculate_energy
+# =============================================================================
+
+
+@pytest.mark.parametrize(
+    "source_metrics, input_size, expected_operations",
+    [
+        pytest.param(metrics(operations=2, function_calls=3, ast_nodes=5), 1000, 10, id="no_loop"),
+        pytest.param(metrics(ast_nodes=10, depth=1), 1000, 10 * 1000, id="one_loop"),
+        pytest.param(metrics(ast_nodes=10, depth=2), 1000, 10 * 1000**2, id="nested_loops"),
+        pytest.param(
+            metrics(ast_nodes=10, recursive={"f"}), 1000, 10 * 1000, id="recursion"
+        ),
+        pytest.param(
+            metrics(ast_nodes=10, depth=1, recursive={"f"}),
+            10,
+            10 * 10 * 10,
+            id="loop_and_recursion",
+        ),
+    ],
+)
+def test_calculate_energy(source_metrics, input_size, expected_operations):
+    """Estimate the energy from the number of operations on the default machine"""
+
+    # GIVEN
+    service = EcoService()
+
+    # WHEN
+    res = service.calculate_energy(source_metrics, input_size)
+
+    # THEN
+    assert res == pytest.approx(expected_energy(MachineType.REFERENCE, expected_operations))
+
+
+@pytest.mark.parametrize("machine", list(MachineType), ids=lambda m: m.name.lower())
+def test_calculate_energy_uses_the_machine(machine):
+    """The energy depends on the operations per second and CPU power of the machine"""
+
+    # GIVEN
+    service = EcoService(machine)
+    source_metrics = metrics(ast_nodes=10, depth=1)
+
+    # WHEN
+    res = service.calculate_energy(source_metrics, 1000)
+
+    # THEN
+    assert res == pytest.approx(expected_energy(machine, 10 * 1000))
+
+
+def test_calculate_energy_differs_between_machines():
+    """Two machines with a different CPU give a different energy for the same code"""
+
+    # GIVEN
+    source_metrics = metrics(ast_nodes=10, depth=1)
+
+    # WHEN
+    reference = EcoService(MachineType.REFERENCE).calculate_energy(source_metrics)
+    raspberry = EcoService(MachineType.RASPBERRY_PI).calculate_energy(source_metrics)
+
+    # THEN
+    assert reference != pytest.approx(raspberry)
+
+
+@pytest.mark.parametrize("input_size", [0, -1], ids=["zero", "negative"])
+def test_calculate_energy_invalid_input_size(input_size):
+    """Fail to estimate the energy because input_size is lower than 1"""
+
+    # GIVEN
+    service = EcoService()
+
+    # WHEN / THEN
+    with pytest.raises(ValueError):
+        service.calculate_energy(metrics(ast_nodes=10), input_size)
+
+
+# =============================================================================
+# calculate_carbon
+# =============================================================================
+
+
+@pytest.mark.parametrize("machine", list(MachineType), ids=lambda m: m.name.lower())
+def test_calculate_carbon_uses_the_machine(machine):
+    """Without explicit intensity, the carbon intensity of the machine is used"""
+
+    # GIVEN
+    service = EcoService(machine)
+
+    # WHEN
+    res = service.calculate_carbon(2.0)
+
+    # THEN
+    assert res == pytest.approx(2.0 * machine.carbon_intensity_gco2e_per_kwh)
+
+
+def test_calculate_carbon_world_mix_vs_reference():
+    """The world mix (450 gCO2e/kWh) emits 9 times more than the reference (50 gCO2e/kWh)"""
+
+    # GIVEN
+    energy = 1.0
+
+    # WHEN
+    reference = EcoService(MachineType.REFERENCE).calculate_carbon(energy)
+    world_mix = EcoService(MachineType.REFERENCE_WORLD_MIX).calculate_carbon(energy)
+
+    # THEN
+    assert world_mix == pytest.approx(9 * reference)
+
+
+def test_calculate_carbon_explicit_intensity_overrides_machine():
+    """An explicit carbon intensity has priority over the one of the machine"""
+
+    # GIVEN
+    service = EcoService(MachineType.REFERENCE_WORLD_MIX)
+
+    # WHEN
+    res = service.calculate_carbon(2.0, 100.0)
+
+    # THEN
+    assert res == pytest.approx(200.0)
+
+
+def test_calculate_carbon_zero_energy():
+    """No energy means no carbon emission"""
+
+    # GIVEN
+    service = EcoService()
+
+    # WHEN
+    res = service.calculate_carbon(0.0)
+
+    # THEN
+    assert res == 0.0
+
+
+@pytest.mark.parametrize(
+    "energy, intensity",
+    [
+        pytest.param(-1.0, None, id="negative_energy"),
+        pytest.param(1.0, -50.0, id="negative_intensity"),
+    ],
+)
+def test_calculate_carbon_invalid_values(energy, intensity):
+    """Fail to calculate the carbon emission because a value is negative"""
+
+    # GIVEN
+    service = EcoService()
+
+    # WHEN / THEN
+    with pytest.raises(ValueError):
+        service.calculate_carbon(energy, intensity)
+
+
+# =============================================================================
+# analyze
+# =============================================================================
+
+
+def test_analyze_depends_on_the_machine():
+    """The machine changes the energy and carbon, not the metrics nor the complexity"""
+
+    # GIVEN
+    source = code_file("for i in range(3):\n    x = i + 1")
+
+    # WHEN
+    reference = EcoService(MachineType.REFERENCE).analyze(source)
+    raspberry = EcoService(MachineType.RASPBERRY_PI).analyze(source)
+
+    # THEN
+    assert reference.metrics == raspberry.metrics
+    assert reference.complexity == raspberry.complexity
+    assert reference.energy_kwh != pytest.approx(raspberry.energy_kwh)
+    assert reference.carbon_gco2e != pytest.approx(raspberry.carbon_gco2e)
+
+
+def test_analyze_energy_matches_calculate_energy():
+    """The energy returned by analyze is the one computed from its own metrics"""
+
+    # GIVEN
+    service = EcoService(MachineType.LAPTOP)
+    source = code_file("for i in range(3):\n    x = i + 1")
+
+    # WHEN
+    res = service.analyze(source)
+
+    # THEN
+    assert res.energy_kwh == pytest.approx(service.calculate_energy(res.metrics))
+    assert res.carbon_gco2e == pytest.approx(service.calculate_carbon(res.energy_kwh))

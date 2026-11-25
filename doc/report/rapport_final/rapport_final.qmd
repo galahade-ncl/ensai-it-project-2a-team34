@@ -123,7 +123,7 @@ Afin de détailler les interactions entre l'utilisateur et la plateforme CleanOp
 Le travail s'est organisé autour de quatre outils, chacun avec un rôle bien délimité.
 
 #### Le dépôt GitHub commun
-Vu que le travail s’est fait en équipe, GitHub a été essentiel dans l’hébergement du code, la documentation et les rapports. D’ailleurs, à partir de la sixième semaine, nous avons abandonné le travail direct sur la branche principale au profit de branches par tâche puisque la répartition du travail par couche rendait les conflits de fusion trop fréquents. Chaque push déclenche la chaîne d'intégration continue.
+Vu que le travail s’est fait en équipe, GitHub a été essentiel dans l’hébergement du code, la documentation et les rapports. D’ailleurs, à partir de la sixième semaine, nous avons abandonné le travail direct sur la branche principale au profit de branches par tâche puisque la répartition du travail par couche rendait les conflits de fusion trop fréquents. Chaque push déclenche la chaîne d'intégration continue décrite en partie IV.
 
 #### Des outils communs: Onyxia, VS Code et PostgreSQL
 
@@ -830,7 +830,7 @@ Ce projet nous a permis de mettre en pratique, sur un cas concret, les enseignem
 
 Le travail en groupe a aussi joué un rôle important dans l'avancement du projet. Chacun de nous avait un niveau différent en programmation, et cette hétérogénéité n'a pas facilité la répartition des tâches. Au début, la communication manquait : chacun travaillait de son côté sans avoir le réflexe d'informer les autres. Une discussion interne a réglé ce problème, et les échanges et les questions entre les membres sont ensuite devenus beaucoup plus fréquents.
 
-CleanOps reste perfectionnable. Les estimations de complexité et de consommation reposent sur des hypothèses simplificatrices, et plusieurs fonctionnalités optionnelles du sujet n'ont pas été développées. Les perspectives présentées en partie 6 indiquent comment aller plus loin.
+CleanOps reste perfectionnable. Les estimations de complexité et de consommation reposent sur des hypothèses simplificatrices, et plusieurs fonctionnalités optionnelles du sujet n'ont pas été développées. Les perspectives présentées en partie VII indiquent comment aller plus loin.
 
 Au final, chacun de nous a beaucoup appris de ce projet, que ce soit dans l'analyse du sujet, en programmation ou dans le travail en équipe. Cette expérience est aussi une bonne préparation à notre future carrière professionnelle, où nous aurons à résoudre en groupe de nombreuses problématiques. 
 
