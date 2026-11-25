@@ -989,6 +989,17 @@ Enfin, ce que je garde de CleanOps tient finalement moins au code qu'à une déc
 
 ### VILARRUPLA Thomas {.unnumbered}
 
+Au cours du projet, j'ai principalement travaillé sur deux parties : la DAO, puis EcoService avec un travail plus spécifique sur le calcul de la consommation énergétique et de l'empreinte carbone.
+
+J'ai commencé par travailler sur la DAO (Data Access Object) qui permet de gérer les échanges entre l'application et la base de données. Cette partie m'a permis de mieux comprendre l'organisation des données et l'importance de structurer correctement le code pour faciliter leur récupération et leur manipulation. J'ai notamment dû veiller à ce que les différentes opérations soient cohérentes avec les besoins du reste de l'application.
+
+Ensuite j'ai participé au développement d'EcoService en me concentrant plus particulièrement sur les calculs liés à l'impact environnemental. J'ai travaillé sur le calcul de l'énergie consommée ainsi que sur l'estimation de l'empreinte carbone. Cette partie m'a demandé de bien comprendre les données utilisées et la logique des calculs afin d'obtenir des résultats cohérents.
+
+Ce projet m'a appris à faire le lien entre la gestion des données et leur exploitation dans des fonctionnalités métier. J'ai compris que la fiabilité d'un résultat dépend autant de la qualité des données récupérées que de la logique utilisée pour les traiter.
+
+Enfin je pense avoir apporté au projet ma contribution technique sur ces différentes parties mais aussi de la rigueur dans l'implémentation et la vérification des fonctionnalités. Cette expérience m'a permis de progresser en développement en ayant une meilleure vision de la manière dont les différentes couches d'une application fonctionnent ensemble.
+Avec du recul je pense que j'aurais pu mieux anticiper certaines difficultés techniques et prendre davantage de temps pour tester mes développements au fur et à mesure. J'aurais également pu communiquer plus régulièrement sur mon avancement afin de faciliter l'intégration de mon travail avec celui des autres membres de l'équipe. Cela m'aurait permis de détecter plus tôt certaines incohérences et d'éviter potentiellement des corrections tardives.
+
 {{< pagebreak >}}
 
 
