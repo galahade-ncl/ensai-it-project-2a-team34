@@ -207,13 +207,14 @@ def test_list_all_project():
     """List all project of a user"""
 
     # GIVEN
-    ProjectDao().list_all_project = MagicMock(return_value=project_list_michel)
-
     user = User(id_user=1, username="Jean", password="0123456789", email="jean@example.com")
-    UserService().find_by_id = MagicMock(return_value=user)
 
     # WHEN
-    res = UserService().list_all_project(1)
+    with (
+        patch.object(UserService, "find_by_id", return_value=user),
+        patch.object(ProjectDao, "list_all_project", return_value=project_list_michel),
+    ):
+        res = UserService().list_all_project(1)
 
     # THEN
     assert res == project_list_michel
