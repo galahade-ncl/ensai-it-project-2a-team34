@@ -1002,3 +1002,25 @@ Avec du recul je pense que j'aurais pu mieux anticiper certaines difficultés te
 
 
 ### ZHU Annabelle {.unnumbered}
+
+#### Mon rôle et ma participation {.unnumbered}
+
+La composition du groupe étant imposée, j'ai travaillé avec des personnes que je connaissais peu, dont les niveaux et les méthodes de travail étaient différents. Cette diversité a enrichi le projet, mais elle a demandé un vrai effort d'organisation.
+En tant que chef de projet, j'ai organisé les réunions, réparti le travail avec Madie, notre tech lead, et suivi l'avancement du projet. Pour garder une vision d'ensemble sur le projet, j'ai essayé de m'impliquer dans diverses tâches qui va de la programmation à la gestion d'équipe à la rédaction.
+
+#### Le travail en groupe {.unnumbered}
+
+Le début du projet a été difficile. Lors de la répartition des tâches, peu de membres prenaient la parole et le groupe WhatsApp restait très calme. Malgré des réunions presque hebdomadaires, tout le monde n'était pas toujours présent ni impliqué, et c'était souvent Madie qui s'exprimait, alors que ces réunions devaient être des moments d'échange. J'en porte une part de responsabilité : au départ, je n'ai pas su faire participer chacun.
+
+Après le dossier d'analyse, nous avons parlé ouvertement de ce manque de communication. À partir de là, j'ai pris davantage d'initiatives : informer l'équipe des décisions, relancer les membres, préparer la répartition des tâches avec Madie. Les échanges sont ensuite devenus beaucoup plus fréquents.
+
+#### Ce que j'en retiens {.unnumbered}
+
+Ce projet m'a permis de mettre en pratique la programmation orientée objet, le SQL et l'architecture en couches vus en première et en deuxième année. J'ai particulièrement aimé travailler avec le module `ast` pour analyser l'arbre syntaxique du code : il a été difficile à prendre en main, mais c'est la partie qui m'a le plus appris.
+Le sujet m'a aussi fait découvrir des questions que je ne me posais pas : l'impact énergétique d'un programme et les licences des bibliothèques utilisées. J'y ferai davantage attention dans mes prochains projets et dans ma vie professionnelle.
+
+#### Mes conseils à nos successeurs {.unnumbered}
+
+- **Faire parler tout le monde dès la première semaine** : un tour de table en début de réunion, où chacun dit ce qu'il a fait et ce qui le bloque, évite que seules une ou deux personnes s'expriment.
+- **Trancher vite les questions de conception** : chez nous, la question du stockage des fichiers est restée ouverte plus d'un mois et nous a obligés à supprimer une table, une classe DAO et deux routes déjà écrites.
+- **Travailler sur des branches dès le départ** : nous ne l'avons fait qu'à partir de la sixième semaine, après de nombreux conflits sur la branche principale.
