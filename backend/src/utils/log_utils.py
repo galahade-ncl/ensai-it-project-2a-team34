@@ -161,7 +161,7 @@ def log(func):
 
         # Retrieve method parameters
         method_name = func.__name__
-        param_names = func.__code__.co_varnames[1: func.__code__.co_argcount]
+        param_names = func.__code__.co_varnames[1 : func.__code__.co_argcount]
         args_list = []
 
         for i, arg in enumerate(args[1:]):
@@ -211,6 +211,7 @@ class LogMiddleware(BaseHTTPMiddleware):
     """
     Middleware that logs every HTTP request and response.
     """
+
     async def dispatch(self, request: Request, call_next):
         """
         Log an HTTP request and its response.

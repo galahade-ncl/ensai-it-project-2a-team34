@@ -140,7 +140,9 @@ def test_run_audit_successful():
     )
 
     with (
-        patch.object(SecurityService, "find_vulnerabilities", return_value=vulnerabilities) as find_vuln,
+        patch.object(
+            SecurityService, "find_vulnerabilities", return_value=vulnerabilities
+        ) as find_vuln,
         patch.object(SecurityService, "find_licences", return_value=licenses) as find_licenses,
         patch.object(EcoService, "analyze", return_value=analysis) as analyze,
         patch.object(SBOMService, "generate", return_value=sbom) as generate_sbom,

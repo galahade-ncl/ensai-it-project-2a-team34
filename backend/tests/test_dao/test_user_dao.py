@@ -11,9 +11,7 @@ from dao.user_dao import UserDao
 def test_create_success():
     with patch("dao.user_dao.DBConnection") as mock_db:
         cursor = MagicMock()
-        mock_db.return_value.connection.__enter__.return_value.cursor.return_value.__enter__.return_value = (
-            cursor
-        )
+        mock_db.return_value.connection.__enter__.return_value.cursor.return_value.__enter__.return_value = cursor
         cursor.fetchone.return_value = {"id_user": 42}
 
         user = MagicMock(username="alice", password="pw", email="a@a.fr")
@@ -90,9 +88,7 @@ def cursor():
     """Gives a fake cursor (a mock one)"""
     with patch("dao.user_dao.DBConnection") as mock_db:
         fake_cursor = MagicMock()
-        mock_db.return_value.connection.__enter__.return_value.cursor.return_value.__enter__.return_value = (
-            fake_cursor
-        )
+        mock_db.return_value.connection.__enter__.return_value.cursor.return_value.__enter__.return_value = fake_cursor
         yield fake_cursor
 
 

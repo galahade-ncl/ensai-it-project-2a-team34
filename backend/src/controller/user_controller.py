@@ -73,9 +73,7 @@ async def create_user(u: UserModel, user_service=Depends(get_user_service)) -> U
 
 @router.put("/{id_user}", response_model=UserReadModel, tags=["Users"])
 async def update_user(
-    u: UserResponseModel,
-    user=Depends(verify_token),
-    user_service=Depends(get_user_service)
+    u: UserResponseModel, user=Depends(verify_token), user_service=Depends(get_user_service)
 ):
     """
     Update the information of the authenticated user.
@@ -165,8 +163,7 @@ async def delete_user(
 
 @router.get("/{id_user}/project", response_model=list[ProjectReadModel], tags=["Users"])
 async def project_by_user(
-    user=Depends(verify_token),
-    user_service=Depends(get_user_service)
+    user=Depends(verify_token), user_service=Depends(get_user_service)
 ) -> list[ProjectReadModel]:
     """
     Retrieve the projects of the authenticated user.

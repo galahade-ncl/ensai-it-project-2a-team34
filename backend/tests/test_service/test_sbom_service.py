@@ -284,9 +284,7 @@ def test_generate_vulnerability_on_unlisted_package(project, file_service):
         (LowVulnerability, "low"),
     ],
 )
-def test_generate_severity_from_subclass(
-    project, file_service, vulnerability_class, expected
-):
+def test_generate_severity_from_subclass(project, file_service, vulnerability_class, expected):
     """Severity is deduced from the class, not from a text attribute."""
     vulnerability = vulnerability_class(1, "OSV-1", None, "requests", "2.31.0")
     document = json.loads(SBOMService().generate(project, [vulnerability]).content)

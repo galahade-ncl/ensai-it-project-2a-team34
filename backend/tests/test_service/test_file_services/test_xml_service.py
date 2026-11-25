@@ -1,3 +1,5 @@
+import xml.etree.ElementTree as ET
+
 import pytest
 
 # from datetime import datetime
@@ -17,7 +19,7 @@ POM = b"""<project xmlns="http://maven.apache.org/POM/4.0.0">
 
 
 def test_parse_dependencies_xml_parses_maven_dependency():
-    """ Verifies that a Maven dependency is specified in the format groupId:artifactId along with its version."""
+    """Verifies that a Maven dependency is specified in the format groupId:artifactId along with its version."""
     # GIVEN
     list_result = [("org.springframework:spring-core", "5.3.0")]
 
@@ -31,10 +33,10 @@ def test_parse_dependencies_xml_parses_maven_dependency():
 
 
 def test_xml_invalid_raises():
-    """ Verify that malformed XML triggers an error."""
+    """Verify that malformed XML triggers an error."""
     # GIVEN
     content = b"<project>"
 
     # THEN
-    with pytest.raises(Exception):  # ruff: ignore[assert-raises-exception]
-        XmlService.parse_dependencies(content)
+    with pytest.raises(ET.ParseError):
+        XmlService().parse_dependencies(content)

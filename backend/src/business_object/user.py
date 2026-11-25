@@ -25,6 +25,7 @@ class User:
         Return a hash of the user identifier, allowing users to be used
         in a set or as dict keys.
     """
+
     def __init__(self, username, password, email, id_user=None, access_token=None) -> None:
         self.id_user = id_user
         self.username = username

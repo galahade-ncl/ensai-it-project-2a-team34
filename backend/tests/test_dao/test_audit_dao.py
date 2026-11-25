@@ -32,9 +32,7 @@ def audit():
         carbon_emission_gco2e=1.2,
         sbom=None,
         # Audit expects a QualityGate object, not a status string.
-        quality_gate=QualityGateService().create(
-            "global", 5, 0, 1, 0.001, "PASSED"
-        ),
+        quality_gate=QualityGateService().create("global", 5, 0, 1, 0.001, "PASSED"),
         certificate=None,
     )
 

@@ -62,7 +62,7 @@ else:
                 if res["status_code"] in (200, 201):
                     st.success("Account created, you can now log in.")
                 else:
-                    st.error(f"Account creation failed ({res["status_code"]}).")
+                    st.error(f"Account creation failed ({res['status_code']}).")
                 # Add the detail of the HTTPException
 
 st.divider()

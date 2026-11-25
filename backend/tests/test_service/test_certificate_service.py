@@ -25,6 +25,7 @@ utils.security.load_signing_key (lru_cache), so every test installs a
 throw-away key pair and clears that cache before and after running.
 """
 
+
 # --------------------------------------------------------------- HELPERS
 def make_pem(key: Ed25519PrivateKey | None = None) -> str:
     """Return a private Ed25519 key in PEM format."""
@@ -132,9 +133,9 @@ def test_generate_certificate_unknown_qualitygate(audit, project):
 
 
 def test_generate_certificate_payload(audit, project):
-    payload = CertificateService().generate_certificate(audit, project, "eco").signed_data[
-        "payload"
-    ]
+    payload = (
+        CertificateService().generate_certificate(audit, project, "eco").signed_data["payload"]
+    )
 
     uuid.UUID(payload["cert_id"])  # raises if the identifier is not a UUID
     assert payload["audit_id"] == 42
@@ -149,8 +150,7 @@ def test_generate_certificate_payload(audit, project):
     # the payload binds the certificate to the exact files that were audited
     assert payload["files"]["code_sha256"] == hashlib.sha256(b"print('hello')").hexdigest()
     assert (
-        payload["files"]["dependencies_sha256"]
-        == hashlib.sha256(b"requests==2.31.0").hexdigest()
+        payload["files"]["dependencies_sha256"] == hashlib.sha256(b"requests==2.31.0").hexdigest()
     )
 
     # figures are frozen as strings, rounded to six decimals
@@ -161,9 +161,9 @@ def test_generate_certificate_payload(audit, project):
 
 def test_generate_certificate_counts_vulnerabilities(project):
     audit = make_audit(vulnerabilities=["first", "second", "third"])
-    payload = CertificateService().generate_certificate(audit, project, "security").signed_data[
-        "payload"
-    ]
+    payload = (
+        CertificateService().generate_certificate(audit, project, "security").signed_data["payload"]
+    )
     assert payload["summary"]["vulnerabilities"] == 3
 
 

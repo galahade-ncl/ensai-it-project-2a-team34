@@ -55,13 +55,13 @@ project_list = [
             name="citron",
             content=b"print('Hello World')\n",
             type_file="py",
-            date=datetime(2026, 2, 3, 14, 30, 12)
-            ),
+            date=datetime(2026, 2, 3, 14, 30, 12),
+        ),
         dependencyfile=DependencyFile(
             name="myrtille",
             content=b"requests==2.32.3\npytest==8.3.3\n",
             type_file="txt",
-            date=datetime(2026, 2, 21, 9, 5, 47)
+            date=datetime(2026, 2, 21, 9, 5, 47),
         ),
         secretHMACkey=bytes.fromhex(
             "7f55be633e93f7de0d8ac2ab8a3993fb7123c84f73582da121c2c62051596297"
@@ -74,12 +74,13 @@ project_list = [
             name="sucre",
             content=b"function add(a, b) { return a + b; }\n",
             type_file="js",
-            date=datetime(2026, 3, 12, 16, 22, 31)),
+            date=datetime(2026, 3, 12, 16, 22, 31),
+        ),
         dependencyfile=DependencyFile(
             name="casserole",
             content=b'{"dependencies": {"express": "^4.21.0"}}',
             type_file="json",
-            date=datetime(2026, 3, 27, 11, 18, 54)
+            date=datetime(2026, 3, 27, 11, 18, 54),
         ),
         secretHMACkey=bytes.fromhex(
             "a63d3f3e91dd4a09906d89caa4ccf7f45862f9e2e3c1a30268585b078aec2fda"
@@ -99,13 +100,13 @@ project_list = [
             name="le_fichier_code",
             content=b"def multiply(a, b):\n    return a * b\n",
             type_file="py",
-            date=datetime(2026, 4, 8, 13, 45, 9)
+            date=datetime(2026, 4, 8, 13, 45, 9),
         ),
         dependencyfile=DependencyFile(
             name="le_fichier_dependences",
             content=b'[project]\nname = "my-app"\ndependencies = ["requests>=2.0"]\n',
             type_file="toml",
-            date=datetime(2026, 4, 19, 7, 32, 16)
+            date=datetime(2026, 4, 19, 7, 32, 16),
         ),
         secretHMACkey=bytes.fromhex(
             "858470290e217b99b5bf2b6fdbaaeb43c8a903d87cd03de2705ca56ca8a3ce3e"
@@ -118,7 +119,7 @@ project_list = [
             name="fichier_1",
             content=b"public class Main { public static void main(String[] args) {} }\n",
             type_file="java",
-            date=datetime(2026, 5, 6, 15, 10, 42)
+            date=datetime(2026, 5, 6, 15, 10, 42),
         ),
         dependencyfile=DependencyFile(
             name="fichier_2",
@@ -130,7 +131,7 @@ project_list = [
                     </project>
                     """,
             type_file="xml",
-            date=datetime(2026, 5, 24, 12, 55, 28)
+            date=datetime(2026, 5, 24, 12, 55, 28),
         ),
         secretHMACkey=bytes.fromhex(
             "822931904fd51a85179d0af5408dd461297be80066289afc08ad0980fd8fa755"
@@ -206,13 +207,14 @@ def test_list_all_project():
     """List all project of a user"""
 
     # GIVEN
-    ProjectDao().list_all_project = MagicMock(return_value=project_list_michel)
-
     user = User(id_user=1, username="Jean", password="0123456789", email="jean@example.com")
-    UserService().find_by_id = MagicMock(return_value=user)
 
     # WHEN
-    res = UserService().list_all_project(1)
+    with (
+        patch.object(UserService, "find_by_id", return_value=user),
+        patch.object(ProjectDao, "list_all_project", return_value=project_list_michel),
+    ):
+        res = UserService().list_all_project(1)
 
     # THEN
     assert res == project_list_michel

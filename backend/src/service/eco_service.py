@@ -345,9 +345,7 @@ class EcoService:
         for func in ast.walk(tree):
             if isinstance(func, ast.FunctionDef):
                 for node in ast.walk(func):
-                    if isinstance(node, ast.Call) and self._is_recursive_call(
-                        node, func.name
-                    ):
+                    if isinstance(node, ast.Call) and self._is_recursive_call(node, func.name):
                         antipatterns.append(
                             RecursiveCall(
                                 line=node.lineno,
@@ -567,9 +565,7 @@ class EcoService:
             if calls == 0:
                 continue
 
-            executions = sum(
-                calls**level for level in range(self.DEFAULT_RECURSION_DEPTH + 1)
-            )
+            executions = sum(calls**level for level in range(self.DEFAULT_RECURSION_DEPTH + 1))
 
             one_execution = 1
             for loop in self._outest_loop(function):

@@ -16,6 +16,7 @@ class ProjectReadModel(BaseModel):
     name_project : str
         Name of the project.
     """
+
     id_project: int
     name_project: str
 
@@ -33,6 +34,7 @@ class ProjectResponseModel(BaseModel):
     secretHMACkey : str
         Secret HMAC key of the project, encoded in Base64.
     """
+
     id_project: int
     name_project: str
     secretHMACkey: str
@@ -47,6 +49,7 @@ class ProjectCreateModel(BaseModel):
     name_project : str
         Name of the project.
     """
+
     name_project: str
 
 
@@ -63,6 +66,7 @@ class ProjectCompletedModel(BaseModel):
     dependencyfile : DependencyFileModel
         Dependency file of the project.
     """
+
     id_project: int
     codefile: CodeFileModel
     dependencyfile: DependencyFileModel

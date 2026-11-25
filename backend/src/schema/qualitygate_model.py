@@ -10,4 +10,5 @@ class QualityGateModel(BaseModel):
     status : str
         Status of the quality gate.
     """
+
     status: str

@@ -18,7 +18,7 @@ from service.security_service import SecurityService
     ],
 )
 def test_detect_ecosystem_successful(name, type_file, expected):
-    """ Verify that each supported file (requirements.txt, package.json, pom.xml, Cargo.toml) returns the correct OSV ecosystem."""
+    """Verify that each supported file (requirements.txt, package.json, pom.xml, Cargo.toml) returns the correct OSV ecosystem."""
     # GIVEN
     dependencyfile = DependencyFile(name=name, type_file=type_file, content=b"")
 
@@ -30,7 +30,7 @@ def test_detect_ecosystem_successful(name, type_file, expected):
 
 
 def test_detect_ecosystem_failed():
-    """ Verify that a file with an unsupported name (e.g., composer.json) raises a ValueError."""
+    """Verify that a file with an unsupported name (e.g., composer.json) raises a ValueError."""
     # GIVEN
     dependencyfile = DependencyFile(name="composer", type_file="json", content=b"")
 
@@ -40,7 +40,7 @@ def test_detect_ecosystem_failed():
 
 
 def test_find_vulnerabilities_aggregates_results_of_all_dependencies():
-    """ Verify that, for a file containing multiple dependencies, the vulnerabilities found by the API for each one are combined into a single list."""
+    """Verify that, for a file containing multiple dependencies, the vulnerabilities found by the API for each one are combined into a single list."""
     # GIVEN
     dep1, dep2 = MagicMock(), MagicMock()
     vuln1, vuln2, vuln3 = MagicMock(), MagicMock(), MagicMock()
@@ -95,7 +95,7 @@ def test_find_vulnerabilities_no_dependencies_returns_empty_list():
 
 
 def test_unsupported_file_raises_and_skips_api():
-    """ Verify that, if the file is not supported, the error is raised before any parsing or API calls are made."""
+    """Verify that, if the file is not supported, the error is raised before any parsing or API calls are made."""
     with (
         patch.object(SecurityService, "detect_ecosystem", side_effect=ValueError),
         patch.object(FileService, "parse_dependencies") as parse,
@@ -109,7 +109,7 @@ def test_unsupported_file_raises_and_skips_api():
 
 
 def test_api_error_propagates():
-    """ Verify that, if the OSV API fails, the error is not suppressed and is passed back to the caller."""
+    """Verify that, if the OSV API fails, the error is not suppressed and is passed back to the caller."""
     with (
         patch.object(FileService, "parse_dependencies", return_value=[MagicMock()]),
         patch.object(SecurityService, "detect_ecosystem", return_value="PyPI"),

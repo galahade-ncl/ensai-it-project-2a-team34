@@ -14,6 +14,7 @@ class DependencyFileModel(BaseModel):
     type_file : str
         Extension of the file.
     """
+
     name: str
     content: str
     type_file: str
