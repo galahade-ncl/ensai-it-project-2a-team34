@@ -869,8 +869,6 @@ https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-218.pdf
 
 ## Annexes {.unnumbered}
 
-[À placer ici : le diagramme de classes complet, le diagramme de séquence, le diagramme d'activité (ou alors rajouter partie), le modèle physique des données à jour, les deux diagrammes de Gantt, une capture de la documentation Swagger et un exemple de SBOM généré. À décider également : des bilans personnels par membre, comme dans les rapports des années précédentes.]
-
 ### Fichiers de dépendances pris en charge {.unnumbered}
 
 \appendix
