@@ -911,9 +911,9 @@ https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-218.pdf
 ```{=latex}
 \begin{figure}[H]
 \centering
-\includegraphics[width=\linewidth, height=0.78\textheight, keepaspectratio]{img/sequence_diagram.png}
-\caption{Diagramme de classes complet de l'application}
-\label{fig:diagramme-classes}
+\includegraphics[width=\linewidth, height=0.78\textheight, keepaspectratio]{img/sequence_diagramme.png}
+\caption{Diagramme de séquence de l'application (version courte)}
+\label{fig:diagramme-sequence}
 \end{figure}
 \end{landscape}
 \restoregeometry
