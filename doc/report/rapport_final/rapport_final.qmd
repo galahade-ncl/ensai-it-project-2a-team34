@@ -750,14 +750,15 @@ Le document final, dont la structure sera illustrée par un tableau ultérieurem
 Les fichiers soumis par l'utilisateur ne sont pas conservés dans la base de données. En effet, ils sont lus, analysés, puis effacés. L'audit qui en résulte est par contre enregistré en base et rattaché à son projet pour qu'un utilisateur puisse y revenir et comparer deux soumissions successives. Ainsi, on ne stocke en base que les éléments qui permettent de comparer et ce qui doit pouvoir être retéléchargé notamment la date, la complexité estimée du code, la consommation énergétique, les émissions carbone, ainsi que le type de Quality Gate et le statut qu'elle a rendu, c'est-à-dire si l'audit est passé ou non. Ensuite, s'y ajoutent à cela le SBOM, stocké tel quel et le certificat signé.
 
 Le détail des constats incluant les vulnérabilités, les licences et les anti-patterns n'a pas de colonne dédiée dans la table. Effectivement, recopier ces listes auraient alourdi le modèle de données pour y stocker une seconde fois ce que le SBOM contient déja. Deux routes exploitent cet historique:
-- `GET /project/{id_project}/audit` en restitue la liste des audits  pour un projet donné, ce qui permet de suivre son évolution d'une soumission à l'autre
-- `GET /audit/{id_audit}` détaille un audit précis.
+
+  * `GET /project/{id_project}/audit` en restitue la liste des audits  pour un projet donné, ce qui permet de suivre son évolution d'une soumission à l'autre
+  * `GET /audit/{id_audit}` détaille un audit précis.
 
 Toutes deux vérifient que le projet appartient à l'utilisateur authentifié et envoient une erreur 404 dans le cas contraire, afin qu'il n'apprenne pas l'existence d'un audit qui ne le concerne pas.
 
 #### Evaluation des mesures de l'audit
 
-La Quality Gate confronte ensuite les mesures produites par l'audit aux seuils fixés par l'application. Certains de ces seuils concernent notamment le fait que le projet doit avooir au plus cinq vulnérabilités, aucune vulnérabilité critique, au plus 1 gCO2e d'émissions et 0,001 kWh de consommation. Chaque type de porte n'examine que les critères qui le concernent, la porte globale étant la seule à les vérifier tous. Le statut de l'audit passe alors de « Unevaluated » à « Passed » ou « Failed ».
+La Quality Gate confronte ensuite les mesures produites par l'audit aux seuils fixés par l'application. Certains de ces seuils concernent notamment le fait que le projet doit avoir au plus cinq vulnérabilités, aucune vulnérabilité critique, au plus 1 gCO2e d'émissions et 0,001 kWh de consommation. Chaque type de porte n'examine que les critères qui le concernent, la porte globale étant la seule à les vérifier tous. Le statut de l'audit passe alors de "Unevaluated" à "Passed" ou "Failed".
 
 Lorsque les critères sont respectés, un certificat est émis.
 
