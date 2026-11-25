@@ -923,44 +923,40 @@ https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-218.pdf
 ### Diagramme de séquence {.unnumbered}
 
 
-```{=latex}
 \begin{figure}[H]
-\centering
-\includegraphics[width=\linewidth, height=0.78\textheight, keepaspectratio]{img/sequence_diagramme.png}
-\caption{Diagramme de séquence de l'application (version courte)}
-\label{fig:diagramme-sequence}
+    \centering
+    \includegraphics[width=0.8\textwidth]{img/sequence_diagramme.png}
+    \caption{Diagramme de séquence de l'application (version courte)}
+    \label{fig:diagramme-sequence}
 \end{figure}
-\end{landscape}
-\restoregeometry
-```
 
 
 {{< pagebreak >}}
 
 ## Note individuelle {.unnumbered}
 
-### MANAMBIRAVAKA Anaëlle
+### MANAMBIRAVAKA Anaëlle {.unnumbered}
 
 
 {{< pagebreak >}}
 
-### NADIN Sarah"
+### NADIN Sarah {.unnumbered}
 
 
 {{< pagebreak >}}
 
-### NICOLIE Galahade
+### NICOLIE Galahade {.unnumbered}
 
 
 {{< pagebreak >}}
 
-### PERRIN-BEAU Madie
+### PERRIN-BEAU Madie {.unnumbered}
 
 {{< pagebreak >}}
 
-### VILARRUPLA Thomas
+### VILARRUPLA Thomas {.unnumbered}
 
 {{< pagebreak >}}
 
 
-### ZHU Annabelle
+### ZHU Annabelle {.unnumbered}
