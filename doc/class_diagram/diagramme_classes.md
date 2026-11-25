@@ -20,7 +20,7 @@ Pour afficher ce diagramme dans VScode :
   "flowchart": {
     "htmlLabels": true,
     "curve": "basis"},
-  "themeCSS": ".cluster:nth-of-type(1) rect {   fill: #b3ccf8 !important; stroke: #3086e8 !important; width: 1200px !important; } .cluster:nth-of-type(2) rect { fill: #ccf0ff !important; stroke: #586cff !important; width: 2900px !important; } .cluster:nth-of-type(3) rect { fill: rgb(241, 254, 245) !important; stroke: #217a34 !important;} .cluster:nth-of-type(4) rect { fill: rgba(179, 255, 188, 0.8) !important; stroke: #3ea053 !important;} .cluster:nth-of-type(5) rect {   fill: #b2f4fb !important; stroke: #30e8e2 !important; } .cluster:nth-of-type(6) rect {   fill: rgb(142, 214, 230) !important; stroke: #63c6c9 !important; }"}}%%
+  "themeCSS": ".cluster:nth-of-type(1) rect {   fill: #b3ccf8 !important; stroke: #3086e8 !important; width: 1400px !important; } .cluster:nth-of-type(2) rect { fill: #ccf0ff !important; stroke: #586cff !important; width: 3500px !important; } .cluster:nth-of-type(3) rect { fill: rgb(241, 254, 245) !important; stroke: #217a34 !important;} .cluster:nth-of-type(4) rect { fill: rgba(179, 255, 188, 0.8) !important; stroke: #3ea053 !important;} .cluster:nth-of-type(5) rect {   fill: #b2f4fb !important; stroke: #30e8e2 !important; } .cluster:nth-of-type(6) rect {   fill: rgb(142, 214, 230) !important; stroke: #63c6c9 !important; }"}}%%
 
 classDiagram
     %% Business objects
