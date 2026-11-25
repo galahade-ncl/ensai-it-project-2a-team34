@@ -768,19 +768,19 @@ Le projet compte à ce jour 384 tests automatisés au total qui sont répartis p
 \hline
 \textbf{Couche} & \textbf{Nombre de tests} & \textbf{Ce qu'elles vérifient} \\
 \hline
-\textbf{Services} & 186 & Logique métier, DAO simulée, exécution sans la base de données \\
+\textbf{Services} & 211 & Logique métier, DAO simulée, exécution sans la base de données \\
 \hline
-\textbf{DAO} & 58 & Requêtes SQL sur un schéma de test dédié \\
+\textbf{DAO} & 82 & Requêtes SQL sur un schéma de test dédié \\
 \hline
-\textbf{API externes} & 37 & Appels OSV et deps.dev, conversion CVSS, construction des objets \\
+\textbf{API externes} & 73 & Appels OSV et deps.dev, conversion CVSS, construction des objets \\
 \hline
 \textbf{Utilitaires de sécurité} & 36 & Hachage, génération de clé, signature et vérification \\
 \hline
 \textbf{Analyseurs de fichiers} & 16 & Lecture des formats TXT, JSON, XML et TOML \\
 \hline
-\textbf{Objets métier} & 7 & Fabrique de Quality Gates \\
+\textbf{Objets métier} & 29 & Fabrique de Quality Gates \\
 \hline
-\textbf{Total} & \textbf{384} & - \\
+\textbf{Total} & \textbf{449} & - \\
 \hline
 \end{tabular}
 \caption{Répartition des tests par couche applicative.}
