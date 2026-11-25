@@ -978,6 +978,17 @@ Enfin, ce que je garde de CleanOps tient finalement moins au code qu'à une déc
 
 ### NICOLIE Galahade {.unnumbered}
 
+Au début du projet, nous étions tous un peu intimidés par le sujet, qui ne nous parlait pas vraiment. Néanmoins, les premières séances de suivi, de recherche et de discussion avec le groupe m’ont permis de comprendre les principaux enjeux de l’application.
+
+Malgré une analyse préliminaire bien menée, beaucoup de choses ont changé entre les diagrammes que nous avions réalisés au début et le code final.
+
+La structure en couches n’a pas été suffisante pour nous éviter d’importantes modifications du code. Par exemple, la classe `Projet` avait initialement un attribut `User`. Lorsque celui-ci a été supprimé, nous avons dû reprendre plusieurs routes, de la DAO au contrôleur, ainsi que tous les tests associés.
+
+De plus, la communication était un élément essentiel. Au fur et à mesure que nous avancions dans le développement, nous avons chacun dû prendre des décisions qui avaient des répercussions sur le travail des autres. Pour cette raison, j’ai beaucoup apprécié les trois jours d’immersion, qui nous ont permis de réellement travailler ensemble et de discuter de chaque décision.
+
+Au début du projet, je me suis occupé de coder quelques classes métier ainsi qu’une partie du contrôleur. Ensuite, je devais m’occuper de la fonctionnalité `run_audit`, ce qui m’a permis de mieux comprendre le travail de mes camarades. En effet, cette fonctionnalité fait appel à de nombreux autres services (`eco`, `security`, `project`, etc.).
+
+Finalement, ce projet m’a permis d’en apprendre beaucoup sur le travail d’équipe. J’ai trouvé difficile de prendre des initiatives et de travailler sur le projet de mon côté. À l’inverse, je me suis investi le plus possible lors des séances de suivi et des trois jours d’immersion.
 
 {{< pagebreak >}}
 
