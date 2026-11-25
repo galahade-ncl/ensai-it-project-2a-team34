@@ -108,7 +108,7 @@ Afin de détailler les interactions entre l'utilisateur et la plateforme CleanOp
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.6\textwidth]{img/image_manque.jpg}
+    \includegraphics[width=1.0\textwidth]{img/diagramme_cas_utilisation.png}
     \caption{Diagramme de cas d'utilisation}
     \label{fig:diagcas}
 \end{figure}
@@ -492,13 +492,14 @@ Les routes exposées sont les suivantes.
 
 \begin{table}[H]
 \centering
-\footnotesize
-\renewcommand{\arraystretch}{1.4}
-\setlength{\tabcolsep}{3pt}
+\scriptsize
+\renewcommand{\arraystretch}{1.0}
+\setlength{\tabcolsep}{2pt}
 \urlstyle{tt}
-\newcommand{\rt}[1]{{\fontsize{7}{8}\selectfont\path{#1}}}
+\newcommand{\rt}[1]{{\fontsize{5.5}{6.5}\selectfont\path{#1}}}
 \newlength{\avail}
-\setlength{\avail}{\dimexpr0.96\textwidth-8\tabcolsep\relax}\begin{tabular}{
+\setlength{\avail}{\dimexpr0.80\textwidth-8\tabcolsep\relax}
+\begin{tabular}{
     >{\raggedright\arraybackslash}p{0.17\avail}
     >{\centering\arraybackslash}p{0.13\avail}
     >{\raggedright\arraybackslash}p{0.31\avail}
