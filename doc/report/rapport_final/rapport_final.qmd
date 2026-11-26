@@ -776,7 +776,7 @@ L’application permet également de vérifier l’authenticité d’un tel cert
 
 ### Stratégie de test
 
-Le projet compte 246 fonctions de test, toutes exécutées par `pytest`. Ce sont des tests unitaires car chaque test vérifie une seule classe, isolée de ses dépendances. Un test de service ne touche jamais la base de données, et un test de DAO ne l'atteint pas davantage. Cette isolation a un coût, celui d'écrire les doublures, mais elle garantit que la campagne complète s'exécute en quelques secondes, sans serveur ni réseau, et qu'un test qui échoue désigne la classe fautive sans ambiguïté.
+Le projet compte 293 fonctions de test, toutes exécutées par `pytest`. Ce sont des tests unitaires car chaque test vérifie une seule classe, isolée de ses dépendances. Un test de service ne touche jamais la base de données, et un test de DAO ne l'atteint pas davantage. Cette isolation a un coût, celui d'écrire les doublures, mais elle garantit que la campagne complète s'exécute en quelques secondes, sans serveur ni réseau, et qu'un test qui échoue désigne la classe fautive sans ambiguïté.
 
 La méthode employée pour effectuer les tests unitaires est l’approche GIVEN, WHEN, THEN: un bloc GIVEN qui prépare les données, un bloc WHEN qui appelle la méthode testée, un bloc THEN qui vérifie le résultat. Chaque méthode est ainsi éprouvée dans son cas nominal et dans ses cas d’échec.  
 
@@ -784,7 +784,7 @@ D’ailleurs, le mocking, une pratique consistant à simuler le comportement de 
 
 ### Les couches concernées
 
-Le projet compte à ce jour 384 tests automatisés au total qui sont répartis par couche selon le tableau suivant.
+Le projet compte à ce jour 449 tests automatisés au total qui sont répartis par couche selon le tableau suivant.
 
 \begin{table}[H]
 \centering
@@ -831,6 +831,66 @@ Deux tests font exception réunis dans `test_api_network.py`. `test_osv_real_cal
 ### Les limites des tests effectués
 
 Trois limites de couverture des tests sont à relever. Premièrement, les contrôleurs ne sont pas testés. En effet, les routes ont été éprouvées manuellement via la documentation interactive de FastAPI, mais aucun test automatique n'envoie de requête HTTP. Deuxièmement, l’interface Streamlit n'a pas de tests non plus. Enfin, aucun test ne s'exécute contre une vraie base PostgreSQL : les DAO sont validés sur un curseur simulé, ce qui éprouve la logique mais pas la conformité du SQL au schéma réel.
+
+### Qualité du code 
+
+
+Au-delà des tests, nous avons mesuré la qualité du backend à l'aide de quatre outils, chacun chargé d'un aspect précis : Ruff pour le style et les erreurs courantes, Coverage pour la couverture des tests, Pylint pour une note globale et Interrogate pour la documentation. Les mesures ont été relevées le 25 novembre 2026 sur le backend du projet.
+
+| Indicateur | Outil | Résultat | Appréciation |
+|:-----------|:------|:---------|:-------------|
+| Erreurs de lint | Ruff | 0 erreur | Satisfaisant |
+| Formatage | Ruff | 108 fichiers conformes sur 110 | Satisfaisant |
+| Couverture (services et DAO) | Coverage | 94 % | Satisfaisant |
+| Couverture (ensemble du code) | Coverage | 69 % | Cela aurait pu être amélioré |
+| Tests | pytest | 447 réussis sur 447 exécutés | Satisfaisant |
+| Note globale | Pylint | 9,33 / 10 | Satisfaisant |
+| Documentation | Interrogate | 100 % | Satisfaisant |
+
+: Synthèse des indicateurs de qualité du backend {#tbl-indicateurs}
+
+#### Ruff, garant de la cohérence du code
+
+Ruff a été retenu comme outil principal de contrôle du code car il réunit en un seul programme le linter et le formateur, et s'exécute en moins d'une seconde sur l'ensemble du projet. Sa configuration, placée dans le `pyproject.toml`, active six familles de règles : les erreurs de style, les erreurs logiques comme les variables inutilisées, le tri des imports, les bugs probables et la modernisation de la syntaxe pour Python 3.13. La longueur de ligne est fixée à 120 caractères. Deux règles ont été volontairement écartées. La règle `B008` interdit d'appeler une fonction dans la valeur par défaut d'un argument, or c'est précisément ainsi que FastAPI injecte ses dépendances. La règle `E501`, quant à elle, ferait doublon avec le formateur, qui gère déjà la longueur des lignes.
+
+À ce jour, `ruff check` ne relève aucune erreur sur les 110 fichiers du backend. Côté formatage, 108 fichiers sont conformes. Les deux restants, `severity.py` et `hmac_model.py`, ont été modifiés en dernier pour y ajouter leur documentation et doivent simplement être reformatés avec `ruff format`.
+
+Ruff s'est aussi montré utile au-delà du style. La règle `B017` signale les tests qui attendent une exception trop générale, du type `pytest.raises(Exception)`. En corrigeant ces avertissements, nous avons découvert qu'un test du parseur XML passait pour une mauvaise raison : la méthode était appelée sur la classe et non sur une instance, ce qui levait une `TypeError` bien avant que le XML ne soit lu. Le test, qui attrapait toute exception, restait donc vert sans rien vérifier. En imposant l'exception précise `ParseError`, l'erreur est apparue et a pu être corrigée.
+
+#### Couverture des tests
+
+La couverture est mesurée avec `coverage`. Grâce au paramétrage, les fonctions de test produisent 449 tests à l'exécution. Les 447 tests lancés par défaut réussissent.
+
+Notre configuration limite volontairement la mesure aux couches `service` et `dao`, qui portent la logique métier. Sur ce périmètre, la couverture atteint 94 % : sur 992 instructions, seules 47 ne sont jamais exécutées. Étendue à l'ensemble du dossier `src`, elle tombe à 69 %. Le tableau suivant détaille cet écart couche par couche.
+
+| Couche | Instructions | Non couvertes | Couverture |
+|:-------|-------------:|--------------:|-----------:|
+| DAO | 367 | 5 | 99 % |
+| API OSV | 56 | 0 | 100 % |
+| Services | 625 | 42 | 93 % |
+| Objets métier | 247 | 28 | 89 % |
+| API deps.dev | 46 | 15 | 67 % |
+| Utilitaires | 209 | 82 | 61 % |
+| Contrôleurs | 231 | 231 | 0 % |
+| Schémas Pydantic | 155 | 155 | 0 % |
+| **Total** | **1 973** | **595** | **69 %** |
+
+: Couverture des tests par couche applicative {#tbl-couverture}
+
+L'écart s'explique d'abord par les contrôleurs, qui ne sont pas testés automatiquement comme indiqué précédemment. Les schémas Pydantic n'étant utilisés que par ces contrôleurs, ils restent eux aussi à 0 %. Dans les utilitaires, une partie du code non couvert correspond à des scripts lancés à la main, comme la réinitialisation de la base ou la génération de clé que nous ne testons pas.
+
+Au sein des fichiers services, quelques fichiers restent en retrait. Le parseur de fichiers `.lock` n'est couvert qu'à 35 % car il n'a aucun fichier de test dédié. Le parseur TOML ne teste pas le format Poetry. Dans `SecurityService`, la recherche de licences n'est pas testée. Enfin, `FileService` ne vérifie l'aiguillage que pour l'extension `.txt`, alors qu'il en gère cinq.
+
+#### Autres indicateurs
+
+Pylint attribue au code la note de 9,33 sur 10. Une large part des avertissements relève de règles peu pertinentes pour notre architecture, comme l'absence de docstring des méthodes `__init__` ou le faible nombre de méthodes publiques des objets métier. Les remarques restantes sont plus utiles : treize messages de log construits avec des f-strings plutôt qu'avec les paramètres du module `logging`, et sept blocs de code dupliqués entre plusieurs fichiers.
+
+Interrogate confirme que l'ensemble des classes, méthodes et fonctions publiques possède une docstring au format Numpy, les paramètres des constructeurs étant décrits dans la docstring de la classe.
+
+#### Bilan
+
+Le code du backend est propre et cohérent : aucune erreur Ruff, une note Pylint supérieure à 9 et une documentation complète. La couche métier est solidement testée, avec 94 % de couverture. Les marges de progression sont identifiées : tester les contrôleurs et compléter les tests des parseurs de fichiers.
+
 
 {{< pagebreak >}}
 
