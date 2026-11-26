@@ -133,10 +133,10 @@ L’ensemble du développement s’est fait sur Onyxia, la plateforme de service
   * un service VS Code, qui nous a donné à tous le même éditeur, le même interpréteur Python et les mêmes extensions
   * un service PostgreSQL , qui héberge la base de données de l’application.
 
-Ce choix nous a évité une difficulté classique des projets menés à plusieurs : le fameux "chez moi, ça marche, mais pourquoi ça ne marche pas chez toi ?"". En effet, personne n’avait besoin d’installer quoi que ce soit localement : il suffisait d’ouvrir le service pour retrouver un environnement similaire à celui des autres membres de l’équipe.
+Ce choix nous a évité une difficulté classique des projets menés à plusieurs : le fameux "chez moi, ça marche, mais pourquoi ça ne marche pas chez toi ?". En effet, personne n’avait besoin d’installer quoi que ce soit localement : il suffisait d’ouvrir le service pour retrouver un environnement similaire à celui des autres membres de l’équipe.
 
 #### Un fichier de suivi hebdomadaire 
-Un fichier de suivi hebdomadaire, versionné dans `doc/tracking`, est renseigné chaque jeudi. Il liste, membre par membre, les tâches réalisées dans la semaine, puis un backlog séparé en tâches prioritaires et secondaires. Enfin, une rubrique « pistes de réflexion » consigne les questions encore ouvertes. Cette dernière rubrique s'est révélée l'un des outils les plus utiles du projet car elle permet d’enregistrer les tâches à réaliser jusqu'au moment de les prendre en compte, au lieu de se perdre dans une discussion.
+Un fichier de suivi hebdomadaire, versionné dans `doc/tracking`, est renseigné chaque jeudi. Il liste, membre par membre, les tâches réalisées dans la semaine, puis un backlog séparé en tâches prioritaires et secondaires. Enfin, une rubrique "pistes de réflexion" consigne les questions encore ouvertes. Cette dernière rubrique s'est révélée l'un des outils les plus utiles du projet car elle permet d’enregistrer les tâches à réaliser jusqu'au moment de les prendre en compte, au lieu de se perdre dans une discussion.
 
 #### Un document Google Docs
 Le document Google Docs partagé a servi d'espace de rédaction collaborative  afin d’y insérer les consignes, diagrammes, inventaire des classes et des méthodes à coder couche par couche, les retours du tuteur, puis la rédaction des rapports. La mise en page finale en Quarto, qui produit la version PDF, n'intervient qu'une fois le texte stabilisé.
@@ -167,15 +167,15 @@ Pour aider à la bonne gestion du projet, des rôles ont été attribués à cer
 \cellcolor{lightblue}
 Chef de projet
 & Annabelle Zhu
-& Coordonne l’équipe, organise les réunions, répartit le
-travail et assure le suivi régulier de l’avancement du projet \\
+& Coordonne l'équipe, organise les réunions, répartit le
+travail et assure le suivi régulier de l'avancement du projet \\
 \hline
 
 \cellcolor{lightpink}
 Tech Lead
 & Madie Perrin-Beau
 & Principal développeur, référent technique de
-l’ application et responsable des outils de
+l'application et responsable des outils de
 développement (Git, VS Code, Quarto...) \\
 \hline
 
@@ -285,7 +285,7 @@ Le diagramme de Gantt mis à jour, présenté ci-dessous, matérialise ces déca
 
 ### Conception et évolutions depuis le dossier d'analyse
 
-Le dossier d'analyse a reçu un retour détaillé du tuteur. D’ailleurs, certaines remarques portaient sur la lisibilité des diagrammes, d'autres sur le fond de la conception. Cette partie rend compte des modifications effectuées et, surtout, explique pourquoi elles étaient nécessaires : la plupart ne sont pas des corrections de forme, mais des choix que la confrontation au code a fait évoluer.
+Le dossier d'analyse a reçu un retour détaillé du tuteur. Certaines remarques portaient sur la lisibilité des diagrammes, d'autres sur le fond de la conception. Cette partie rend compte des modifications effectuées et, surtout, explique pourquoi elles étaient nécessaires : la plupart ne sont pas des corrections de forme, mais des choix que la confrontation au code a fait évoluer.
 
 #### Une architecture en couches
 
@@ -375,6 +375,14 @@ Un audit est obligatoirement lié à un projet.
 
 Le diagramme de classes du dossier d'analyse a évolué pendant l'implémentation. Trois retours du tuteur et quelques décisions internes nous ont conduits à le modifier. Ces changements reflètent une compréhension du sujet qui s'est affinée au contact du code.
 
+Trois de ces modifications sont détaillées ci-dessous.
+
+D’abord, la plus impactante est l'abandon du fichier `File` persisté. La raison est la suivante: le modèle initial traitait un fichier comme une entité durable, dotée d'un identifiant et d'un chemin sur le disque. Or, un fichier soumis à l'audit n'a en réalité pas vocation à être conservé. `File` est ainsi devenue une classe abstraite légère, et l'application a cessé de stocker le code source de ses utilisateurs. Ce qui est aussi préférable en matière de la confidentialité.
+
+Ensuite, la gravité d'une vulnérabilité est passée d'un attribut à un type. Compter les vulnérabilités critiques dans la Quality Gate s'écrit désormais par un test d'instance, sans comparaison de chaînes de caractères, donc sans risque de faute de frappe silencieuse.
+
+Enfin, les appels aux API externes n'apparaissaient pas du tout dans le diagramme initial. En effet, l'accès au réseau était implicitement contenu dans `SecurityService`. Deux classes dédiées, `API_OSV` et `API_DEPSDEV`, l'en ont extrait. Le service ne manipule plus que des objets `Vulnerability` et `Licence`, ce qui permet de le tester sans appel réseau.
+
 \begin{table}[ht]
 \centering
 \renewcommand{\arraystretch}{1.3}
@@ -435,13 +443,7 @@ dans la base de données \\
 \caption{Évolutions de l'architecture du projet}
 \end{table}
 
-Trois de ces modifications sont détaillées ci-dessous.
-
-D’abord, la plus impactante est l'abandon du fichier `File` persisté. La raison est la suivante: le modèle initial traitait un fichier comme une entité durable, dotée d'un identifiant et d'un chemin sur le disque. Or, un fichier soumis à l'audit n'a en réalité pas vocation à être conservé. `File` est ainsi devenue une classe abstraite légère, et l'application a cessé de stocker le code source de ses utilisateurs. Ce qui est aussi préférable en matière de la confidentialité.
-
-Ensuite, la gravité d'une vulnérabilité est passée d'un attribut à un type. Compter les vulnérabilités critiques dans la Quality Gate s'écrit désormais par un test d'instance, sans comparaison de chaînes de caractères, donc sans risque de faute de frappe silencieuse.
-
-Enfin, les appels aux API externes n'apparaissaient pas du tout dans le diagramme initial. En effet, l'accès au réseau était implicitement contenu dans `SecurityService`. Deux classes dédiées, `API_OSV` et `API_DEPSDEV`, l'en ont extrait. Le service ne manipule plus que des objets `Vulnerability` et `Licence`, ce qui permet de le tester sans appel réseau.
+Le diagramme de classes final, qui intègre l'ensemble de ces modifications, est présenté ci-dessous. Une version plus grande est disponible en annexe (figure `\ref{fig:diagramme-classes}`{=latex}).
 
 \begin{figure}[H]
     \centering
@@ -456,8 +458,8 @@ Trois patrons de conception structurent le code (avec deux emplois du Strategy P
 
 Le premier usage concerne les Quality Gates. Une classe mère abstraite `QualityGate` définit la méthode `evaluate(audit)`, que trois classes filles spécialisent :
 
-* `EcoQualityGate` vérifie que la consommation énergétique et les émissions de carbone respectent les seuils fixés ;
-* `SecurityQualityGate` vérifie que le nombre de vulnérabilités détectées ne dépasse pas le seuil autorisé ;
+* `EcoQualityGate` vérifie que la consommation énergétique et les émissions de carbone respectent les seuils fixés
+* `SecurityQualityGate` vérifie que le nombre de vulnérabilités détectées ne dépasse pas le seuil autorisé
 * `GlobalQualityGate` combine l'ensemble des critères : l'audit n'est validé que s'ils sont tous respectés.
 
 L'utilisateur choisit le type de Quality Gate au lancement de l'audit, et le service d'audit appelle `evaluate` sans savoir quelle classe il manipule. Ajouter un nouveau type de contrôle ne demande donc aucune modification du code existant.
@@ -834,8 +836,9 @@ Trois limites de couverture des tests sont à relever. Premièrement, les contr�
 
 ### Qualité du code 
 
-
 Au-delà des tests, nous avons mesuré la qualité du backend à l'aide de quatre outils, chacun chargé d'un aspect précis : Ruff pour le style et les erreurs courantes, Coverage pour la couverture des tests, Pylint pour une note globale et Interrogate pour la documentation. Les mesures ont été relevées le 25 novembre 2026 sur le backend du projet.
+
+::: {#tbl-indicateurs tbl-cap-location="bottom"}
 
 | Indicateur | Outil | Résultat | Appréciation |
 |:-----------|:------|:---------|:-------------|
@@ -847,7 +850,9 @@ Au-delà des tests, nous avons mesuré la qualité du backend à l'aide de quatr
 | Note globale | Pylint | 9,33 / 10 | Satisfaisant |
 | Documentation | Interrogate | 100 % | Satisfaisant |
 
-: Synthèse des indicateurs de qualité du backend {#tbl-indicateurs}
+Synthèse des indicateurs de qualité du backend
+
+:::
 
 #### Ruff, garant de la cohérence du code
 
@@ -861,7 +866,7 @@ Ruff s'est aussi montré utile au-delà du style. La règle `B017` signale les t
 
 La couverture est mesurée avec `coverage`. Grâce au paramétrage, les fonctions de test produisent 449 tests à l'exécution. Les 447 tests lancés par défaut réussissent.
 
-Notre configuration limite volontairement la mesure aux couches `service` et `dao`, qui portent la logique métier. Sur ce périmètre, la couverture atteint 94 % : sur 992 instructions, seules 47 ne sont jamais exécutées. Étendue à l'ensemble du dossier `src`, elle tombe à 69 %. Le tableau suivant détaille cet écart couche par couche.
+Notre configuration limite volontairement la mesure aux couches `service` et `dao`, qui portent la logique métier. Sur ce périmètre, la couverture atteint 94% : sur 992 instructions, seules 47 ne sont jamais exécutées. Étendue à l'ensemble du dossier `src`, elle tombe à 69 %. Le tableau suivant détaille cet écart couche par couche.
 
 | Couche | Instructions | Non couvertes | Couverture |
 |:-------|-------------:|--------------:|-----------:|
@@ -1020,7 +1025,7 @@ https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-218.pdf
 
 Je suis arrivée à l'école après la rentrée officielle, donc après le lancement du projet. Quand j'ai rejoint l'équipe, le sujet avait déjà été exploré, le groupe constitué et les premières décisions prises. Il a fallu comprendre en quelques jours ce que les autres avaient construit en deux semaines, puis trouver ma place dans une répartition du travail déjà esquissée.
 
-J'en retiens deux choses. La première est qu'un retard de calendrier se rattrape bien plus vite qu'un retard de compréhension cat j'ai passé mes premiers jours à lire ce qui avait été décidé plutôt qu'à produire, et c'est précisément ce qui m'a permis d'avancer ensuite. La seconde est que je dois beaucoup à l'équipe, qui a pris le temps de m'expliquer ce que j'avais manqué plutôt que de me confier ce qu'il restait à faire.
+J'en retiens deux choses. La première est qu'un retard de calendrier se rattrape bien plus vite qu'un retard de compréhension car j'ai passé mes premiers jours à lire ce qui avait été décidé plutôt qu'à produire, et c'est précisément ce qui m'a permis d'avancer ensuite. La seconde est que je dois beaucoup à l'équipe, qui a pris le temps de m'expliquer ce que j'avais manqué plutôt que de me confier ce qu'il restait à faire.
 
 Ce que je retiens d'abord de CleanOps, c'est l'écart entre ce que l'on imagine en analyse et ce que l'on découvre en écrivant le code. J'ai dessiné le modèle physique des données en septembre avec Annabelle, avant d'avoir écrit une seule ligne de Python. Deux mois plus tard, une table avait disparu, une classe s'était scindée en quatre, et un attribut qui me semblait évident n'existait plus. J'ai compris qu'un dossier d'analyse n'est pas un contrat que l'on exécute, mais une hypothèse que l'on corrige.
 
