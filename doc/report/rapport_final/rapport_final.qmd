@@ -33,6 +33,7 @@ format:
     template: template_ensai_bis.tex
     toc: true
     number-sections: true
+    tbl-cap-location: bottom
     text: |
         \usepackage{xurl}
         \newcommand{\code}[1]{{\urlstyle{tt}\path{#1}}}
@@ -838,7 +839,7 @@ Trois limites de couverture des tests sont à relever. Premièrement, les contr�
 
 Au-delà des tests, nous avons mesuré la qualité du backend à l'aide de quatre outils, chacun chargé d'un aspect précis : Ruff pour le style et les erreurs courantes, Coverage pour la couverture des tests, Pylint pour une note globale et Interrogate pour la documentation. Les mesures ont été relevées le 25 novembre 2026 sur le backend du projet.
 
-::: {#tbl-indicateurs tbl-cap-location="bottom"}
+::: {#tbl-indicateurs}
 
 | Indicateur | Outil | Résultat | Appréciation |
 |:-----------|:------|:---------|:-------------|
@@ -853,6 +854,9 @@ Au-delà des tests, nous avons mesuré la qualité du backend à l'aide de quatr
 Synthèse des indicateurs de qualité du backend
 
 :::
+
+\vspace{-1.5em}
+
 
 #### Ruff, garant de la cohérence du code
 
@@ -881,6 +885,8 @@ Notre configuration limite volontairement la mesure aux couches `service` et `da
 | **Total** | **1 973** | **595** | **69 %** |
 
 : Couverture des tests par couche applicative {#tbl-couverture}
+
+\vspace{-1.5em}
 
 L'écart s'explique d'abord par les contrôleurs, qui ne sont pas testés automatiquement comme indiqué précédemment. Les schémas Pydantic n'étant utilisés que par ces contrôleurs, ils restent eux aussi à 0 %. Dans les utilitaires, une partie du code non couvert correspond à des scripts lancés à la main, comme la réinitialisation de la base ou la génération de clé que nous ne testons pas.
 
