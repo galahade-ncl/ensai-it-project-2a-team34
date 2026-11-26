@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="fr" xml:lang="fr"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.10.18">
+<meta name="generator" content="quarto-1.11.9">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -33,24 +33,25 @@ ul.task-list li input[type="checkbox"] {
 <script src="rapport_final_files/libs/clipboard/clipboard.min.js"></script>
 <script src="rapport_final_files/libs/quarto-html/quarto.js" type="module"></script>
 <script src="rapport_final_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="rapport_final_files/libs/quarto-html/scrollable-regions/scrollable-regions.js" type="module"></script>
 <script src="rapport_final_files/libs/quarto-html/popper.min.js"></script>
 <script src="rapport_final_files/libs/quarto-html/tippy.umd.min.js"></script>
 <script src="rapport_final_files/libs/quarto-html/anchor.min.js"></script>
 <link href="rapport_final_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="rapport_final_files/libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="rapport_final_files/libs/quarto-html/quarto-syntax-highlighting-63b5708e65d6cd79cd7618c58d0c21e7.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="rapport_final_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="rapport_final_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="rapport_final_files/libs/bootstrap/bootstrap-dc4f74d98e60dc58001c1af744715ae9.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="rapport_final_files/libs/bootstrap/bootstrap-083eb76b6b15214d82581dbd3fb3df2f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 
 
 <link rel="stylesheet" href="style2.scss">
 </head>
 
-<body class="quarto-light">
+<body class="quarto-light"><a id="quarto-skip-link" class="visually-hidden-focusable" href="#quarto-document-content">Aller au contenu principal</a>
 
 <div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
 <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-  <nav id="TOC" role="doc-toc" class="toc-active">
+  <nav id="TOC" role="doc-toc" aria-labelledby="toc-title" class="toc-active">
     <h2 id="toc-title">Table des matières</h2>
    
   <ul class="collapse">
@@ -68,7 +69,7 @@ ul.task-list li input[type="checkbox"] {
   </ul>
 <div class="quarto-alternate-formats"><h2>Autres formats</h2><ul><li><a href="rapport_final.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
 </div>
-<main class="content" id="quarto-document-content">
+<main class="content" id="quarto-document-content" tabindex="-1">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
@@ -533,6 +534,17 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="estimation-de-la-consommation-énergétique" class="level4" data-number="3.4.4">
 <h4 data-number="3.4.4" class="anchored" data-anchor-id="estimation-de-la-consommation-énergétique"><span class="header-section-number">3.4.4</span> Estimation de la consommation énergétique</h4>
+<p>La consommation énergétique est calculée par la méthode calculate_energy() de la classe <code>EcoService</code>. Elle repose sur une estimation du nombre d’opérations réalisées par le programme, à partir des métriques extraites de son arbre syntaxique abstrait (AST). Le nombre d’opérations de base est obtenu en additionnant trois métriques extraites précédemment comme ceci : N = operations + function_calls + ast_nodes. Ce nombre est ensuite ajusté en fonction des structures du programme détectées lors de l’analyse. Lorsqu’une ou plusieurs boucles sont présentes, le nombre d’opérations est multiplié par la taille d’entrée estimée, élevée à la puissance de la profondeur maximale des boucles imbriquées. La taille d’entrée est fixée par défaut à 1 000. En présence d’au moins une fonction récursive, le résultat est également multiplié par la taille d’entrée estimée. Le nombre d’opérations obtenu permet ensuite d’estimer le temps d’exécution théorique, en fonction de la vitesse de traitement de la machine sélectionnée : t (s) = opérations_totale / opérations_par_secondes = N/10^9</p>
+<p>Enfin, la consommation énergétique est calculée à partir de la puissance du processeur : E (kWh) = P(W) * t(s) / 3 600 000. Par défaut, le programme utilise la configuration MachineType.REFERENCE qui considère une vitesse de traitement d’un milliard d’opérations par seconde et une puissance CPU de 65 W. Le calcul repose sur des hypothèses simplificatrices concernant la vitesse de traitement, la puissance consommée et le nombre d’opérations effectivement réalisées. La consommation estimée dépend également de la configuration matérielle sélectionnée.</p>
+</section>
+<section id="estimation-des-émissions-carbone" class="level4" data-number="3.4.5">
+<h4 data-number="3.4.5" class="anchored" data-anchor-id="estimation-des-émissions-carbone"><span class="header-section-number">3.4.5</span> Estimation des émissions carbone</h4>
+<p>Une fois la consommation énergétique obtenue, CleanOps estime les émissions de gaz à effet de serre associées à cette consommation. Le calcul repose sur l’intensité carbone de l’électricité, fixée par défaut à 50 gCO₂e/kWh, une valeur choisie pour représenter approximativement le mix électrique français. La formule utilisée est C (gCO₂e) = E (kWh) × I (gCO₂e/kWh) où I représente l’intensité carbone de l’électricité. Cette intensité peut être modifiée en passant un autre paramètre à la méthode calculate_carbon(). Il est donc possible d’adapter l’estimation à un contexte énergétique différent, par exemple celui d’un autre pays.</p>
+</section>
+<section id="intégration-à-laudit-et-à-la-quality-gate" class="level4" data-number="3.4.6">
+<h4 data-number="3.4.6" class="anchored" data-anchor-id="intégration-à-laudit-et-à-la-quality-gate"><span class="header-section-number">3.4.6</span> Intégration à l’audit et à la Quality Gate</h4>
+<p>Les résultats de l’analyse éco-énergétique sont ensuite transmis à <code>AuditService</code>, qui les associe aux autres résultats de l’audit du projet. Trois informations principales sont conservées : la liste des anti-patterns détectés, la complexité estimée, ainsi que la consommation énergétique et les émissions carbone calculées. Ces valeurs sont enregistrées dans l’objet Audit puis comparées aux seuils définis lors de la création de la Quality Gate.</p>
+<p>Pour le contrôle écologique, deux seuils sont actuellement fixés: une consommation énergétique maximale de 0,001 kWh et des émissions carbone maximales de 1 gCO₂e. La classe <code>EcoQualityGate</code> vérifie que les deux conditions sont simultanément respectées. Si elles le sont, le contrôle écologique est validé et dans le cas contraire il échoue. Cette fonctionnalité permet ainsi de faire de l’impact environnemental un critère de validation du projet, au même titre que les critères de sécurité. Les résultats sont également conservés dans l’historique des audits, ce qui permet de suivre leur évolution au fil des soumissions.</p>
 </section>
 </section>
 <section id="génération-du-sbom" class="level3" data-number="3.5">
@@ -542,9 +554,23 @@ ul.task-list li input[type="checkbox"] {
 <p>Deux précautions sont prises avant d’écrire le document. D’une part, les noms des packages sont uniformisés. Par exemple, on normalise <code>Flask_SQLAlchemy</code> en <code>flask_sqlalchemy</code> pour qu’ils soient considérés comme un seul package. D’autre part, les versions sont aussi débarrassés de leurs préfixes de contrainte (<code>^1.2.0</code> devient <code>1.2.0</code> ). Les doublons ainsi révélés sont supprimés.</p>
 <p>Le document final, dont la structure sera illustrée par un tableau ultérieurement, déclare l’outil qui l’a produit, le projet audité, la liste des composants et les liens des dépendance entre eux. De plus, si l’audit a trouvé des vulnérabilités, elles y sont jointes avec leur gravité, leur source et le composant qu’elles affectent. Le fichier SBOM est alors directement exploitable par un outil tiers.</p>
 </section>
-<section id="journalisation-historique-quality-gate-et-certificat" class="level3" data-number="3.6">
-<h3 data-number="3.6" class="anchored" data-anchor-id="journalisation-historique-quality-gate-et-certificat"><span class="header-section-number">3.6</span> Journalisation, historique, Quality Gate et certificat</h3>
+<section id="conservation-évaluation-et-certification-des-audits" class="level3" data-number="3.6">
+<h3 data-number="3.6" class="anchored" data-anchor-id="conservation-évaluation-et-certification-des-audits"><span class="header-section-number">3.6</span> Conservation, évaluation et certification des audits</h3>
+<section id="conservation-des-audits" class="level4" data-number="3.6.1">
+<h4 data-number="3.6.1" class="anchored" data-anchor-id="conservation-des-audits"><span class="header-section-number">3.6.1</span> Conservation des Audits</h4>
+<p>Les fichiers soumis par l’utilisateur ne sont pas conservés dans la base de données. En effet, ils sont lus, analysés, puis effacés. L’audit qui en résulte est par contre enregistré en base et rattaché à son projet pour qu’un utilisateur puisse y revenir et comparer deux soumissions successives. Ainsi, on ne stocke en base que les éléments qui permettent de comparer et ce qui doit pouvoir être retéléchargé notamment la date, la complexité estimée du code, la consommation énergétique, les émissions carbone, ainsi que le type de Quality Gate et le statut qu’elle a rendu, c’est-à-dire si l’audit est passé ou non. Ensuite, s’y ajoutent à cela le SBOM, stocké tel quel et le certificat signé.</p>
+<p>Le détail des constats incluant les vulnérabilités, les licences et les anti-patterns n’a pas de colonne dédiée dans la table. Effectivement, recopier ces listes auraient alourdi le modèle de données pour y stocker une seconde fois ce que le SBOM contient déja. Deux routes exploitent cet historique: - <code>GET /project/{id_project}/audit</code> en restitue la liste des audits pour un projet donné, ce qui permet de suivre son évolution d’une soumission à l’autre - <code>GET /audit/{id_audit}</code> détaille un audit précis.</p>
+<p>Toutes deux vérifient que le projet appartient à l’utilisateur authentifié et envoient une erreur 404 dans le cas contraire, afin qu’il n’apprenne pas l’existence d’un audit qui ne le concerne pas.</p>
+</section>
+<section id="evaluation-des-mesures-de-laudit" class="level4" data-number="3.6.2">
+<h4 data-number="3.6.2" class="anchored" data-anchor-id="evaluation-des-mesures-de-laudit"><span class="header-section-number">3.6.2</span> Evaluation des mesures de l’audit</h4>
+<p>La Quality Gate confronte ensuite les mesures produites par l’audit aux seuils fixés par l’application. Certains de ces seuils concernent notamment le fait que le projet doit avooir au plus cinq vulnérabilités, aucune vulnérabilité critique, au plus 1 gCO2e d’émissions et 0,001 kWh de consommation. Chaque type de porte n’examine que les critères qui le concernent, la porte globale étant la seule à les vérifier tous. Le statut de l’audit passe alors de « Unevaluated » à « Passed » ou « Failed ».</p>
+<p>Lorsque les critères sont respectés, un certificat est émis.</p>
+</section>
+<section id="certification" class="level4" data-number="3.6.3">
+<h4 data-number="3.6.3" class="anchored" data-anchor-id="certification"><span class="header-section-number">3.6.3</span> Certification</h4>
 <div style="page-break-after: always;"></div>
+</section>
 </section>
 </section>
 <section id="tests-et-qualité-du-code" class="level2" data-number="4">
@@ -612,9 +638,12 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="annexes" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="annexes">Annexes</h2>
-<p>[À placer ici : le diagramme de classes complet, le diagramme de séquence, le diagramme d’activité (ou alors rajouter partie), le modèle physique des données à jour, les deux diagrammes de Gantt, une capture de la documentation Swagger et un exemple de SBOM généré. À décider également : des bilans personnels par membre, comme dans les rapports des années précédentes.]</p>
 <section id="fichiers-de-dépendances-pris-en-charge" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="fichiers-de-dépendances-pris-en-charge">Fichiers de dépendances pris en charge</h3>
+
+</section>
+<section id="diagramme-de-séquence" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="diagramme-de-séquence">Diagramme de séquence</h3>
 
 </section>
 <section id="diagramme-de-classes-complet" class="level3 unnumbered">
@@ -624,28 +653,28 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="note-individuelle" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="note-individuelle">Note individuelle</h2>
-<section id="manambiravaka-anaëlle" class="level3" data-number="6.1">
-<h3 data-number="6.1" class="anchored" data-anchor-id="manambiravaka-anaëlle"><span class="header-section-number">6.1</span> MANAMBIRAVAKA Anaëlle</h3>
+<section id="manambiravaka-anaëlle" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="manambiravaka-anaëlle">MANAMBIRAVAKA Anaëlle</h3>
 <div style="page-break-after: always;"></div>
 </section>
-<section id="nadin-sarah" class="level3" data-number="6.2">
-<h3 data-number="6.2" class="anchored" data-anchor-id="nadin-sarah"><span class="header-section-number">6.2</span> NADIN Sarah”</h3>
+<section id="nadin-sarah" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="nadin-sarah">NADIN Sarah</h3>
 <div style="page-break-after: always;"></div>
 </section>
-<section id="nicolie-galahade" class="level3" data-number="6.3">
-<h3 data-number="6.3" class="anchored" data-anchor-id="nicolie-galahade"><span class="header-section-number">6.3</span> NICOLIE Galahade</h3>
+<section id="nicolie-galahade" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="nicolie-galahade">NICOLIE Galahade</h3>
 <div style="page-break-after: always;"></div>
 </section>
-<section id="perrin-beau-madie" class="level3" data-number="6.4">
-<h3 data-number="6.4" class="anchored" data-anchor-id="perrin-beau-madie"><span class="header-section-number">6.4</span> PERRIN-BEAU Madie</h3>
+<section id="perrin-beau-madie" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="perrin-beau-madie">PERRIN-BEAU Madie</h3>
 <div style="page-break-after: always;"></div>
 </section>
-<section id="vilarrupla-thomas" class="level3" data-number="6.5">
-<h3 data-number="6.5" class="anchored" data-anchor-id="vilarrupla-thomas"><span class="header-section-number">6.5</span> VILARRUPLA Thomas</h3>
+<section id="vilarrupla-thomas" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="vilarrupla-thomas">VILARRUPLA Thomas</h3>
 <div style="page-break-after: always;"></div>
 </section>
-<section id="zhu-annabelle" class="level3" data-number="6.6">
-<h3 data-number="6.6" class="anchored" data-anchor-id="zhu-annabelle"><span class="header-section-number">6.6</span> ZHU Annabelle</h3>
+<section id="zhu-annabelle" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="zhu-annabelle">ZHU Annabelle</h3>
 </section>
 </section>
 
@@ -729,7 +758,8 @@ ul.task-list li input[type="checkbox"] {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
       // Inspect non-navigation links and adorn them if external
-     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      window.quartoDecorateExternalLinks = function (root) {
+     var links = (root || window.document).querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
       for (var i=0; i<links.length; i++) {
         const link = links[i];
         if (!isInternal(link.href)) {
@@ -738,8 +768,69 @@ ul.task-list li input[type="checkbox"] {
           if (link.dataset.originalHref !== undefined) {
             link.href = link.dataset.originalHref;
           }
+          if (!link.classList.contains('no-external-icon')) {
+          }
         }
       }
+      };
+      window.quartoDecorateExternalLinks(window.document);
+    // Esc closes the popup (WCAG 1.4.13) and focus leaving both trigger and
+    // popup closes it (WCAG 2.4.11); tippy handles neither for interactive popups.
+    const hideOnEscAndFocusOut = {
+      name: 'hideOnEscAndFocusOut',
+      defaultValue: true,
+      fn(instance) {
+        const dismiss = () => {
+          // A show scheduled by the trigger delay would otherwise reopen it
+          instance.clearDelayTimeouts();
+          instance.hide();
+        };
+        const onKeyDown = (event) => {
+          if (event.key !== 'Escape') {
+            return;
+          }
+          // Keep Esc from also reaching page handlers (e.g. reveal.js overview),
+          // except an open reveal.js slide menu, which Esc should close too.
+          // The menu handles keys only when its keyboard option is on.
+          const menuHandlesEsc = window.Reveal?.getPlugin?.('menu')?.isOpen() &&
+            window.Reveal.getConfig().menu?.keyboard !== false;
+          if (!menuHandlesEsc) {
+            event.stopPropagation();
+          }
+          if (instance.popper.contains(window.document.activeElement)) {
+            // Disabled while refocusing so the focus trigger does not reopen it
+            instance.disable();
+            instance.reference.focus();
+            instance.enable();
+          }
+          dismiss();
+        };
+        const onFocusOut = (event) => {
+          const target = event.relatedTarget;
+          if (target && !instance.reference.contains(target) &&
+              !instance.popper.contains(target)) {
+            dismiss();
+          }
+        };
+        // On the trigger too: a click trigger (code-annotations: select) has no
+        // blur handling. Attached for the instance's lifetime so leaving the
+        // trigger also cancels a show still pending on the trigger delay.
+        instance.reference.addEventListener('focusout', onFocusOut);
+        return {
+          onShow() {
+            window.document.addEventListener('keydown', onKeyDown, true);
+            instance.popper.addEventListener('focusout', onFocusOut);
+          },
+          onHide() {
+            window.document.removeEventListener('keydown', onKeyDown, true);
+            instance.popper.removeEventListener('focusout', onFocusOut);
+          },
+          onDestroy() {
+            instance.reference.removeEventListener('focusout', onFocusOut);
+          },
+        };
+      },
+    };
     function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
       const config = {
         allowHTML: true,
@@ -753,6 +844,7 @@ ul.task-list li input[type="checkbox"] {
         interactiveBorder: 10,
         theme: 'quarto',
         placement: 'bottom-start',
+        plugins: [hideOnEscAndFocusOut],
       };
       if (contentFn) {
         config.content = contentFn;
@@ -915,44 +1007,54 @@ ul.task-list li input[type="checkbox"] {
           const lineIds = lines.map((line) => {
             return targetCell + "-" + line;
           })
-          let top = null;
-          let height = null;
-          let parent = null;
+          // Each band is positioned against its own containing block, which is
+          // not the offsetParent of the lines, so place it from client rects.
+          const placeBand = (band, firstEl, lastEl, codeBlock) => {
+            const container = band.offsetParent;
+            if (container === null) {
+              return;
+            }
+            const containerRect = container.getBoundingClientRect();
+            // Reveal.js scales slides with a transform, so convert client
+            // pixels back to the CSS pixels of the container.
+            const scale = containerRect.height / container.offsetHeight || 1;
+            const firstRect = firstEl.getBoundingClientRect();
+            const lastRect = lastEl.getBoundingClientRect();
+            const top = (firstRect.top - containerRect.top) / scale - container.clientTop + container.scrollTop;
+            const height = (lastRect.bottom - firstRect.top) / scale;
+            band.style.top = top - 2 + "px";
+            band.style.height = height + 4 + "px";
+            if (codeBlock) {
+              // Without the copy button wrapper, the containing block is wider
+              // than the code block, so span the code block explicitly.
+              const blockRect = codeBlock.getBoundingClientRect();
+              band.style.left = (blockRect.left - containerRect.left) / scale - container.clientLeft + container.scrollLeft + "px";
+              band.style.width = blockRect.width / scale + "px";
+            }
+          };
           if (lineIds.length > 0) {
-              //compute the position of the single el (top and bottom and make a div)
-              const el = window.document.getElementById(lineIds[0]);
-              top = el.offsetTop;
-              height = el.offsetHeight;
-              parent = el.parentElement.parentElement;
-            if (lineIds.length > 1) {
-              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
-              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
-              height = bottom - top;
+            const el = window.document.getElementById(lineIds[0]);
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const parent = el.parentElement.parentElement;
+            // cook up a div (if necessary) and position it
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
             }
-            if (top !== null && height !== null && parent !== null) {
-              // cook up a div (if necessary) and position it 
-              let div = window.document.getElementById("code-annotation-line-highlight");
-              if (div === null) {
-                div = window.document.createElement("div");
-                div.setAttribute("id", "code-annotation-line-highlight");
-                div.style.position = 'absolute';
-                parent.appendChild(div);
-              }
-              div.style.top = top - 2 + "px";
-              div.style.height = height + 4 + "px";
-              div.style.left = 0;
-              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
-              if (gutterDiv === null) {
-                gutterDiv = window.document.createElement("div");
-                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
-                gutterDiv.style.position = 'absolute';
-                const codeCell = window.document.getElementById(targetCell);
-                const gutter = codeCell.querySelector('.code-annotation-gutter');
-                gutter.appendChild(gutterDiv);
-              }
-              gutterDiv.style.top = top - 2 + "px";
-              gutterDiv.style.height = height + 4 + "px";
+            placeBand(div, el, lastEl, parent.closest("div.sourceCode") || parent);
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
             }
+            placeBand(gutterDiv, el, lastEl);
             selectedAnnoteEl = annoteEl;
           }
         };
@@ -1050,6 +1152,9 @@ ul.task-list li input[type="checkbox"] {
       }
     }
   });
+  </script>
+  <script type="application/javascript">
+  window.quartoScrollableRegionsLabels = {"code":"Code défilable","output":"Sortie défilable"};
   </script>
 </div> <!-- /content -->
 
