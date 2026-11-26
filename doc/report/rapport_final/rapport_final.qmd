@@ -2,7 +2,7 @@
 title: "Rapport Final"
 subtitle: "Projet Informatique de 2ème année : **⚙️CleanOps⚙️**"
 authors:
-  - "MANAMBIRAVAKA Anaëlle"
+  - "MANAMBIRAVAKA Anaelle"
   - "NADIN Sarah"
   - "NICOLIE Galahade"
   - "PERRIN-BEAU Madie"
@@ -1027,7 +1027,7 @@ https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-218.pdf
 
 ## Note individuelle {.unnumbered}
 
-### MANAMBIRAVAKA Anaëlle {.unnumbered}
+### MANAMBIRAVAKA Anaelle {.unnumbered}
 
 Je suis arrivée à l'école après la rentrée officielle, donc après le lancement du projet. Quand j'ai rejoint l'équipe, le sujet avait déjà été exploré, le groupe constitué et les premières décisions prises. Il a fallu comprendre en quelques jours ce que les autres avaient construit en deux semaines, puis trouver ma place dans une répartition du travail déjà esquissée.
 
