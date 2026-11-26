@@ -998,8 +998,6 @@ Malgré ces difficultés organisationnelles, le projet m'a permis de mettre en p
 
 Si c'était à refaire, je conseillerais de distinguer clairement les rôles de tech lead et de cheffe de projet, fixer des échéances intermédiaires avec un responsable pour chaque tâche, alerter le tuteur dès les premiers signes de déséquilibre.
 
-**Mon ressenti**
-
 Je termine ce projet avec de la déception et de la tristesse. Malgré le temps et l'énergie investis, je regrette que nous n'ayons pas réussi à produire un résultat aussi complet que souhaité ni à instaurer une véritable dynamique collective. J'aurais préféré consacrer davantage de temps aux aspects techniques, qui m'intéressaient particulièrement, plutôt qu'à la coordination du groupe.
 
 {{< pagebreak >}}
