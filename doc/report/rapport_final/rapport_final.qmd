@@ -8,7 +8,7 @@ authors:
   - "PERRIN-BEAU Madie"
   - "VILARRUPLA Thomas"
   - "ZHU Annabelle"
-date: "17 Septembre 2026"
+date: "25 Novembre 2026"
 keywords :
   - "LACAILLE Adrien"
 
@@ -27,6 +27,7 @@ format:
     number-sections: true
 
   pdf:
+    latex-min-runs: 3
     filters:
       - code_break.lua
     template: template_ensai_bis.tex
@@ -775,7 +776,7 @@ L’application permet également de vérifier l’authenticité d’un tel cert
 
 ### Stratégie de test
 
-Le projet compte 246 fonctions de test, toutes exécutées par `pytest`. Ce sont des tests unitaires car chaque test vérifie une seule classe, isolée de ses dépendances. Un test de service ne touche jamais la base de données, et un test de DAO ne l'atteint pas davantage. Cette isolation a un coût, celui d'écrire les doublures, mais elle garantit que la campagne complète s'exécute en quelques secondes, sans serveur ni réseau, et qu'un test qui échoue désigne la classe fautive sans ambiguïté.
+Le projet compte 293 fonctions de test, toutes exécutées par `pytest`. Ce sont des tests unitaires car chaque test vérifie une seule classe, isolée de ses dépendances. Un test de service ne touche jamais la base de données, et un test de DAO ne l'atteint pas davantage. Cette isolation a un coût, celui d'écrire les doublures, mais elle garantit que la campagne complète s'exécute en quelques secondes, sans serveur ni réseau, et qu'un test qui échoue désigne la classe fautive sans ambiguïté.
 
 La méthode employée pour effectuer les tests unitaires est l’approche GIVEN, WHEN, THEN: un bloc GIVEN qui prépare les données, un bloc WHEN qui appelle la méthode testée, un bloc THEN qui vérifie le résultat. Chaque méthode est ainsi éprouvée dans son cas nominal et dans ses cas d’échec.  
 
@@ -783,7 +784,7 @@ D’ailleurs, le mocking, une pratique consistant à simuler le comportement de 
 
 ### Les couches concernées
 
-Le projet compte à ce jour 384 tests automatisés au total qui sont répartis par couche selon le tableau suivant.
+Le projet compte à ce jour 449 tests automatisés au total qui sont répartis par couche selon le tableau suivant.
 
 \begin{table}[H]
 \centering
@@ -831,6 +832,66 @@ Deux tests font exception réunis dans `test_api_network.py`. `test_osv_real_cal
 
 Trois limites de couverture des tests sont à relever. Premièrement, les contrôleurs ne sont pas testés. En effet, les routes ont été éprouvées manuellement via la documentation interactive de FastAPI, mais aucun test automatique n'envoie de requête HTTP. Deuxièmement, l’interface Streamlit n'a pas de tests non plus. Enfin, aucun test ne s'exécute contre une vraie base PostgreSQL : les DAO sont validés sur un curseur simulé, ce qui éprouve la logique mais pas la conformité du SQL au schéma réel.
 
+### Qualité du code 
+
+
+Au-delà des tests, nous avons mesuré la qualité du backend à l'aide de quatre outils, chacun chargé d'un aspect précis : Ruff pour le style et les erreurs courantes, Coverage pour la couverture des tests, Pylint pour une note globale et Interrogate pour la documentation. Les mesures ont été relevées le 25 novembre 2026 sur le backend du projet.
+
+| Indicateur | Outil | Résultat | Appréciation |
+|:-----------|:------|:---------|:-------------|
+| Erreurs de lint | Ruff | 0 erreur | Satisfaisant |
+| Formatage | Ruff | 108 fichiers conformes sur 110 | Satisfaisant |
+| Couverture (services et DAO) | Coverage | 94 % | Satisfaisant |
+| Couverture (ensemble du code) | Coverage | 69 % | Cela aurait pu être amélioré |
+| Tests | pytest | 447 réussis sur 447 exécutés | Satisfaisant |
+| Note globale | Pylint | 9,33 / 10 | Satisfaisant |
+| Documentation | Interrogate | 100 % | Satisfaisant |
+
+: Synthèse des indicateurs de qualité du backend {#tbl-indicateurs}
+
+#### Ruff, garant de la cohérence du code
+
+Ruff a été retenu comme outil principal de contrôle du code car il réunit en un seul programme le linter et le formateur, et s'exécute en moins d'une seconde sur l'ensemble du projet. Sa configuration, placée dans le `pyproject.toml`, active six familles de règles : les erreurs de style, les erreurs logiques comme les variables inutilisées, le tri des imports, les bugs probables et la modernisation de la syntaxe pour Python 3.13. La longueur de ligne est fixée à 120 caractères. Deux règles ont été volontairement écartées. La règle `B008` interdit d'appeler une fonction dans la valeur par défaut d'un argument, or c'est précisément ainsi que FastAPI injecte ses dépendances. La règle `E501`, quant à elle, ferait doublon avec le formateur, qui gère déjà la longueur des lignes.
+
+À ce jour, `ruff check` ne relève aucune erreur sur les 110 fichiers du backend. Côté formatage, 108 fichiers sont conformes. Les deux restants, `severity.py` et `hmac_model.py`, ont été modifiés en dernier pour y ajouter leur documentation et doivent simplement être reformatés avec `ruff format`.
+
+Ruff s'est aussi montré utile au-delà du style. La règle `B017` signale les tests qui attendent une exception trop générale, du type `pytest.raises(Exception)`. En corrigeant ces avertissements, nous avons découvert qu'un test du parseur XML passait pour une mauvaise raison : la méthode était appelée sur la classe et non sur une instance, ce qui levait une `TypeError` bien avant que le XML ne soit lu. Le test, qui attrapait toute exception, restait donc vert sans rien vérifier. En imposant l'exception précise `ParseError`, l'erreur est apparue et a pu être corrigée.
+
+#### Couverture des tests
+
+La couverture est mesurée avec `coverage`. Grâce au paramétrage, les fonctions de test produisent 449 tests à l'exécution. Les 447 tests lancés par défaut réussissent.
+
+Notre configuration limite volontairement la mesure aux couches `service` et `dao`, qui portent la logique métier. Sur ce périmètre, la couverture atteint 94 % : sur 992 instructions, seules 47 ne sont jamais exécutées. Étendue à l'ensemble du dossier `src`, elle tombe à 69 %. Le tableau suivant détaille cet écart couche par couche.
+
+| Couche | Instructions | Non couvertes | Couverture |
+|:-------|-------------:|--------------:|-----------:|
+| DAO | 367 | 5 | 99 % |
+| API OSV | 56 | 0 | 100 % |
+| Services | 625 | 42 | 93 % |
+| Objets métier | 247 | 28 | 89 % |
+| API deps.dev | 46 | 15 | 67 % |
+| Utilitaires | 209 | 82 | 61 % |
+| Contrôleurs | 231 | 231 | 0 % |
+| Schémas Pydantic | 155 | 155 | 0 % |
+| **Total** | **1 973** | **595** | **69 %** |
+
+: Couverture des tests par couche applicative {#tbl-couverture}
+
+L'écart s'explique d'abord par les contrôleurs, qui ne sont pas testés automatiquement comme indiqué précédemment. Les schémas Pydantic n'étant utilisés que par ces contrôleurs, ils restent eux aussi à 0 %. Dans les utilitaires, une partie du code non couvert correspond à des scripts lancés à la main, comme la réinitialisation de la base ou la génération de clé que nous ne testons pas.
+
+Au sein des fichiers services, quelques fichiers restent en retrait. Le parseur de fichiers `.lock` n'est couvert qu'à 35 % car il n'a aucun fichier de test dédié. Le parseur TOML ne teste pas le format Poetry. Dans `SecurityService`, la recherche de licences n'est pas testée. Enfin, `FileService` ne vérifie l'aiguillage que pour l'extension `.txt`, alors qu'il en gère cinq.
+
+#### Autres indicateurs
+
+Pylint attribue au code la note de 9,33 sur 10. Une large part des avertissements relève de règles peu pertinentes pour notre architecture, comme l'absence de docstring des méthodes `__init__` ou le faible nombre de méthodes publiques des objets métier. Les remarques restantes sont plus utiles : treize messages de log construits avec des f-strings plutôt qu'avec les paramètres du module `logging`, et sept blocs de code dupliqués entre plusieurs fichiers.
+
+Interrogate confirme que l'ensemble des classes, méthodes et fonctions publiques possède une docstring au format Numpy, les paramètres des constructeurs étant décrits dans la docstring de la classe.
+
+#### Bilan
+
+Le code du backend est propre et cohérent : aucune erreur Ruff, une note Pylint supérieure à 9 et une documentation complète. La couche métier est solidement testée, avec 94 % de couverture. Les marges de progression sont identifiées : tester les contrôleurs et compléter les tests des parseurs de fichiers.
+
+
 {{< pagebreak >}}
 
 ## Difficultés rencontrées
@@ -852,9 +913,7 @@ Plusieurs chantiers se dégagent, du plus structurant au plus ponctuel.
 
 Le premier est l'élargissement du périmètre d'analyse, aujourd'hui doublement restreint. Un projet ne peut porter qu'un seul fichier de code et un seul fichier de dépendances, là où un projet réel en compte des dizaines. Ainsi, accepter une arborescence entière, ou une archive, est la suite naturelle. Surtout, l'application souffre d'une asymétrie : l'audit de sécurité reconnaît quatre écosystèmes qui sont notamment PyPI, npm, Maven et crates.io, mais l'analyse du code lui-même ne sait lire que du Python. Un projet Java ou JavaScript n'obtient donc qu'un audit à moitié rempli. L'intention de lever cette limite figure déjà dans le code, sous la forme des classes PyService, JsService et JavaService, laissées vides faute de temps : chacune aurait accueilli l'analyseur syntaxique de son langage.
 
-Le deuxième viserait la finesse de l'estimation énergétique. Le calcul repose sur trois constantes figées dans EcoService: un milliard d'opérations par seconde, un processeur de 65 watts et une intensité carbone de 50 gCO2e par kWh. Ces valeurs décrivent une machine de référence, pas celle de l'utilisateur. Une classe MachineType, envisagée puis écartée, aurait permis de choisir un profil matériel et un mix électrique faute de quoi les chiffres produits valent surtout comme ordre de grandeur et comme base de comparaison entre deux audits du même projet.
-
-Enfin, côté tests,deux manques sont identifiés : les méthodes des objets métier ne sont pas couvertes, et les tests du client OSV comme ceux de SecurityService restent incomplets.
+Une classe MachineType a donc été implémentée pour répertorier les valeurs par défaut de notre API. Une fonctionnalité, qui n’a pas été implémentée par manque de temps, pourrait permettre à l’utilisateur de choisir sa machine parmi celles proposées. En effet, plusieurs exemples de machine pourraient être proposés à l’utilisateur pour que ce dernier puisse choisir celle qui correspond le mieux à son code. Cependant, elle n’a pas pu être implémentée et tous les utilisateurs se voient attribuer les mêmes valeurs par défaut. 
 
 
 {{< pagebreak >}}
@@ -867,7 +926,7 @@ Comme l'API traite des fichiers venant de l'extérieur, la sécurité a été in
 
 Ce projet nous a permis de mettre en pratique, sur un cas concret, les enseignements de première et de deuxième année. L'architecture en couches, qui sépare l'API, la couche service, les DAO et la base de données, a rendu le code plus lisible, plus facile à modifier et plus simple à tester. Nous avons également manipulé des mécanismes de sécurité réels : authentification et signatures symétriques.
 
-Le travail en groupe a aussi joué un rôle important dans l'avancement du projet. Chacun de nous avait un niveau différent en programmation, et cette hétérogénéité n'a pas facilité la répartition des tâches. Au début, la communication manquait : chacun travaillait de son côté sans avoir le réflexe d'informer les autres. Une discussion interne a réglé ce problème, et les échanges et les questions entre les membres sont ensuite devenus beaucoup plus fréquents.
+Le travail en groupe a aussi joué un rôle important dans l'avancement du projet. Chacun de nous avait un niveau différent en programmation, et cette hétérogénéité n'a pas facilité la répartition des tâches. Au début, la communication manquait : chacun travaillait de son côté sans avoir le réflexe d'informer les autres. Après une discussion au sein du groupe, les échanges et les questions entre les membres sont devenus plus fréquents. Cette amélioration est toutefois restée partielle : l'implication est demeurée inégale jusqu'à la fin du projet.
 
 CleanOps reste perfectionnable. Les estimations de complexité et de consommation reposent sur des hypothèses simplificatrices, et plusieurs fonctionnalités optionnelles du sujet n'ont pas été développées. Les perspectives présentées en partie VII indiquent comment aller plus loin.
 
@@ -959,16 +1018,52 @@ https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-218.pdf
 
 ### MANAMBIRAVAKA Anaëlle {.unnumbered}
 
+Je suis arrivée à l'école après la rentrée officielle, donc après le lancement du projet. Quand j'ai rejoint l'équipe, le sujet avait déjà été exploré, le groupe constitué et les premières décisions prises. Il a fallu comprendre en quelques jours ce que les autres avaient construit en deux semaines, puis trouver ma place dans une répartition du travail déjà esquissée.
+
+J'en retiens deux choses. La première est qu'un retard de calendrier se rattrape bien plus vite qu'un retard de compréhension cat j'ai passé mes premiers jours à lire ce qui avait été décidé plutôt qu'à produire, et c'est précisément ce qui m'a permis d'avancer ensuite. La seconde est que je dois beaucoup à l'équipe, qui a pris le temps de m'expliquer ce que j'avais manqué plutôt que de me confier ce qu'il restait à faire.
+
+Ce que je retiens d'abord de CleanOps, c'est l'écart entre ce que l'on imagine en analyse et ce que l'on découvre en écrivant le code. J'ai dessiné le modèle physique des données en septembre avec Annabelle, avant d'avoir écrit une seule ligne de Python. Deux mois plus tard, une table avait disparu, une classe s'était scindée en quatre, et un attribut qui me semblait évident n'existait plus. J'ai compris qu'un dossier d'analyse n'est pas un contrat que l'on exécute, mais une hypothèse que l'on corrige.
+
+Mon travail m'a fait traverser presque toutes les couches de l'application. J'ai commencé par des classes métier, puis j'ai implémenté les contrôleurs d'utilisateur et d'authentification avec les modèles de validation associés, avant de prendre en charge la génération du SBOM qui était une tâche assez fastidieuse. C'est cette dernière partie qui m'a le plus appris puisque je croyais produire un simple fichier listant des dépendances alors que j'ai découvert une norme internationale, deux API publiques à interroger, et des conventions de nommage qu'il faut respecter à la lettre sous peine de ne rien trouver. Un détail aussi mince que la manière d'écrire le nom d'un paquet décide qu'une vulnérabilité sera détectée ou passera inaperçue.
+
+Écrire les tests de mon propre code a été le second apprentissage marquant car j'ai constaté qu'un code difficile à tester est presque toujours un code mal découpé. Les tests m'ont fait revenir sur mes propres classes plus souvent que l'inverse.
+
+Enfin, ce que je garde de CleanOps tient finalement moins au code qu'à une découverte simple car j'ai été jugée sur ce que j'apportais, pas sur le moment où j'étais arrivée. C'est une leçon que j'emporterai bien au-delà de ce projet.
 
 {{< pagebreak >}}
 
 ### NADIN Sarah {.unnumbered}
+
+#### Mon rôle {.unnumbered}
+Durant ce projet, j’ai endossé le rôle de rédactrice technique. J’étais donc responsable de tout ce qui concerne la documentation du code et du rapport.
+
+#### Organisation en équipe {.unnumbered}
+Au cours de ce travail, j’ai ressenti que l’implication de chacun des membres du groupe n’était pas équitable. Moi-même, pour des raisons de santé, je n’ai pas réussi à m’impliquer autant que je l’aurais souhaité. 
+Cependant, je pense que les tâches auraient pu être mieux réparties si on avait changé certaines choses simples : certains membres du projet ne répondaient pas assez aux messages. Cela a poussé notre tech leader et notre cheffe de projet à reprendre leurs tâches et/ou à les redistribuer aux autres membres du groupe. Cette non réponse a instauré un climat défavorable. En effet, certains faisaient le travail d’autres par peur qu’ils ne le fassent pas puis ne confiaient plus de tâche importantes à ces dits membres. De plus, il n’y a eu que très peu de réunions où tous les membres du groupe ont été présents ce qui n’a pas permis d’avoir une répartition des tâches claire. 
+J’ai pour ma part réalisé beaucoup de documentation (en temps que rédactrice technique) et de tests mais j’aurais également aimé pouvoir m’impliquer d’avantage dans le code pur du projet, notamment au niveau du frontend qui était déjà presque fini au moment où j’ai voulu m’y pencher. 
+Toutefois, je pense que réaliser un projet en groupe de six est quelque chose de difficile et bien que la part de travail a été inégale, chacun a réussi à s’intégrer au projet et à apporter son point de vu. 
+
+#### Mon implication dans ce projet et points d’amélioration {.unnumbered}
+
+La tâche de documentation était essentielle pour ce projet. En effet, certains codes au début du projet étaient très mal documentés ce qui ne permettait pas de les reprendre aisément. Les diagrammes qui constituent une ligne conductrice pour notre travail ont dû être souvent mis à jour car nous avons été amenés à changer certains aspects du projet. 
+Je pense que pour les projets à venir (durant ma troisième année à l’ENSAI ou lors de mon futur travail), j’essaierai de prendre d’avantage d’initiatives par moi-même pour décharger mes camarades/collègues et choisir d’avantage sur quoi je travaillerai. Ce manque d’initiative à la suite de ma maladie a conduit notamment notre tech leader à faire le frontend dans la précipitation (sûrement par manque de certitude) alors que j’aurais réellement aimé m’y impliquer d’avantage.
 
 
 {{< pagebreak >}}
 
 ### NICOLIE Galahade {.unnumbered}
 
+Au début du projet, nous étions tous un peu intimidés par le sujet, qui ne nous parlait pas vraiment. Néanmoins, les premières séances de suivi, de recherche et de discussion avec le groupe m’ont permis de comprendre les principaux enjeux de l’application.
+
+Malgré une analyse préliminaire bien menée, beaucoup de choses ont changé entre les diagrammes que nous avions réalisés au début et le code final.
+
+La structure en couches n’a pas été suffisante pour nous éviter d’importantes modifications du code. Par exemple, la classe `Projet` avait initialement un attribut `User`. Lorsque celui-ci a été supprimé, nous avons dû reprendre plusieurs routes, de la DAO au contrôleur, ainsi que tous les tests associés.
+
+De plus, la communication était un élément essentiel. Au fur et à mesure que nous avancions dans le développement, nous avons chacun dû prendre des décisions qui avaient des répercussions sur le travail des autres. Pour cette raison, j’ai beaucoup apprécié les trois jours d’immersion, qui nous ont permis de réellement travailler ensemble et de discuter de chaque décision.
+
+Au début du projet, je me suis occupé de coder quelques classes métier ainsi qu’une partie du contrôleur. Ensuite, je devais m’occuper de la fonctionnalité `run_audit`, ce qui m’a permis de mieux comprendre le travail de mes camarades. En effet, cette fonctionnalité fait appel à de nombreux autres services (`eco`, `security`, `project`, etc.).
+
+Finalement, ce projet m’a permis d’en apprendre beaucoup sur le travail d’équipe. J’ai trouvé difficile de prendre des initiatives et de travailler sur le projet de mon côté. À l’inverse, je me suis investi le plus possible lors des séances de suivi et des trois jours d’immersion.
 
 {{< pagebreak >}}
 
@@ -976,35 +1071,78 @@ https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-218.pdf
 
 **Ma participation au projet**
 
-Dès le début du projet, je me suis orientée vers le rôle de tech lead, en prenant une place importante dans les décisions techniques. Ma motivation était notamment liée au fait que je n'avais pas eu l'occasion de réaliser de projet l'année précédente.
+Dès le début, je me suis orientée vers le rôle de tech lead et j'ai pris une place importante dans les décisions techniques, en partie parce que je n'avais pas pu réaliser de projet l'année précédente.
 
-L'investissement initial du groupe étant inégal, j'ai également pris en charge certaines responsabilités de cheffe de projet : organisation des réunions, suivi des tâches et relances. Malgré une redéfinition des rôles à la fin du dossier d'analyse, j'ai continué à assumer ces missions. J'ai signalé les difficultés de communication au groupe avant les vacances de la Toussaint, mais la situation ne s'est pas durablement améliorée. J'ai finalement pris du recul pour laisser davantage de place aux autres membres, ce qui a notamment conduit à l'abandon de certaines fonctionnalités envisagées, comme la prise en charge d'autres langages que Python.
+Comme l'investissement du groupe était inégal, j'ai aussi assumé des tâches de cheffe de projet : organiser les réunions, suivre les tâches et relancer les membres. J'ai continué à le faire même après la redéfinition des rôles à la fin du dossier d'analyse. J'ai signalé les difficultés de communication avant la Toussaint, mais la situation ne s'est pas durablement améliorée. J'ai donc pris du recul pour laisser plus de place aux autres, ce qui a entraîné l'abandon de certaines fonctionnalités, comme la prise en charge d'autres langages que Python.
 
-Côté développement, j'ai travaillé sur différentes couches de l'application, particulièrement sur les services et les interactions avec les API externes. Je me suis également chargée de la mise en forme des dossiers sur Quarto.
+Côté développement, j'ai travaillé sur plusieurs couches de l'application, surtout les services et les interactions avec les API externes, et j'ai mis en forme les dossiers sur Quarto.
 
 **Ce qui a bien fonctionné**
 
-La répartition initiale des tâches a été réalisée collectivement, en tenant compte des avis de chacun. Elle nous a donné une première organisation claire pour démarrer le projet.
+Nous avons réparti les tâches ensemble au départ, en tenant compte de l'avis de chacun, ce qui nous a donné une organisation claire pour démarrer.
 
 **Les difficultés rencontrées**
 
-La principale difficulté a été le manque de régularité dans la participation de certains membres, entraînant un déséquilibre dans la charge de travail. Malgré mes relances et l'envoi d'une liste des éléments restant à développer, plusieurs tâches n'ont pas été réalisées dans les délais. La rédaction du rapport a également été compliquée : certaines parties ont dû être terminées le jour du rendu, faute d'avancement suffisant.
+La principale difficulté a été la participation irrégulière de certains membres, qui a déséquilibré la charge de travail. Malgré mes relances et la liste des éléments restant à développer que j'ai envoyée, plusieurs tâches ont pris du retard. Le rapport aussi a été compliqué à rédiger : certaines parties ont été terminées le jour du rendu.
 
-Le cumul des responsabilités techniques et de coordination a ainsi été une importante source de stress, me donnant parfois le sentiment de porter une grande partie du projet.
+Cumuler les responsabilités techniques et la coordination m'a beaucoup stressée, et j'ai parfois eu le sentiment de porter une trop grande partie du projet.
 
 **Ce que j'en retiens**
 
-Malgré ces difficultés organisationnelles, le projet m'a permis de mettre en pratique des notions comme la programmation orientée objet et d'approfondir ma compréhension des API.
+Malgré ces difficultés, le projet m'a permis de mettre en pratique la programmation orientée objet et de mieux comprendre les API.
 
-Si c'était à refaire, je conseillerais de distinguer clairement les rôles de tech lead et de cheffe de projet, fixer des échéances intermédiaires avec un responsable pour chaque tâche, alerter le tuteur dès les premiers signes de déséquilibre.
+Si c'était à refaire, je conseillerais de :
 
-Je termine ce projet avec de la déception et de la tristesse. Malgré le temps et l'énergie investis, je regrette que nous n'ayons pas réussi à produire un résultat aussi complet que souhaité ni à instaurer une véritable dynamique collective. J'aurais préféré consacrer davantage de temps aux aspects techniques, qui m'intéressaient particulièrement, plutôt qu'à la coordination du groupe.
+  * Distinguer clairement les rôles de tech lead et de cheffe de projet.
+  * Fixer des échéances intermédiaires, avec un responsable pour chaque tâche.
+  * Alerter le tuteur dès les premiers signes de déséquilibre.
+
+Je termine ce projet déçue et avec une grande quantité de stresse. Malgré le temps et l'énergie investis, je regrette que nous n'ayons pas obtenu un résultat aussi complet que souhaité ni créé une vraie dynamique collective. J'aurais préféré consacrer plus de temps aux aspects techniques, qui m'intéressaient particulièrement, qu'à la coordination du groupe.
 
 {{< pagebreak >}}
 
 ### VILARRUPLA Thomas {.unnumbered}
 
+Au cours du projet, j'ai principalement travaillé sur deux parties : la DAO, puis EcoService avec un travail plus spécifique sur le calcul de la consommation énergétique et de l'empreinte carbone.
+
+J'ai commencé par travailler sur la DAO (Data Access Object) qui permet de gérer les échanges entre l'application et la base de données. Cette partie m'a permis de mieux comprendre l'organisation des données et l'importance de structurer correctement le code pour faciliter leur récupération et leur manipulation. J'ai notamment dû veiller à ce que les différentes opérations soient cohérentes avec les besoins du reste de l'application.
+
+Ensuite j'ai participé au développement d'EcoService en me concentrant plus particulièrement sur les calculs liés à l'impact environnemental. J'ai travaillé sur le calcul de l'énergie consommée ainsi que sur l'estimation de l'empreinte carbone. Cette partie m'a demandé de bien comprendre les données utilisées et la logique des calculs afin d'obtenir des résultats cohérents.
+
+Ce projet m'a appris à faire le lien entre la gestion des données et leur exploitation dans des fonctionnalités métier. J'ai compris que la fiabilité d'un résultat dépend autant de la qualité des données récupérées que de la logique utilisée pour les traiter.
+
+Enfin je pense avoir apporté au projet ma contribution technique sur ces différentes parties mais aussi de la rigueur dans l'implémentation et la vérification des fonctionnalités. Cette expérience m'a permis de progresser en développement en ayant une meilleure vision de la manière dont les différentes couches d'une application fonctionnent ensemble.
+Avec du recul je pense que j'aurais pu mieux anticiper certaines difficultés techniques et prendre davantage de temps pour tester mes développements au fur et à mesure. J'aurais également pu communiquer plus régulièrement sur mon avancement afin de faciliter l'intégration de mon travail avec celui des autres membres de l'équipe. Cela m'aurait permis de détecter plus tôt certaines incohérences et d'éviter potentiellement des corrections tardives.
+
 {{< pagebreak >}}
 
 
 ### ZHU Annabelle {.unnumbered}
+
+#### Mon rôle et ma participation {.unnumbered}
+
+La composition du groupe étant imposée, j'ai travaillé avec des personnes que je connaissais peu, aux niveaux et aux méthodes de travail différents.
+
+J'ai accepté le rôle de cheffe de projet parce que personne d'autre ne s'était proposé, tout en sachant qu'il ne me correspondait pas forcément : je ne m'impose pas naturellement. Madie, notre tech lead, en a donc assuré une partie le temps que je trouve ma place. J'ai ensuite organisé les réunions, réparti le travail avec elle et suivi l'avancement du projet. Côté code, j'ai notamment implémenté `UserService` et la
+détection des anti-patterns dans `EcoService`. J'ai aussi utilisé l'IA, notamment pour comprendre pourquoi certains tests échouaient.
+
+#### Le travail en groupe {.unnumbered}
+
+Le début du projet a été difficile : peu de membres prenaient la parole lors de la répartition des tâches, et c'était souvent Madie qui s'exprimait en réunion. J'en porte une part de responsabilité, car je n'ai pas su faire participer chacun.
+
+Après le dossier d'analyse, nous avons parlé ouvertement de ce manque de communication, et j'ai pris davantage d'initiatives : informer l'équipe, relancer les membres, préparer la répartition des tâches. Les échanges sont devenus plus fréquents, mais l'investissement est resté inégal : à l'approche du rendu final, certains membres ne répondaient toujours pas aux messages et ne réalisaient pas leurs tâches.
+
+#### Ce que j'en retiens {.unnumbered}
+
+J'ai mis en pratique la programmation orientée objet, le SQL et l'architecture en couches. J'ai particulièrement aimé travailler avec le module `ast` : difficile à prendre en main mais c'était la partie qui m'a le plus appris. Le sujet m'a aussi sensibilisée à l'impact énergétique du code et aux licences des bibliothèques, qui étaient des problématiques dont je ne m'en préoccupais pas avant.
+
+Je retiens surtout ce qu'implique le rôle de chef de projet : si la situation se reproduisait, j'exprimerais mes doutes dès le départ et je confierais ce rôle à quelqu'un dont le profil s'y prête davantage.
+
+#### Mes conseils à nos successeurs {.unnumbered}
+
+- **Choisir le chef de projet par envie**, et non par défaut.
+- **Faire un tour de table à chaque réunion**, pour que tout le monde s'exprime.
+- **Trancher vite les questions de conception** : le stockage des fichiers, resté en suspens plus d'un mois, nous a coûté une table, une classe DAO et deux routes.
+- **Travailler sur des branches dès le départ.**
+
+Finalement, les fonctionnalités principales ont été implémentées, même s'il est regrettable de ne pas avoir pu aller plus loin et d'avoir passer du temps sur la gestion du groupe.

@@ -180,3 +180,5 @@ To see logs:
   - `docker compose stop` to simply stop
 
 [How it works](https://github.com/olevitt/kubernetes)
+
+PS : If you want to try it out, we have put three project examples in data/test_files.
