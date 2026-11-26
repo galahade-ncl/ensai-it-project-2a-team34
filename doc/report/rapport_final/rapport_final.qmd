@@ -574,7 +574,7 @@ Les mots de passe, enfin, ne sont jamais conservés en clair : ils sont hachés 
 
 La signature est un HMAC-SHA256 calculé, avec la clé secrète, sur la concaténation de l'identifiant du projet, du fichier de code et du fichier de dépendances. Un détail de l'implémentation mérite d'être souligné : chaque élément est précédé de sa longueur, codée sur huit octets. Sans cette précaution, deux soumissions différentes pourraient produire la même concaténation. En effet, un octet déplacé de la fin du code vers le début du fichier de dépendances donnerait la même chaîne, donc la même signature, et permettrait de faire passer un contenu pour un autre. Le préfixe de longueur rend la concaténation non ambiguë.
 
-Lors de la vérification, l’API recalcule la signature attendue à partir de la clé secrète et du contenu reçue, puis la compare avec celle envoyée par l’utilisateur. Cette comparaison utilise `hmac.compare_digest` dont le temps d’exécution ne dépend pas de la position du premier octet différent entre la signature envoyée par l’utilisateur et celle calculée par l’API. Elle est donc à temps constant. Une comparaison naïve s’arrête dès qu’elle trouve un octet différent, ce qui permettrait en théorie de reconstituer une signature valide octet par octet, simplement en mesurant le temps de réponse du serveur. 
+Lors de la vérification, l’API recalcule la signature attendue à partir de la clé secrète et du contenu reçu, puis la compare avec celle envoyée par l’utilisateur. Cette comparaison utilise `hmac.compare_digest` dont le temps d’exécution ne dépend pas de la position du premier octet différent entre la signature envoyée par l’utilisateur et celle calculée par l’API. Elle est donc à temps constant. Une comparaison naïve s’arrête dès qu’elle trouve un octet différent, ce qui permettrait en théorie de reconstituer une signature valide octet par octet, simplement en mesurant le temps de réponse du serveur. 
 
 La vérification a lieu dans la route d'audit, avant tout traitement. De ce fait, un projet dont la signature est invalide n’est jamais analysé et la requête est rejetée avec un code 401. Cet ordre est important, puisque l’étape suivante consiste précisément à analyser du code fourni par un tiers.
 
@@ -656,7 +656,7 @@ Ces métriques permettent d'obtenir une première représentation de la structur
 
 Deux catégories d'anti-patterns sont actuellement recherchées : les boucles imbriquées et les appels récursifs, et la recherche se fait notamment en plusieurs étapes. 
 
-Tout d’abord, toutes les boucles qui ne sont pas elles-mêmes contenues dans une autre boucle sont détectées puis leurs profondeurs sont calculées. C’est à partir de ces deux informations que la détection des anti-patterns est faite :  la méthode ne retient que les boucles à profondeur supérieur à deux pour ensuite renvoyer la liste des anti-patterns.
+Tout d’abord, toutes les boucles qui ne sont pas elles-mêmes contenues dans une autre boucle sont détectées puis leurs profondeurs sont calculées. C’est à partir de ces deux informations que la détection des anti-patterns est faite :  la méthode ne retient que les boucles à profondeur supérieur ou égale à deux pour ensuite renvoyer la liste des anti-patterns.
 
 Pour les appels récursifs, à partir de l’arbre syntaxique du code, on détecte les fonctions qui s'appellent elles-mêmes. Ces fonctions sont ensuite retenues pour être renvoyées par la méthode.
 
